@@ -1,6 +1,5 @@
 # Project Name
-Put here a short paragraph describing your project. 
-Adding an screenshot or a mockup of your application in action would be nice.  
+This is a desktop application for Temple students which helps create a schedule for their next semester based on their course of study, classes they have taken and need to take, professor ratings, and user selected prioritization of classes and days they would like to attend class.
 
 ![This is a screenshot.](images.png)
 # How to run
