@@ -14,6 +14,10 @@ class GUI():
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
 
+        generalFrame=ttk.Frame(self.__root)
+        generalFrame.pack(padx=5,pady=5)
+    
+
 if __name__=='__main__':
     root = Tk()
     app = GUI(root)
