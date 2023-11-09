@@ -25,6 +25,13 @@ def get_curric(degree_program):
         curric.append(c.text)
     return curric
 
+def get_term_codes():
+    PAGINATION_OPTS = {
+     "offset": "1",
+     "max": "10",
+    }
+    response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
+    return(response.json())
 
 def get_course_sections_info(term_code,subject,course_num):
     session = requests.Session()
@@ -67,9 +74,5 @@ def get_course_sections_info(term_code,subject,course_num):
    
 #print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
-#get_cookies()
-#get_term_codes()
+print(get_term_codes())
 print(get_course_sections_info("202336","EES","2021"))
-
-'''
-'''
