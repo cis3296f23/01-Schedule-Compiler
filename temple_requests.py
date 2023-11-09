@@ -33,7 +33,7 @@ def get_term_codes():
     response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
     return(response.json())
 
-def get_course_sections_info(term_code,subject,course_num):
+def get_course_sections_info(term_code,subject,course_num,attr):
     session = requests.Session()
     # term and txt_term need to be the same
     SEARCH_REQ = {
@@ -41,6 +41,7 @@ def get_course_sections_info(term_code,subject,course_num):
         "txt_term": term_code,
         "txt_subject": subject,
         "txt_courseNumber": course_num,
+        "txt_attribute": attr
     }
     # extra stuff for the results
     RESULTS_OPTS = {
@@ -75,4 +76,4 @@ def get_course_sections_info(term_code,subject,course_num):
 #print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
 print(get_term_codes())
-print(get_course_sections_info("202336","EES","2021"))
+print(get_course_sections_info("202336","EES","2021",''))
