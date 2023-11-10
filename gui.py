@@ -27,7 +27,9 @@ class GUI():
         ttk.Label(master,text='Select a degree program:').grid(row=0,column=0)
         self.degree_prog_dropdown = ttk.Combobox(master,values=temple_requests.get_degree_programs())
         self.degree_prog_dropdown.grid(row=1,column=0)
-
+        ttk.Label(master,text="Enter your degree program (i.e Computer Science BS):").grid(row=2,column=0)
+        self.degree_prog_entry=ttk.Entry(master,width=50)
+        self.degree_prog_entry.grid(row=3,column=0)
 
 if __name__=='__main__':
     root = Tk()
