@@ -4,17 +4,26 @@ from bs4 import BeautifulSoup
 
 def get_degree_programs():
     #first try to create dictionary of links to degree programs based on html that leads to links (should find subject and level too)
-    req = requests.get("https://bulletin.temple.edu/academic-programs/")
-    soup = BeautifulSoup(req.content,'html.parser')
-    degree_programs_html = soup.find('tbody', class_='fixedTH',id='degree_body')
-    i = 0
-    degree_programs = []
-    for degree in degree_programs_html:
-        if not degree.text.isspace() and '/' not in degree.text:
-            #can later split by level of program
-            degree_programs.append(degree.text)
-    return degree_programs
-        
+    #add error handling for failed request
+    try: 
+        req = requests.get("https://bulletin.temple.edu/academic-programs/")
+        req.raise_for_status()
+        soup = BeautifulSoup(req.content,'html.parser')
+        degree_programs_html = soup.find('tbody', class_='fixedTH',id='degree_body')
+        i = 0
+        degree_programs = []
+        for degree in degree_programs_html:
+            if not degree.text.isspace() and '/' not in degree.text:
+                #can later split by level of program
+                degree_programs.append(degree.text)
+        return degree_programs
+    
+    except requests.exceptions.Timeout as e:
+        print(f"Timeout occurred: {e}")
+    
+    #return none if error occurred
+    return[]
+            
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
 def get_curric(degree_program):
     #create dictionary to match up level and school to each degree program
