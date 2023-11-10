@@ -30,6 +30,10 @@ class GUI():
         ttk.Label(master,text="Enter your degree program (i.e Computer Science BS):").grid(row=2,column=0)
         self.degree_prog_entry=ttk.Entry(master,width=50)
         self.degree_prog_entry.grid(row=3,column=0)
+        self.course_retrieval_button = ttk.Button(master,text='Get Required Courses',command=self.get_courses())
+    
+    def get_courses(self):
+        return temple_requests.get_curric(self.degree_prog_entry.get())
 
 if __name__=='__main__':
     root = Tk()
