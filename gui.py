@@ -34,21 +34,34 @@ class GUI():
         self.course_retrieval_btn = ttk.Button(master,text='Get Required Courses',command=self.get_courses)
         self.course_retrieval_btn.grid(row=4,column=0)
         ttk.Label(master,text="Courses in the curriculum:").grid(row=5,column=0)
-        self.retrieval_btn_output = Text(master,width=150,height=15)
+        self.retrieval_btn_output = Text(master,width=150,height=7)
         self.retrieval_btn_output.grid(row=6,column=0)
         self.course_entry=ttk.Entry(master,width=20)
         self.course_entry.grid(row=7,column=0)
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
         self.schedule_info_btn.grid(row=8,column=0)
-        self.schedule__info_btn_output = Text(master,width=150,height=15)
+        self.schedule__info_btn_output = Text(master,width=150,height=7)
         self.schedule__info_btn_output.grid(row=9,column=0)
-    
+        ttk.Label(master,text="Enter a professor name:").grid(row=10,column=0)
+        self.prof_entry=ttk.Entry(master,width=30)
+        self.prof_entry.grid(row=11,column=0)
+        self.rmp_button = ttk.Button(master,text="Get RMP Rating",command=self.get_rmp_rating)
+        self.rmp_button.grid(row=12,column=0)
+        self.rmp_output = Text(master,width=80,height=5)
+        self.rmp_output.grid(row=13,column=0)
+
+
     def get_courses(self):
         self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
 
     def get_schedule_info(self):
         course = self.course_entry.get()
         self.schedule__info_btn_output.insert(END,temple_requests.get_course_sections_info('202403',course[:course.find(' ')],course[course.find(' ')+1:],''))
+
+    def get_rmp_rating(self):
+        prof = self.prof_entry.get()
+        rating_info = temple_requests.get_rmp_rating(prof)
+        self.rmp_output.insert(END,"Professor " + prof + " has a rating of " + str(rating_info[0]) + " from " + str(rating_info[1]) + " reviews.")
 
 if __name__=='__main__':
     root = Tk()
