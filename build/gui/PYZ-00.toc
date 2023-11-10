@@ -1,0 +1,893 @@
+('C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+ 'Design\\End Of Semester '
+ 'Project\\01-Schedule-Compiler\\build\\gui\\PYZ-00.pyz',
+ [('__future__', 'C:\\Python311\\Lib\\__future__.py', 'PYMODULE'),
+  ('_aix_support', 'C:\\Python311\\Lib\\_aix_support.py', 'PYMODULE'),
+  ('_bootsubprocess', 'C:\\Python311\\Lib\\_bootsubprocess.py', 'PYMODULE'),
+  ('_compat_pickle', 'C:\\Python311\\Lib\\_compat_pickle.py', 'PYMODULE'),
+  ('_compression', 'C:\\Python311\\Lib\\_compression.py', 'PYMODULE'),
+  ('_markupbase', 'C:\\Python311\\Lib\\_markupbase.py', 'PYMODULE'),
+  ('_py_abc', 'C:\\Python311\\Lib\\_py_abc.py', 'PYMODULE'),
+  ('_pydecimal', 'C:\\Python311\\Lib\\_pydecimal.py', 'PYMODULE'),
+  ('_strptime', 'C:\\Python311\\Lib\\_strptime.py', 'PYMODULE'),
+  ('_threading_local', 'C:\\Python311\\Lib\\_threading_local.py', 'PYMODULE'),
+  ('argparse', 'C:\\Python311\\Lib\\argparse.py', 'PYMODULE'),
+  ('ast', 'C:\\Python311\\Lib\\ast.py', 'PYMODULE'),
+  ('asyncio', 'C:\\Python311\\Lib\\asyncio\\__init__.py', 'PYMODULE'),
+  ('asyncio.base_events',
+   'C:\\Python311\\Lib\\asyncio\\base_events.py',
+   'PYMODULE'),
+  ('asyncio.base_futures',
+   'C:\\Python311\\Lib\\asyncio\\base_futures.py',
+   'PYMODULE'),
+  ('asyncio.base_subprocess',
+   'C:\\Python311\\Lib\\asyncio\\base_subprocess.py',
+   'PYMODULE'),
+  ('asyncio.base_tasks',
+   'C:\\Python311\\Lib\\asyncio\\base_tasks.py',
+   'PYMODULE'),
+  ('asyncio.constants',
+   'C:\\Python311\\Lib\\asyncio\\constants.py',
+   'PYMODULE'),
+  ('asyncio.coroutines',
+   'C:\\Python311\\Lib\\asyncio\\coroutines.py',
+   'PYMODULE'),
+  ('asyncio.events', 'C:\\Python311\\Lib\\asyncio\\events.py', 'PYMODULE'),
+  ('asyncio.exceptions',
+   'C:\\Python311\\Lib\\asyncio\\exceptions.py',
+   'PYMODULE'),
+  ('asyncio.format_helpers',
+   'C:\\Python311\\Lib\\asyncio\\format_helpers.py',
+   'PYMODULE'),
+  ('asyncio.futures', 'C:\\Python311\\Lib\\asyncio\\futures.py', 'PYMODULE'),
+  ('asyncio.locks', 'C:\\Python311\\Lib\\asyncio\\locks.py', 'PYMODULE'),
+  ('asyncio.log', 'C:\\Python311\\Lib\\asyncio\\log.py', 'PYMODULE'),
+  ('asyncio.mixins', 'C:\\Python311\\Lib\\asyncio\\mixins.py', 'PYMODULE'),
+  ('asyncio.proactor_events',
+   'C:\\Python311\\Lib\\asyncio\\proactor_events.py',
+   'PYMODULE'),
+  ('asyncio.protocols',
+   'C:\\Python311\\Lib\\asyncio\\protocols.py',
+   'PYMODULE'),
+  ('asyncio.queues', 'C:\\Python311\\Lib\\asyncio\\queues.py', 'PYMODULE'),
+  ('asyncio.runners', 'C:\\Python311\\Lib\\asyncio\\runners.py', 'PYMODULE'),
+  ('asyncio.selector_events',
+   'C:\\Python311\\Lib\\asyncio\\selector_events.py',
+   'PYMODULE'),
+  ('asyncio.sslproto', 'C:\\Python311\\Lib\\asyncio\\sslproto.py', 'PYMODULE'),
+  ('asyncio.staggered',
+   'C:\\Python311\\Lib\\asyncio\\staggered.py',
+   'PYMODULE'),
+  ('asyncio.streams', 'C:\\Python311\\Lib\\asyncio\\streams.py', 'PYMODULE'),
+  ('asyncio.subprocess',
+   'C:\\Python311\\Lib\\asyncio\\subprocess.py',
+   'PYMODULE'),
+  ('asyncio.taskgroups',
+   'C:\\Python311\\Lib\\asyncio\\taskgroups.py',
+   'PYMODULE'),
+  ('asyncio.tasks', 'C:\\Python311\\Lib\\asyncio\\tasks.py', 'PYMODULE'),
+  ('asyncio.threads', 'C:\\Python311\\Lib\\asyncio\\threads.py', 'PYMODULE'),
+  ('asyncio.timeouts', 'C:\\Python311\\Lib\\asyncio\\timeouts.py', 'PYMODULE'),
+  ('asyncio.transports',
+   'C:\\Python311\\Lib\\asyncio\\transports.py',
+   'PYMODULE'),
+  ('asyncio.trsock', 'C:\\Python311\\Lib\\asyncio\\trsock.py', 'PYMODULE'),
+  ('asyncio.unix_events',
+   'C:\\Python311\\Lib\\asyncio\\unix_events.py',
+   'PYMODULE'),
+  ('asyncio.windows_events',
+   'C:\\Python311\\Lib\\asyncio\\windows_events.py',
+   'PYMODULE'),
+  ('asyncio.windows_utils',
+   'C:\\Python311\\Lib\\asyncio\\windows_utils.py',
+   'PYMODULE'),
+  ('base64', 'C:\\Python311\\Lib\\base64.py', 'PYMODULE'),
+  ('bdb', 'C:\\Python311\\Lib\\bdb.py', 'PYMODULE'),
+  ('bisect', 'C:\\Python311\\Lib\\bisect.py', 'PYMODULE'),
+  ('bs4',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\__init__.py',
+   'PYMODULE'),
+  ('bs4.builder',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\builder\\__init__.py',
+   'PYMODULE'),
+  ('bs4.builder._html5lib',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\builder\\_html5lib.py',
+   'PYMODULE'),
+  ('bs4.builder._htmlparser',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\builder\\_htmlparser.py',
+   'PYMODULE'),
+  ('bs4.builder._lxml',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\builder\\_lxml.py',
+   'PYMODULE'),
+  ('bs4.css',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\css.py',
+   'PYMODULE'),
+  ('bs4.dammit',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\dammit.py',
+   'PYMODULE'),
+  ('bs4.element',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\element.py',
+   'PYMODULE'),
+  ('bs4.formatter',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\bs4\\formatter.py',
+   'PYMODULE'),
+  ('bz2', 'C:\\Python311\\Lib\\bz2.py', 'PYMODULE'),
+  ('calendar', 'C:\\Python311\\Lib\\calendar.py', 'PYMODULE'),
+  ('certifi',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\certifi\\__init__.py',
+   'PYMODULE'),
+  ('certifi.core',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\certifi\\core.py',
+   'PYMODULE'),
+  ('cgi', 'C:\\Python311\\Lib\\cgi.py', 'PYMODULE'),
+  ('charset_normalizer',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\__init__.py',
+   'PYMODULE'),
+  ('charset_normalizer.api',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\api.py',
+   'PYMODULE'),
+  ('charset_normalizer.cd',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\cd.py',
+   'PYMODULE'),
+  ('charset_normalizer.constant',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\constant.py',
+   'PYMODULE'),
+  ('charset_normalizer.legacy',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\legacy.py',
+   'PYMODULE'),
+  ('charset_normalizer.models',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\models.py',
+   'PYMODULE'),
+  ('charset_normalizer.utils',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\utils.py',
+   'PYMODULE'),
+  ('charset_normalizer.version',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\charset_normalizer\\version.py',
+   'PYMODULE'),
+  ('cmd', 'C:\\Python311\\Lib\\cmd.py', 'PYMODULE'),
+  ('code', 'C:\\Python311\\Lib\\code.py', 'PYMODULE'),
+  ('codeop', 'C:\\Python311\\Lib\\codeop.py', 'PYMODULE'),
+  ('concurrent', 'C:\\Python311\\Lib\\concurrent\\__init__.py', 'PYMODULE'),
+  ('concurrent.futures',
+   'C:\\Python311\\Lib\\concurrent\\futures\\__init__.py',
+   'PYMODULE'),
+  ('concurrent.futures._base',
+   'C:\\Python311\\Lib\\concurrent\\futures\\_base.py',
+   'PYMODULE'),
+  ('concurrent.futures.process',
+   'C:\\Python311\\Lib\\concurrent\\futures\\process.py',
+   'PYMODULE'),
+  ('concurrent.futures.thread',
+   'C:\\Python311\\Lib\\concurrent\\futures\\thread.py',
+   'PYMODULE'),
+  ('contextlib', 'C:\\Python311\\Lib\\contextlib.py', 'PYMODULE'),
+  ('contextvars', 'C:\\Python311\\Lib\\contextvars.py', 'PYMODULE'),
+  ('copy', 'C:\\Python311\\Lib\\copy.py', 'PYMODULE'),
+  ('csv', 'C:\\Python311\\Lib\\csv.py', 'PYMODULE'),
+  ('ctypes', 'C:\\Python311\\Lib\\ctypes\\__init__.py', 'PYMODULE'),
+  ('ctypes._endian', 'C:\\Python311\\Lib\\ctypes\\_endian.py', 'PYMODULE'),
+  ('dataclasses', 'C:\\Python311\\Lib\\dataclasses.py', 'PYMODULE'),
+  ('datetime', 'C:\\Python311\\Lib\\datetime.py', 'PYMODULE'),
+  ('decimal', 'C:\\Python311\\Lib\\decimal.py', 'PYMODULE'),
+  ('difflib', 'C:\\Python311\\Lib\\difflib.py', 'PYMODULE'),
+  ('dis', 'C:\\Python311\\Lib\\dis.py', 'PYMODULE'),
+  ('doctest', 'C:\\Python311\\Lib\\doctest.py', 'PYMODULE'),
+  ('email', 'C:\\Python311\\Lib\\email\\__init__.py', 'PYMODULE'),
+  ('email._encoded_words',
+   'C:\\Python311\\Lib\\email\\_encoded_words.py',
+   'PYMODULE'),
+  ('email._header_value_parser',
+   'C:\\Python311\\Lib\\email\\_header_value_parser.py',
+   'PYMODULE'),
+  ('email._parseaddr', 'C:\\Python311\\Lib\\email\\_parseaddr.py', 'PYMODULE'),
+  ('email._policybase',
+   'C:\\Python311\\Lib\\email\\_policybase.py',
+   'PYMODULE'),
+  ('email.base64mime', 'C:\\Python311\\Lib\\email\\base64mime.py', 'PYMODULE'),
+  ('email.charset', 'C:\\Python311\\Lib\\email\\charset.py', 'PYMODULE'),
+  ('email.contentmanager',
+   'C:\\Python311\\Lib\\email\\contentmanager.py',
+   'PYMODULE'),
+  ('email.encoders', 'C:\\Python311\\Lib\\email\\encoders.py', 'PYMODULE'),
+  ('email.errors', 'C:\\Python311\\Lib\\email\\errors.py', 'PYMODULE'),
+  ('email.feedparser', 'C:\\Python311\\Lib\\email\\feedparser.py', 'PYMODULE'),
+  ('email.generator', 'C:\\Python311\\Lib\\email\\generator.py', 'PYMODULE'),
+  ('email.header', 'C:\\Python311\\Lib\\email\\header.py', 'PYMODULE'),
+  ('email.headerregistry',
+   'C:\\Python311\\Lib\\email\\headerregistry.py',
+   'PYMODULE'),
+  ('email.iterators', 'C:\\Python311\\Lib\\email\\iterators.py', 'PYMODULE'),
+  ('email.message', 'C:\\Python311\\Lib\\email\\message.py', 'PYMODULE'),
+  ('email.parser', 'C:\\Python311\\Lib\\email\\parser.py', 'PYMODULE'),
+  ('email.policy', 'C:\\Python311\\Lib\\email\\policy.py', 'PYMODULE'),
+  ('email.quoprimime', 'C:\\Python311\\Lib\\email\\quoprimime.py', 'PYMODULE'),
+  ('email.utils', 'C:\\Python311\\Lib\\email\\utils.py', 'PYMODULE'),
+  ('fnmatch', 'C:\\Python311\\Lib\\fnmatch.py', 'PYMODULE'),
+  ('fractions', 'C:\\Python311\\Lib\\fractions.py', 'PYMODULE'),
+  ('ftplib', 'C:\\Python311\\Lib\\ftplib.py', 'PYMODULE'),
+  ('getopt', 'C:\\Python311\\Lib\\getopt.py', 'PYMODULE'),
+  ('getpass', 'C:\\Python311\\Lib\\getpass.py', 'PYMODULE'),
+  ('gettext', 'C:\\Python311\\Lib\\gettext.py', 'PYMODULE'),
+  ('glob', 'C:\\Python311\\Lib\\glob.py', 'PYMODULE'),
+  ('gzip', 'C:\\Python311\\Lib\\gzip.py', 'PYMODULE'),
+  ('hashlib', 'C:\\Python311\\Lib\\hashlib.py', 'PYMODULE'),
+  ('hmac', 'C:\\Python311\\Lib\\hmac.py', 'PYMODULE'),
+  ('html', 'C:\\Python311\\Lib\\html\\__init__.py', 'PYMODULE'),
+  ('html.entities', 'C:\\Python311\\Lib\\html\\entities.py', 'PYMODULE'),
+  ('html.parser', 'C:\\Python311\\Lib\\html\\parser.py', 'PYMODULE'),
+  ('http', 'C:\\Python311\\Lib\\http\\__init__.py', 'PYMODULE'),
+  ('http.client', 'C:\\Python311\\Lib\\http\\client.py', 'PYMODULE'),
+  ('http.cookiejar', 'C:\\Python311\\Lib\\http\\cookiejar.py', 'PYMODULE'),
+  ('http.cookies', 'C:\\Python311\\Lib\\http\\cookies.py', 'PYMODULE'),
+  ('http.server', 'C:\\Python311\\Lib\\http\\server.py', 'PYMODULE'),
+  ('idna',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\idna\\__init__.py',
+   'PYMODULE'),
+  ('idna.core',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\idna\\core.py',
+   'PYMODULE'),
+  ('idna.idnadata',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\idna\\idnadata.py',
+   'PYMODULE'),
+  ('idna.intranges',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\idna\\intranges.py',
+   'PYMODULE'),
+  ('idna.package_data',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\idna\\package_data.py',
+   'PYMODULE'),
+  ('idna.uts46data',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\idna\\uts46data.py',
+   'PYMODULE'),
+  ('importlib', 'C:\\Python311\\Lib\\importlib\\__init__.py', 'PYMODULE'),
+  ('importlib._abc', 'C:\\Python311\\Lib\\importlib\\_abc.py', 'PYMODULE'),
+  ('importlib._bootstrap',
+   'C:\\Python311\\Lib\\importlib\\_bootstrap.py',
+   'PYMODULE'),
+  ('importlib._bootstrap_external',
+   'C:\\Python311\\Lib\\importlib\\_bootstrap_external.py',
+   'PYMODULE'),
+  ('importlib.abc', 'C:\\Python311\\Lib\\importlib\\abc.py', 'PYMODULE'),
+  ('importlib.machinery',
+   'C:\\Python311\\Lib\\importlib\\machinery.py',
+   'PYMODULE'),
+  ('importlib.metadata',
+   'C:\\Python311\\Lib\\importlib\\metadata\\__init__.py',
+   'PYMODULE'),
+  ('importlib.metadata._adapters',
+   'C:\\Python311\\Lib\\importlib\\metadata\\_adapters.py',
+   'PYMODULE'),
+  ('importlib.metadata._collections',
+   'C:\\Python311\\Lib\\importlib\\metadata\\_collections.py',
+   'PYMODULE'),
+  ('importlib.metadata._functools',
+   'C:\\Python311\\Lib\\importlib\\metadata\\_functools.py',
+   'PYMODULE'),
+  ('importlib.metadata._itertools',
+   'C:\\Python311\\Lib\\importlib\\metadata\\_itertools.py',
+   'PYMODULE'),
+  ('importlib.metadata._meta',
+   'C:\\Python311\\Lib\\importlib\\metadata\\_meta.py',
+   'PYMODULE'),
+  ('importlib.metadata._text',
+   'C:\\Python311\\Lib\\importlib\\metadata\\_text.py',
+   'PYMODULE'),
+  ('importlib.readers',
+   'C:\\Python311\\Lib\\importlib\\readers.py',
+   'PYMODULE'),
+  ('importlib.resources',
+   'C:\\Python311\\Lib\\importlib\\resources\\__init__.py',
+   'PYMODULE'),
+  ('importlib.resources._adapters',
+   'C:\\Python311\\Lib\\importlib\\resources\\_adapters.py',
+   'PYMODULE'),
+  ('importlib.resources._common',
+   'C:\\Python311\\Lib\\importlib\\resources\\_common.py',
+   'PYMODULE'),
+  ('importlib.resources._itertools',
+   'C:\\Python311\\Lib\\importlib\\resources\\_itertools.py',
+   'PYMODULE'),
+  ('importlib.resources._legacy',
+   'C:\\Python311\\Lib\\importlib\\resources\\_legacy.py',
+   'PYMODULE'),
+  ('importlib.resources.abc',
+   'C:\\Python311\\Lib\\importlib\\resources\\abc.py',
+   'PYMODULE'),
+  ('importlib.resources.readers',
+   'C:\\Python311\\Lib\\importlib\\resources\\readers.py',
+   'PYMODULE'),
+  ('importlib.util', 'C:\\Python311\\Lib\\importlib\\util.py', 'PYMODULE'),
+  ('inspect', 'C:\\Python311\\Lib\\inspect.py', 'PYMODULE'),
+  ('ipaddress', 'C:\\Python311\\Lib\\ipaddress.py', 'PYMODULE'),
+  ('json', 'C:\\Python311\\Lib\\json\\__init__.py', 'PYMODULE'),
+  ('json.decoder', 'C:\\Python311\\Lib\\json\\decoder.py', 'PYMODULE'),
+  ('json.encoder', 'C:\\Python311\\Lib\\json\\encoder.py', 'PYMODULE'),
+  ('json.scanner', 'C:\\Python311\\Lib\\json\\scanner.py', 'PYMODULE'),
+  ('logging', 'C:\\Python311\\Lib\\logging\\__init__.py', 'PYMODULE'),
+  ('lxml',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\__init__.py',
+   'PYMODULE'),
+  ('lxml.ElementInclude',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\ElementInclude.py',
+   'PYMODULE'),
+  ('lxml.cssselect',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\cssselect.py',
+   'PYMODULE'),
+  ('lxml.doctestcompare',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\doctestcompare.py',
+   'PYMODULE'),
+  ('lxml.html',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\__init__.py',
+   'PYMODULE'),
+  ('lxml.html.ElementSoup',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\ElementSoup.py',
+   'PYMODULE'),
+  ('lxml.html._diffcommand',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\_diffcommand.py',
+   'PYMODULE'),
+  ('lxml.html._html5builder',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\_html5builder.py',
+   'PYMODULE'),
+  ('lxml.html._setmixin',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\_setmixin.py',
+   'PYMODULE'),
+  ('lxml.html.builder',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\builder.py',
+   'PYMODULE'),
+  ('lxml.html.defs',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\defs.py',
+   'PYMODULE'),
+  ('lxml.html.formfill',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\formfill.py',
+   'PYMODULE'),
+  ('lxml.html.html5parser',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\html5parser.py',
+   'PYMODULE'),
+  ('lxml.html.soupparser',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\soupparser.py',
+   'PYMODULE'),
+  ('lxml.html.usedoctest',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\html\\usedoctest.py',
+   'PYMODULE'),
+  ('lxml.includes',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\includes\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.extlibs',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\includes\\extlibs\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libexslt',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\includes\\libexslt\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libxml',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\includes\\libxml\\__init__.py',
+   'PYMODULE'),
+  ('lxml.includes.libxslt',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\includes\\libxslt\\__init__.py',
+   'PYMODULE'),
+  ('lxml.isoschematron',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\isoschematron\\__init__.py',
+   'PYMODULE'),
+  ('lxml.pyclasslookup',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\pyclasslookup.py',
+   'PYMODULE'),
+  ('lxml.usedoctest',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\lxml\\usedoctest.py',
+   'PYMODULE'),
+  ('lzma', 'C:\\Python311\\Lib\\lzma.py', 'PYMODULE'),
+  ('mimetypes', 'C:\\Python311\\Lib\\mimetypes.py', 'PYMODULE'),
+  ('multiprocessing',
+   'C:\\Python311\\Lib\\multiprocessing\\__init__.py',
+   'PYMODULE'),
+  ('multiprocessing.connection',
+   'C:\\Python311\\Lib\\multiprocessing\\connection.py',
+   'PYMODULE'),
+  ('multiprocessing.context',
+   'C:\\Python311\\Lib\\multiprocessing\\context.py',
+   'PYMODULE'),
+  ('multiprocessing.dummy',
+   'C:\\Python311\\Lib\\multiprocessing\\dummy\\__init__.py',
+   'PYMODULE'),
+  ('multiprocessing.dummy.connection',
+   'C:\\Python311\\Lib\\multiprocessing\\dummy\\connection.py',
+   'PYMODULE'),
+  ('multiprocessing.forkserver',
+   'C:\\Python311\\Lib\\multiprocessing\\forkserver.py',
+   'PYMODULE'),
+  ('multiprocessing.heap',
+   'C:\\Python311\\Lib\\multiprocessing\\heap.py',
+   'PYMODULE'),
+  ('multiprocessing.managers',
+   'C:\\Python311\\Lib\\multiprocessing\\managers.py',
+   'PYMODULE'),
+  ('multiprocessing.pool',
+   'C:\\Python311\\Lib\\multiprocessing\\pool.py',
+   'PYMODULE'),
+  ('multiprocessing.popen_fork',
+   'C:\\Python311\\Lib\\multiprocessing\\popen_fork.py',
+   'PYMODULE'),
+  ('multiprocessing.popen_forkserver',
+   'C:\\Python311\\Lib\\multiprocessing\\popen_forkserver.py',
+   'PYMODULE'),
+  ('multiprocessing.popen_spawn_posix',
+   'C:\\Python311\\Lib\\multiprocessing\\popen_spawn_posix.py',
+   'PYMODULE'),
+  ('multiprocessing.popen_spawn_win32',
+   'C:\\Python311\\Lib\\multiprocessing\\popen_spawn_win32.py',
+   'PYMODULE'),
+  ('multiprocessing.process',
+   'C:\\Python311\\Lib\\multiprocessing\\process.py',
+   'PYMODULE'),
+  ('multiprocessing.queues',
+   'C:\\Python311\\Lib\\multiprocessing\\queues.py',
+   'PYMODULE'),
+  ('multiprocessing.reduction',
+   'C:\\Python311\\Lib\\multiprocessing\\reduction.py',
+   'PYMODULE'),
+  ('multiprocessing.resource_sharer',
+   'C:\\Python311\\Lib\\multiprocessing\\resource_sharer.py',
+   'PYMODULE'),
+  ('multiprocessing.resource_tracker',
+   'C:\\Python311\\Lib\\multiprocessing\\resource_tracker.py',
+   'PYMODULE'),
+  ('multiprocessing.shared_memory',
+   'C:\\Python311\\Lib\\multiprocessing\\shared_memory.py',
+   'PYMODULE'),
+  ('multiprocessing.sharedctypes',
+   'C:\\Python311\\Lib\\multiprocessing\\sharedctypes.py',
+   'PYMODULE'),
+  ('multiprocessing.spawn',
+   'C:\\Python311\\Lib\\multiprocessing\\spawn.py',
+   'PYMODULE'),
+  ('multiprocessing.synchronize',
+   'C:\\Python311\\Lib\\multiprocessing\\synchronize.py',
+   'PYMODULE'),
+  ('multiprocessing.util',
+   'C:\\Python311\\Lib\\multiprocessing\\util.py',
+   'PYMODULE'),
+  ('netrc', 'C:\\Python311\\Lib\\netrc.py', 'PYMODULE'),
+  ('nturl2path', 'C:\\Python311\\Lib\\nturl2path.py', 'PYMODULE'),
+  ('numbers', 'C:\\Python311\\Lib\\numbers.py', 'PYMODULE'),
+  ('opcode', 'C:\\Python311\\Lib\\opcode.py', 'PYMODULE'),
+  ('optparse', 'C:\\Python311\\Lib\\optparse.py', 'PYMODULE'),
+  ('pathlib', 'C:\\Python311\\Lib\\pathlib.py', 'PYMODULE'),
+  ('pdb', 'C:\\Python311\\Lib\\pdb.py', 'PYMODULE'),
+  ('pickle', 'C:\\Python311\\Lib\\pickle.py', 'PYMODULE'),
+  ('pkgutil', 'C:\\Python311\\Lib\\pkgutil.py', 'PYMODULE'),
+  ('platform', 'C:\\Python311\\Lib\\platform.py', 'PYMODULE'),
+  ('pprint', 'C:\\Python311\\Lib\\pprint.py', 'PYMODULE'),
+  ('py_compile', 'C:\\Python311\\Lib\\py_compile.py', 'PYMODULE'),
+  ('pydoc', 'C:\\Python311\\Lib\\pydoc.py', 'PYMODULE'),
+  ('pydoc_data', 'C:\\Python311\\Lib\\pydoc_data\\__init__.py', 'PYMODULE'),
+  ('pydoc_data.topics',
+   'C:\\Python311\\Lib\\pydoc_data\\topics.py',
+   'PYMODULE'),
+  ('queue', 'C:\\Python311\\Lib\\queue.py', 'PYMODULE'),
+  ('quopri', 'C:\\Python311\\Lib\\quopri.py', 'PYMODULE'),
+  ('random', 'C:\\Python311\\Lib\\random.py', 'PYMODULE'),
+  ('requests',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\__init__.py',
+   'PYMODULE'),
+  ('requests.__version__',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\__version__.py',
+   'PYMODULE'),
+  ('requests._internal_utils',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\_internal_utils.py',
+   'PYMODULE'),
+  ('requests.adapters',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\adapters.py',
+   'PYMODULE'),
+  ('requests.api',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\api.py',
+   'PYMODULE'),
+  ('requests.auth',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\auth.py',
+   'PYMODULE'),
+  ('requests.certs',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\certs.py',
+   'PYMODULE'),
+  ('requests.compat',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\compat.py',
+   'PYMODULE'),
+  ('requests.cookies',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\cookies.py',
+   'PYMODULE'),
+  ('requests.exceptions',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\exceptions.py',
+   'PYMODULE'),
+  ('requests.hooks',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\hooks.py',
+   'PYMODULE'),
+  ('requests.models',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\models.py',
+   'PYMODULE'),
+  ('requests.packages',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\packages.py',
+   'PYMODULE'),
+  ('requests.sessions',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\sessions.py',
+   'PYMODULE'),
+  ('requests.status_codes',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\status_codes.py',
+   'PYMODULE'),
+  ('requests.structures',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\structures.py',
+   'PYMODULE'),
+  ('requests.utils',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\requests\\utils.py',
+   'PYMODULE'),
+  ('runpy', 'C:\\Python311\\Lib\\runpy.py', 'PYMODULE'),
+  ('secrets', 'C:\\Python311\\Lib\\secrets.py', 'PYMODULE'),
+  ('selectors', 'C:\\Python311\\Lib\\selectors.py', 'PYMODULE'),
+  ('shlex', 'C:\\Python311\\Lib\\shlex.py', 'PYMODULE'),
+  ('shutil', 'C:\\Python311\\Lib\\shutil.py', 'PYMODULE'),
+  ('signal', 'C:\\Python311\\Lib\\signal.py', 'PYMODULE'),
+  ('socket', 'C:\\Python311\\Lib\\socket.py', 'PYMODULE'),
+  ('socketserver', 'C:\\Python311\\Lib\\socketserver.py', 'PYMODULE'),
+  ('soupsieve',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\__init__.py',
+   'PYMODULE'),
+  ('soupsieve.__meta__',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\__meta__.py',
+   'PYMODULE'),
+  ('soupsieve.css_match',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\css_match.py',
+   'PYMODULE'),
+  ('soupsieve.css_parser',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\css_parser.py',
+   'PYMODULE'),
+  ('soupsieve.css_types',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\css_types.py',
+   'PYMODULE'),
+  ('soupsieve.pretty',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\pretty.py',
+   'PYMODULE'),
+  ('soupsieve.util',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\soupsieve\\util.py',
+   'PYMODULE'),
+  ('ssl', 'C:\\Python311\\Lib\\ssl.py', 'PYMODULE'),
+  ('statistics', 'C:\\Python311\\Lib\\statistics.py', 'PYMODULE'),
+  ('string', 'C:\\Python311\\Lib\\string.py', 'PYMODULE'),
+  ('stringprep', 'C:\\Python311\\Lib\\stringprep.py', 'PYMODULE'),
+  ('subprocess', 'C:\\Python311\\Lib\\subprocess.py', 'PYMODULE'),
+  ('sysconfig', 'C:\\Python311\\Lib\\sysconfig.py', 'PYMODULE'),
+  ('tarfile', 'C:\\Python311\\Lib\\tarfile.py', 'PYMODULE'),
+  ('tempfile', 'C:\\Python311\\Lib\\tempfile.py', 'PYMODULE'),
+  ('temple_requests',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester Project\\01-Schedule-Compiler\\temple_requests.py',
+   'PYMODULE'),
+  ('textwrap', 'C:\\Python311\\Lib\\textwrap.py', 'PYMODULE'),
+  ('threading', 'C:\\Python311\\Lib\\threading.py', 'PYMODULE'),
+  ('tkinter', 'C:\\Python311\\Lib\\tkinter\\__init__.py', 'PYMODULE'),
+  ('tkinter.constants',
+   'C:\\Python311\\Lib\\tkinter\\constants.py',
+   'PYMODULE'),
+  ('tkinter.ttk', 'C:\\Python311\\Lib\\tkinter\\ttk.py', 'PYMODULE'),
+  ('token', 'C:\\Python311\\Lib\\token.py', 'PYMODULE'),
+  ('tokenize', 'C:\\Python311\\Lib\\tokenize.py', 'PYMODULE'),
+  ('tracemalloc', 'C:\\Python311\\Lib\\tracemalloc.py', 'PYMODULE'),
+  ('tty', 'C:\\Python311\\Lib\\tty.py', 'PYMODULE'),
+  ('typing', 'C:\\Python311\\Lib\\typing.py', 'PYMODULE'),
+  ('unittest', 'C:\\Python311\\Lib\\unittest\\__init__.py', 'PYMODULE'),
+  ('unittest._log', 'C:\\Python311\\Lib\\unittest\\_log.py', 'PYMODULE'),
+  ('unittest.async_case',
+   'C:\\Python311\\Lib\\unittest\\async_case.py',
+   'PYMODULE'),
+  ('unittest.case', 'C:\\Python311\\Lib\\unittest\\case.py', 'PYMODULE'),
+  ('unittest.loader', 'C:\\Python311\\Lib\\unittest\\loader.py', 'PYMODULE'),
+  ('unittest.main', 'C:\\Python311\\Lib\\unittest\\main.py', 'PYMODULE'),
+  ('unittest.result', 'C:\\Python311\\Lib\\unittest\\result.py', 'PYMODULE'),
+  ('unittest.runner', 'C:\\Python311\\Lib\\unittest\\runner.py', 'PYMODULE'),
+  ('unittest.signals', 'C:\\Python311\\Lib\\unittest\\signals.py', 'PYMODULE'),
+  ('unittest.suite', 'C:\\Python311\\Lib\\unittest\\suite.py', 'PYMODULE'),
+  ('unittest.util', 'C:\\Python311\\Lib\\unittest\\util.py', 'PYMODULE'),
+  ('urllib', 'C:\\Python311\\Lib\\urllib\\__init__.py', 'PYMODULE'),
+  ('urllib.error', 'C:\\Python311\\Lib\\urllib\\error.py', 'PYMODULE'),
+  ('urllib.parse', 'C:\\Python311\\Lib\\urllib\\parse.py', 'PYMODULE'),
+  ('urllib.request', 'C:\\Python311\\Lib\\urllib\\request.py', 'PYMODULE'),
+  ('urllib.response', 'C:\\Python311\\Lib\\urllib\\response.py', 'PYMODULE'),
+  ('urllib3',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\__init__.py',
+   'PYMODULE'),
+  ('urllib3._base_connection',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\_base_connection.py',
+   'PYMODULE'),
+  ('urllib3._collections',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\_collections.py',
+   'PYMODULE'),
+  ('urllib3._request_methods',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\_request_methods.py',
+   'PYMODULE'),
+  ('urllib3._version',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\_version.py',
+   'PYMODULE'),
+  ('urllib3.connection',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\connection.py',
+   'PYMODULE'),
+  ('urllib3.connectionpool',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\connectionpool.py',
+   'PYMODULE'),
+  ('urllib3.contrib',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\contrib\\__init__.py',
+   'PYMODULE'),
+  ('urllib3.contrib.pyopenssl',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\contrib\\pyopenssl.py',
+   'PYMODULE'),
+  ('urllib3.contrib.socks',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\contrib\\socks.py',
+   'PYMODULE'),
+  ('urllib3.exceptions',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\exceptions.py',
+   'PYMODULE'),
+  ('urllib3.fields',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\fields.py',
+   'PYMODULE'),
+  ('urllib3.filepost',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\filepost.py',
+   'PYMODULE'),
+  ('urllib3.poolmanager',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\poolmanager.py',
+   'PYMODULE'),
+  ('urllib3.response',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\response.py',
+   'PYMODULE'),
+  ('urllib3.util',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\__init__.py',
+   'PYMODULE'),
+  ('urllib3.util.connection',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\connection.py',
+   'PYMODULE'),
+  ('urllib3.util.proxy',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\proxy.py',
+   'PYMODULE'),
+  ('urllib3.util.request',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\request.py',
+   'PYMODULE'),
+  ('urllib3.util.response',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\response.py',
+   'PYMODULE'),
+  ('urllib3.util.retry',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\retry.py',
+   'PYMODULE'),
+  ('urllib3.util.ssl_',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\ssl_.py',
+   'PYMODULE'),
+  ('urllib3.util.ssl_match_hostname',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\ssl_match_hostname.py',
+   'PYMODULE'),
+  ('urllib3.util.ssltransport',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\ssltransport.py',
+   'PYMODULE'),
+  ('urllib3.util.timeout',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\timeout.py',
+   'PYMODULE'),
+  ('urllib3.util.url',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\url.py',
+   'PYMODULE'),
+  ('urllib3.util.util',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\util.py',
+   'PYMODULE'),
+  ('urllib3.util.wait',
+   'C:\\Users\\ereiz\\OneDrive - Temple University\\5. Junior Fall\\Software '
+   'Design\\End Of Semester '
+   'Project\\01-Schedule-Compiler\\.venv\\Lib\\site-packages\\urllib3\\util\\wait.py',
+   'PYMODULE'),
+  ('webbrowser', 'C:\\Python311\\Lib\\webbrowser.py', 'PYMODULE'),
+  ('xml', 'C:\\Python311\\Lib\\xml\\__init__.py', 'PYMODULE'),
+  ('xml.parsers', 'C:\\Python311\\Lib\\xml\\parsers\\__init__.py', 'PYMODULE'),
+  ('xml.parsers.expat',
+   'C:\\Python311\\Lib\\xml\\parsers\\expat.py',
+   'PYMODULE'),
+  ('xml.sax', 'C:\\Python311\\Lib\\xml\\sax\\__init__.py', 'PYMODULE'),
+  ('xml.sax._exceptions',
+   'C:\\Python311\\Lib\\xml\\sax\\_exceptions.py',
+   'PYMODULE'),
+  ('xml.sax.expatreader',
+   'C:\\Python311\\Lib\\xml\\sax\\expatreader.py',
+   'PYMODULE'),
+  ('xml.sax.handler', 'C:\\Python311\\Lib\\xml\\sax\\handler.py', 'PYMODULE'),
+  ('xml.sax.saxutils', 'C:\\Python311\\Lib\\xml\\sax\\saxutils.py', 'PYMODULE'),
+  ('xml.sax.xmlreader',
+   'C:\\Python311\\Lib\\xml\\sax\\xmlreader.py',
+   'PYMODULE'),
+  ('xmlrpc', 'C:\\Python311\\Lib\\xmlrpc\\__init__.py', 'PYMODULE'),
+  ('xmlrpc.client', 'C:\\Python311\\Lib\\xmlrpc\\client.py', 'PYMODULE'),
+  ('zipfile', 'C:\\Python311\\Lib\\zipfile.py', 'PYMODULE'),
+  ('zipimport', 'C:\\Python311\\Lib\\zipimport.py', 'PYMODULE')])
