@@ -1,4 +1,5 @@
 import requests
+import ratemyprofessor
 from bs4 import BeautifulSoup
 
 def get_degree_programs():
@@ -77,3 +78,7 @@ def get_course_sections_info(term_code,subject,course_num,attr):
 #print(get_curric("Computer Science BS"))
 print(get_term_codes())
 print(get_course_sections_info("202336","EES","2021",''))
+
+professor = ratemyprofessor.get_professor_by_school_and_name(ratemyprofessor.get_school_by_name("Temple University"), "Anthony Hughes")
+if professor is not NONE:
+    print("Anthony Hughes has a rating of %s / 5.0 from %s ratings", professor.rating, professor.num_ratings)
