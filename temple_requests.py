@@ -75,15 +75,18 @@ def get_course_sections_info(term_code,subject,course_num,attr=''):
     data = response.json()
     data["ztcEncodedImage"] = ""
     return data
-    
+
+def get_rmp_rating(prof):
+    professor = ratemyprofessor.get_professor_by_school_and_name(ratemyprofessor.get_school_by_name("Temple University"), prof)
+    if professor is not None:
+        return [professor.rating, professor.num_ratings]
+    else:
+        return [0,0]
     
 
    
 #print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
-print(get_term_codes())
-print(get_course_sections_info("202336","EES","2021",''))
-
-professor = ratemyprofessor.get_professor_by_school_and_name(ratemyprofessor.get_school_by_name("Temple University"), "Anthony Hughes")
-if professor is not NONE:
-    print("Anthony Hughes has a rating of %s / 5.0 from %s ratings", professor.rating, professor.num_ratings)
+#print(get_term_codes())
+#print(get_course_sections_info("202336","EES","2021",''))
+#get_rmp_rating("Abha Belorkar")
