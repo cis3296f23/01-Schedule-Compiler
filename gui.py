@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+import temple_requests
 
 class GUI():
     def __init__(self,root):
@@ -16,7 +17,17 @@ class GUI():
 
         generalFrame=ttk.Frame(self.__root)
         generalFrame.pack(padx=5,pady=5)
+        self.build_general_frame(generalFrame)
     
+    def build_general_frame(self,master):
+        """
+        Builds the GUI
+        @param master : root application
+        """
+        ttk.Label(master,text='Select a degree program:').grid(row=0,column=0)
+        self.degree_prog_dropdown = ttk.Combobox(master,values=temple_requests.get_degree_programs())
+        self.degree_prog_dropdown.grid(row=1,column=0)
+
 
 if __name__=='__main__':
     root = Tk()
