@@ -27,17 +27,28 @@ class GUI():
         ttk.Label(master,text='Select a degree program:').grid(row=0,column=0)
         self.degree_prog_dropdown = ttk.Combobox(master,values=temple_requests.get_degree_programs())
         self.degree_prog_dropdown.grid(row=1,column=0)
-        ttk.Label(master,text="Enter your degree program (i.e Computer Science BS):").grid(row=2,column=0)
+        ttk.Label(master,text="Enter your CST degree program (i.e Computer Science BS):").grid(row=2,column=0)
         self.degree_prog_entry=ttk.Entry(master,width=50)
         self.degree_prog_entry.grid(row=3,column=0)
-        self.course_retrieval_button = ttk.Button(master,text='Get Required Courses',command=self.get_courses)
-        self.course_retrieval_button.grid(row=4,column=0)
+        #only works for cst degree programs (need to fix)
+        self.course_retrieval_btn = ttk.Button(master,text='Get Required Courses',command=self.get_courses)
+        self.course_retrieval_btn.grid(row=4,column=0)
         ttk.Label(master,text="Courses in the curriculum:").grid(row=5,column=0)
-        self.retrieval_button_output = Text(master,width=150,height=15)
-        self.retrieval_button_output.grid(row=6,column=0)
+        self.retrieval_btn_output = Text(master,width=150,height=15)
+        self.retrieval_btn_output.grid(row=6,column=0)
+        self.course_entry=ttk.Entry(master,width=20)
+        self.course_entry.grid(row=7,column=0)
+        self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
+        self.schedule_info_btn.grid(row=8,column=0)
+        self.schedule__info_btn_output = Text(master,width=150,height=15)
+        self.schedule__info_btn_output.grid(row=9,column=0)
     
     def get_courses(self):
-        self.retrieval_button_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
+        self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
+
+    def get_schedule_info(self):
+        course = self.course_entry.get()
+        self.schedule__info_btn_output.insert(END,temple_requests.get_course_sections_info('202403',course[:course.find(' ')],course[course.find(' ')+1:],''))
 
 if __name__=='__main__':
     root = Tk()
