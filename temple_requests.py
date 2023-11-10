@@ -2,20 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 
 def get_degree_programs():
+    #first try to create dictionary of links to degree programs based on html that leads to links (should find subject and level too)
     req = requests.get("https://bulletin.temple.edu/academic-programs/")
     soup = BeautifulSoup(req.content,'html.parser')
     degree_programs_html = soup.find('tbody', class_='fixedTH',id='degree_body')
     i = 0
     degree_programs = []
     for degree in degree_programs_html:
-        if not degree.text.isspace():
-            #can later split by level of program (the abbreviations that follow after some amount of spaces in each element)
+        if not degree.text.isspace() and '/' not in degree.text:
+            #can later split by level of program
             degree_programs.append(degree.text)
     return degree_programs
         
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
 def get_curric(degree_program):
-    req = requests.get("https://bulletin.temple.edu/undergraduate/science-technology/" + '-'.join(degree_program.lower().split()) + "/#requirementstext")
+    #create dictionary to match up level and school to each degree program
+    #if first letter of level is 'A' or 'B' then level = undergraduate 
+    level = 'undergraduate/'
+    school = 'science-technology/'
+    req = requests.get("https://bulletin.temple.edu/" + level +school+ '-'.join(degree_program.lower().split()) + "/#requirementstext")
     soup=BeautifulSoup(req.content,'html.parser')
     requirements_html = soup.find('div',id='requirementstextcontainer')
     courses_html = requirements_html.find_all('a',class_='bubblelink code')
@@ -33,7 +38,7 @@ def get_term_codes():
     response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
     return(response.json())
 
-def get_course_sections_info(term_code,subject,course_num,attr):
+def get_course_sections_info(term_code,subject,course_num,attr=''):
     session = requests.Session()
     # term and txt_term need to be the same
     SEARCH_REQ = {
@@ -75,5 +80,5 @@ def get_course_sections_info(term_code,subject,course_num,attr):
    
 #print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
-print(get_term_codes())
-print(get_course_sections_info("202336","EES","2021",''))
+#print(get_term_codes())
+#print(get_course_sections_info("202336","EES","2021",''))
