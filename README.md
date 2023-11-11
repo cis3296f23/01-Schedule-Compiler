@@ -3,7 +3,7 @@ This is a desktop application for Temple students which helps create a schedule 
 
 ![This is a screenshot.](images.png)
 # How to run
-Provide here instructions on how to use your application.   
+Instructions on how to use the application.   
 - Download the latest binary from the Release section on the right on GitHub.  
 - On the command line uncompress using
 ```
