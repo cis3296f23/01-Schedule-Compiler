@@ -1,9 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-import base64
 
-def get_degree_programs():
+def get_degree_programs()->list[str]:
+    """
+    Retrieves all degree programs at Temple University from its Academic Bulletin
+    """
     #first try to create dictionary of links to degree programs based on html that leads to links (should find subject and level too)
     req = requests.get("https://bulletin.temple.edu/academic-programs/")
     soup = BeautifulSoup(req.content,'html.parser')
@@ -17,7 +19,11 @@ def get_degree_programs():
     return degree_programs
         
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
-def get_curric(degree_program):
+def get_curric(degree_program:str)->list[str]:
+    """
+    Retrieves the curriculum for the specified degree program
+    @param degree_program : the name of the degree program to retrieve required courses for
+    """
     #create dictionary to match up level and school to each degree program
     #if first letter of level is 'A' or 'B' then level = undergraduate 
     level = 'undergraduate/'
@@ -32,7 +38,11 @@ def get_curric(degree_program):
         curric.append(c.text)
     return curric
 
-def get_term_codes():
+def get_term_codes()->dict:
+    """
+    Retrieves the numbers used to specify the semester in url queries
+    Credit: Neil Conley (Github: gummyfrog)
+    """
     PAGINATION_OPTS = {
      "offset": "1",
      "max": "10",
@@ -40,7 +50,15 @@ def get_term_codes():
     response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
     return(response.json())
 
-def get_course_sections_info(term_code,subject,course_num,attr=''):
+def get_course_sections_info(term_code:str,subject:str,course_num:str,attr='')->dict:
+    """
+    Retrieves info on the sections available during the specified term for the specified class
+    @param term_code : number representing the semester
+    @param subject : abbreviation representing the subject of the course
+    @param course_num : number of the course
+    @param attr : attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
+    Credit: https://github.com/gummyfrog/TempleBulletinBot
+    """
     session = requests.Session()
     # term and txt_term need to be the same
     SEARCH_REQ = {
@@ -78,10 +96,15 @@ def get_course_sections_info(term_code,subject,course_num,attr=''):
     return data
 
 #can retrieve other info such as "Would take again" and difficulty later on if it helps
-def get_rmp_rating(prof):
+def get_rmp_data(prof:str):
+    """
+    Retrieves information from ratemyprofessors.com related to the specified professor's ratings
+    @param prof : professor to retrieve information about on ratemyprofessors.com
+    """
     prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
     prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
+    #loops through the professor ids found based on search by professsor name
     for id in prof_ids:
         try:
             prof_rating_req = requests.get("https://www.ratemyprofessors.com/professor/" + id)
@@ -105,10 +128,8 @@ def get_rmp_rating(prof):
         except:
             pass
 
-
-   
 #print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
-print(get_rmp_rating("Sarah Stapleton"))
+#print(get_rmp_rating("Sarah Stapleton"))
