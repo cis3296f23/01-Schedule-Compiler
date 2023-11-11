@@ -1,6 +1,7 @@
 import requests
-import ratemyprofessor
 from bs4 import BeautifulSoup
+import re
+import base64
 
 def get_degree_programs():
     #first try to create dictionary of links to degree programs based on html that leads to links (should find subject and level too)
@@ -76,17 +77,32 @@ def get_course_sections_info(term_code,subject,course_num,attr=''):
     data["ztcEncodedImage"] = ""
     return data
 
+#can retrieve other info such as "Would take again" and difficulty later on if it helps
 def get_rmp_rating(prof):
-    professor = ratemyprofessor.get_professor_by_school_and_name(ratemyprofessor.get_school_by_name("Temple University"), prof)
-    if professor is not None:
-        return [professor.rating, professor.num_ratings]
-    else:
-        return [0,0]
-    
+    prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
+    #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
+    prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
+    for id in prof_ids:
+        try:
+            prof_rating_req = requests.get("https://www.ratemyprofessors.com/professor/" + id)
+            soup=BeautifulSoup(prof_rating_req.content,'html.parser')
+            #rating retrieval
+            rating_html = str(soup.find("div",re.compile("^RatingValue__Numerator")))
+            rating = ''
+            i = rating_html.rfind('<')-1
+            while rating_html[i]!='>':
+                rating+=rating_html[i]
+                i-=1
+            rating = rating[::-1]
+            
+            return [rating,num_ratings]
+        except:
+            pass
+
 
    
 #print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
-#get_rmp_rating("Abha Belorkar")
+print(get_rmp_rating("Sarah Stapleton"))
