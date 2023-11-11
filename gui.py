@@ -45,7 +45,7 @@ class GUI():
         ttk.Label(master,text="Enter a professor name:").grid(row=10,column=0)
         self.prof_entry=ttk.Entry(master,width=30)
         self.prof_entry.grid(row=11,column=0)
-        self.rmp_button = ttk.Button(master,text="Get RMP Rating",command=self.retrieve_rmp_rating)
+        self.rmp_button = ttk.Button(master,text="Get RMP Rating",command=self.retrieve_rmp_data)
         self.rmp_button.grid(row=12,column=0)
         self.rmp_output = Text(master,width=80,height=5)
         self.rmp_output.grid(row=13,column=0)
@@ -58,9 +58,9 @@ class GUI():
         course = self.course_entry.get()
         self.schedule__info_btn_output.insert(END,temple_requests.get_course_sections_info('202403',course[:course.find(' ')],course[course.find(' ')+1:],''))
 
-    def retrieve_rmp_rating(self):
+    def retrieve_rmp_data(self):
         prof = self.prof_entry.get()
-        rating_info = temple_requests.get_rmp_rating(prof)
+        rating_info = temple_requests.get_rmp_data(prof)
         self.rmp_output.insert(END,"Professor " + prof + " has a rating of " + str(rating_info[0]) + " from " + str(rating_info[1]) + " reviews.")
 
 if __name__=='__main__':
