@@ -94,7 +94,13 @@ def get_rmp_rating(prof):
                 rating+=rating_html[i]
                 i-=1
             rating = rating[::-1]
-            
+            #retrieval of number of ratings
+            num_ratings=''
+            num_reviews_html = str(soup.find("div",re.compile("^RatingValue__NumRatings")))
+            i=num_reviews_html.rfind('\">')+2
+            while num_reviews_html[i]!='<':
+                num_ratings+=num_reviews_html[i]
+                i+=1
             return [rating,num_ratings]
         except:
             pass
