@@ -2,7 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-def get_subject_from_html(degrees_html_str,str_to_search, start,offset_to_subject):
+def get_subject_from_html(degrees_html_str,str_to_search,start,offset_to_subject):
+    """
+    Retrieves the subject of the degree program from the given html
+    @param degrees_html : html with degree program information
+    @param str_to_search : unique part of the html to search for to bring index i closer to subject text
+    @param start : first index for find() method to start looking for str_to_search
+    @param offset_to_subject : offset needed to get i to be the index of the first character of subject
+    """
     subject = ''
     i = degrees_html_str.find(str_to_search,start)+offset_to_subject
     while degrees_html_str[i]!='<':
