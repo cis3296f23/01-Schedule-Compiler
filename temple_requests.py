@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-def get_subject_from_html(degrees_html_str,str_to_search,start,offset_to_subject):
+def get_subject_from_html(degrees_html_str:str,str_to_search:str,start:int,offset_to_subject:int)->str:
     """
     Retrieves the subject of the degree program from the given html
     @param degrees_html : html with degree program information
