@@ -2,6 +2,14 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+def get_subject_from_html(degrees_html_str,str_to_search, start,offset_to_subject):
+    subject = ''
+    i = degrees_html_str.find(str_to_search,start)+offset_to_subject
+    while degrees_html_str[i]!='<':
+        subject+=degrees_html_str[i]
+        i+=1
+    return subject
+
 def get_degree_programs()->list[str]:
     """
     Retrieves all degree programs at Temple University from its Academic Bulletin
@@ -12,24 +20,16 @@ def get_degree_programs()->list[str]:
         req = requests.get("https://bulletin.temple.edu/academic-programs/")
         req.raise_for_status()
         soup = BeautifulSoup(req.content,'html.parser')
-        degree_programs_html = soup.find('tbody', class_='fixedTH',id='degree_body')
+        degree_programs_htmls = soup.find('tbody', class_='fixedTH',id='degree_body')
         degree_programs = []
-        for degree in degree_programs_html:
-            degree_str = str(degree)
+        for html in degree_programs_htmls:
+            degrees_html_str = str(html)
             #special case for first row where the style is being set
-            if 'style' in degree_str:
-                subject = ''
-                i = degree_str.find('>',degree_str.find('column0'))+1
-                while degree_str[i]!='<':
-                    subject+=degree_str[i]
-                    i+=1
-            elif not degree.text.isspace():
-                subject = ''
-                i = degree_str.find('column0')+9
-                while degree_str[i]!='<':
-                    subject+=degree_str[i]
-                    i+=1
-                degree_programs.append(degree.text)
+            if 'style' in degrees_html_str:
+                subject = get_subject_from_html(degrees_html_str,'>',degrees_html_str.find('column0'),1)
+            elif not html.text.isspace():
+                subject = get_subject_from_html(degrees_html_str,'column0',0,9)
+            degree_programs.append(html.text)
         return degree_programs
     
     except requests.exceptions.Timeout as e:
@@ -148,7 +148,7 @@ def get_rmp_data(prof:str):
         except:
             pass
 
-print(get_degree_programs())
+get_degree_programs()
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
