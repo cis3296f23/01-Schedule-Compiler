@@ -7,17 +7,28 @@ def get_degree_programs()->list[str]:
     Retrieves all degree programs at Temple University from its Academic Bulletin
     """
     #first try to create dictionary of links to degree programs based on html that leads to links (should find subject and level too)
-    #add error handling for failed request
+    degree_program_to_url = dict()
     try: 
         req = requests.get("https://bulletin.temple.edu/academic-programs/")
         req.raise_for_status()
         soup = BeautifulSoup(req.content,'html.parser')
         degree_programs_html = soup.find('tbody', class_='fixedTH',id='degree_body')
-        i = 0
         degree_programs = []
         for degree in degree_programs_html:
-            if not degree.text.isspace() and '/' not in degree.text:
-                #can later split by level of program
+            degree_str = str(degree)
+            #special case for first row where the style is being set
+            if 'style' in degree_str:
+                subject = ''
+                i = degree_str.find('>',degree_str.find('column0'))+1
+                while degree_str[i]!='<':
+                    subject+=degree_str[i]
+                    i+=1
+            elif not degree.text.isspace():
+                subject = ''
+                i = degree_str.find('column0')+9
+                while degree_str[i]!='<':
+                    subject+=degree_str[i]
+                    i+=1
                 degree_programs.append(degree.text)
         return degree_programs
     
@@ -26,7 +37,7 @@ def get_degree_programs()->list[str]:
     
     #return none if error occurred
     return[]
-            
+
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
 def get_curric(degree_program:str)->list[str]:
     """
@@ -137,7 +148,7 @@ def get_rmp_data(prof:str):
         except:
             pass
 
-#print(get_degree_programs())
+print(get_degree_programs())
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
