@@ -34,11 +34,11 @@ def get_degr_url_and_abbrv_from_html(degrees_html_str:str,col_num:int,start:int)
 
     return '',start
 
-def get_degr_progs()->list[str]:
+def get_degr_progs()->dict:
     """
     Retrieves all degree programs at Temple University from its Academic Bulletin
     """
-    #first try to create dictionary of links to degree programs based on html that leads to links (should find subject and level too)
+    #Remember to use the keys from the return for the dropdown list when finished this function
     degree_program_to_url = dict()
     try: 
         req = requests.get("https://bulletin.temple.edu/academic-programs/")
