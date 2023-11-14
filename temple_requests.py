@@ -47,6 +47,7 @@ def get_degr_progs()->dict:
         degree_programs_htmls = soup.find('tbody', class_='fixedTH',id='degree_body')
         degree_programs = []
         for html in degree_programs_htmls:
+            #can put all of this into a function
             degrees_html_str = str(html)
             #special case for first row where the style is being set (html has extra stuff)
             if 'style' in degrees_html_str:
