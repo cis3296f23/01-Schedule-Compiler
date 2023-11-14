@@ -71,7 +71,7 @@ def get_degr_progs()->dict:
         print(f"Timeout occurred: {e}")
     
     #return none if error occurred
-    return[]
+    return dict()
 
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
 def get_curric(degr_program:str)->list[str]:
