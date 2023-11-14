@@ -34,7 +34,7 @@ def get_degr_url_and_abbrv_from_html(degrees_html_str:str,col_num:int,start:int)
 
     return '',start
 
-def get_degree_programs()->list[str]:
+def get_degr_progs()->list[str]:
     """
     Retrieves all degree programs at Temple University from its Academic Bulletin
     """
@@ -182,7 +182,7 @@ def get_rmp_data(prof:str):
         except:
             pass
 
-get_degree_programs()
+get_degr_progs()
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
