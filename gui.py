@@ -62,9 +62,3 @@ class GUI():
         prof = self.prof_entry.get()
         rating_info = temple_requests.get_rmp_data(prof)
         self.rmp_output.insert(END,"Professor " + prof + " has a rating of " + str(rating_info[0]) + " from " + str(rating_info[1]) + " reviews.")
-
-if __name__=='__main__':
-    root = Tk()
-    app = GUI(root)
-    root.mainloop()
-    exit(0)
