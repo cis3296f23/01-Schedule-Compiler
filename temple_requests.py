@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-def get_subj_from_html(degrees_html_str:str,str_to_search:str,start:int,offset_to_subject:int)->str:
+def get_subj(degrees_html_str:str,str_to_search:str,start:int,offset_to_subject:int)->str:
     """
     Retrieves the subject of the degree program from the given html
     @param degrees_html : html with degree program information
@@ -17,7 +17,7 @@ def get_subj_from_html(degrees_html_str:str,str_to_search:str,start:int,offset_t
         i+=1
     return subject
 
-def get_degr_url_and_abbrv_from_html(degrees_html_str:str,col_num:int,start:int):
+def get_degr_url_and_abbrv(degrees_html_str:str,col_num:int,start:int):
     href_ind = degrees_html_str.find('href',start)
     #if there is a link to a degree program (which is in the href tag) in the current column 
     if href_ind>0 and href_ind<degrees_html_str.find('column'+str(col_num+1)):
@@ -51,17 +51,17 @@ def get_degr_progs()->dict:
             degrees_html_str = str(html)
             #special case for first row where the style is being set (html has extra stuff)
             if 'style' in degrees_html_str:
-                subject = get_subj_from_html(degrees_html_str,'>',degrees_html_str.find('column0'),1)
+                subject = get_subj(degrees_html_str,'>',degrees_html_str.find('column0'),1)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv_from_html(degrees_html_str, i,degrees_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrees_html_str, i,degrees_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         pass
             elif not html.text.isspace():
-                subject = get_subj_from_html(degrees_html_str,'column0',0,9)
+                subject = get_subj(degrees_html_str,'column0',0,9)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv_from_html(degrees_html_str, i,degrees_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrees_html_str, i,degrees_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         pass
             degree_programs.append(html.text)
@@ -80,7 +80,6 @@ def get_curric(degree_program:str)->list[str]:
     @param degree_program : the name of the degree program to retrieve required courses for
     """
     #create dictionary to match up level and school to each degree program
-    #if first letter of level is 'A' or 'B' then level = undergraduate 
     level = 'undergraduate/'
     school = 'science-technology/'
     req = requests.get("https://bulletin.temple.edu/" + level +school+ '-'.join(degree_program.lower().split()) + "/#requirementstext")
