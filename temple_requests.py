@@ -2,35 +2,35 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-def get_subj(degrees_html_str:str,str_to_search:str,start:int,offset_to_subject:int)->str:
+def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subject:int)->str:
     """
     Retrieves the subject of the degree program from the given html
-    @param degrees_html : html with degree program information
+    @param degrs_html : html with degree program information
     @param str_to_search : unique part of the html to search for to bring index i closer to subject text
-    @param start : starting index of degrees_html_str for find() method to start looking for str_to_search
+    @param start : starting index of degrs_html_str for find() method to start looking for str_to_search
     @param offset_to_subject : offset needed to get i to be the index of the first character of subject
     """
     subject = ''
-    i = degrees_html_str.find(str_to_search,start)+offset_to_subject
-    while degrees_html_str[i]!='<':
-        subject+=degrees_html_str[i]
+    i = degrs_html_str.find(str_to_search,start)+offset_to_subject
+    while degrs_html_str[i]!='<':
+        subject+=degrs_html_str[i]
         i+=1
     return subject
 
-def get_degr_url_and_abbrv(degrees_html_str:str,col_num:int,start:int):
-    href_ind = degrees_html_str.find('href',start)
+def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
+    href_ind = degrs_html_str.find('href',start)
     #if there is a link to a degree program (which is in the href tag) in the current column 
-    if href_ind>0 and href_ind<degrees_html_str.find('column'+str(col_num+1)):
+    if href_ind>0 and href_ind<degrs_html_str.find('column'+str(col_num+1)):
         i=0
-        degree_url = ''
+        degr_url = ''
         i=href_ind+6
-        while degrees_html_str[i]!='\"':
-            degree_url+=degrees_html_str[i]
+        while degrs_html_str[i]!='\"':
+            degr_url+=degrs_html_str[i]
             i+=1
         #next move i to where the abbrev is
 
         #i is returned to use in making it faster to find the next starting index (where 'column#' is)
-        return degree_url,i
+        return degr_url,i
 
     return '',start
 
@@ -39,33 +39,33 @@ def get_degr_progs()->dict:
     Retrieves all degree programs at Temple University from its Academic Bulletin
     """
     #Remember to use the keys from the return for the dropdown list when finished this function
-    degree_program_to_url = dict()
+    degr_program_to_url = dict()
     try: 
         req = requests.get("https://bulletin.temple.edu/academic-programs/")
         req.raise_for_status()
         soup = BeautifulSoup(req.content,'html.parser')
-        degree_programs_htmls = soup.find('tbody', class_='fixedTH',id='degree_body')
-        degree_programs = []
-        for html in degree_programs_htmls:
+        degr_programs_htmls = soup.find('tbody', class_='fixedTH',id='degree_body')
+        degr_programs = []
+        for html in degr_programs_htmls:
             #can put all of this into a function
-            degrees_html_str = str(html)
+            degrs_html_str = str(html)
             #special case for first row where the style is being set (html has extra stuff)
-            if 'style' in degrees_html_str:
-                subject = get_subj(degrees_html_str,'>',degrees_html_str.find('column0'),1)
+            if 'style' in degrs_html_str:
+                subject = get_subj(degrs_html_str,'>',degrs_html_str.find('column0'),1)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrees_html_str, i,degrees_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         pass
             elif not html.text.isspace():
-                subject = get_subj(degrees_html_str,'column0',0,9)
+                subject = get_subj(degrs_html_str,'column0',0,9)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrees_html_str, i,degrees_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         pass
-            degree_programs.append(html.text)
-        return degree_programs
+            degr_programs.append(html.text)
+        return degr_programs
     
     except requests.exceptions.Timeout as e:
         print(f"Timeout occurred: {e}")
@@ -74,15 +74,15 @@ def get_degr_progs()->dict:
     return[]
 
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
-def get_curric(degree_program:str)->list[str]:
+def get_curric(degr_program:str)->list[str]:
     """
     Retrieves the curriculum for the specified degree program
-    @param degree_program : the name of the degree program to retrieve required courses for
+    @param degr_program : the name of the degree program to retrieve required courses for
     """
     #create dictionary to match up level and school to each degree program
     level = 'undergraduate/'
     school = 'science-technology/'
-    req = requests.get("https://bulletin.temple.edu/" + level +school+ '-'.join(degree_program.lower().split()) + "/#requirementstext")
+    req = requests.get("https://bulletin.temple.edu/" + level +school+ '-'.join(degr_program.lower().split()) + "/#requirementstext")
     soup=BeautifulSoup(req.content,'html.parser')
     requirements_html = soup.find('div',id='requirementstextcontainer')
     courses_html = requirements_html.find_all('a',class_='bubblelink code')
@@ -104,7 +104,7 @@ def get_term_codes()->dict:
     response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
     return(response.json())
 
-def get_course_sections_info(term_code:str,subject:str,course_num:str,attr='')->dict:
+def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dict:
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param term_code : number representing the semester
@@ -118,7 +118,7 @@ def get_course_sections_info(term_code:str,subject:str,course_num:str,attr='')->
     SEARCH_REQ = {
         "term": term_code,
         "txt_term": term_code,
-        "txt_subject": subject,
+        "txt_subject": subj,
         "txt_courseNumber": course_num,
         "txt_attribute": attr
     }
