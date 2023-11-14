@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subject:int)->str:
+def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)->str:
     """
     Retrieves the subject of the degree program from the given html
     @param degrs_html : html with degree program information
@@ -10,12 +10,12 @@ def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subject:in
     @param start : starting index of degrs_html_str for find() method to start looking for str_to_search
     @param offset_to_subject : offset needed to get i to be the index of the first character of subject
     """
-    subject = ''
-    i = degrs_html_str.find(str_to_search,start)+offset_to_subject
+    subj = ''
+    i = degrs_html_str.find(str_to_search,start)+offset_to_subj
     while degrs_html_str[i]!='<':
-        subject+=degrs_html_str[i]
+        subj+=degrs_html_str[i]
         i+=1
-    return subject
+    return subj
 
 def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
     href_ind = degrs_html_str.find('href',start)
@@ -45,27 +45,27 @@ def get_degr_progs()->dict:
         req.raise_for_status()
         soup = BeautifulSoup(req.content,'html.parser')
         degr_programs_htmls = soup.find('tbody', class_='fixedTH',id='degree_body')
-        degr_programs = []
         for html in degr_programs_htmls:
-            #can put all of this into a function
             degrs_html_str = str(html)
             #special case for first row where the style is being set (html has extra stuff)
             if 'style' in degrs_html_str:
-                subject = get_subj(degrs_html_str,'>',degrs_html_str.find('column0'),1)
+                subj = get_subj(degrs_html_str,'>',degrs_html_str.find('column0'),1)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
                     degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
-                        pass
+                        #modify to include abbrv with subject
+                        degr_program_to_url[subj]=degr_url
             elif not html.text.isspace():
-                subject = get_subj(degrs_html_str,'column0',0,9)
+                subj = get_subj(degrs_html_str,'column0',0,9)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
                     degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
-                        pass
-            degr_programs.append(html.text)
-        return degr_programs
+                        #modify to include abbrv with subject
+                        degr_program_to_url[subj]=degr_url
+            
+        return degr_program_to_url
     
     except requests.exceptions.Timeout as e:
         print(f"Timeout occurred: {e}")
