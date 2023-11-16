@@ -57,17 +57,17 @@ def get_degr_progs()->dict:
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
                     degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
-                    if not degr_url.isspace():
+                    if abbrv:
                         #modify to include abbrv with subject
-                        degr_program_to_url[subj+abbrv]=degr_url
+                        degr_program_to_url[subj+' '+abbrv]=degr_url
             elif not html.text.isspace():
                 subj = get_subj(degrs_html_str,'column0',0,9)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
                     degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
-                    if not degr_url.isspace():
+                    if abbrv:
                         #modify to include abbrv with subject
-                        degr_program_to_url[subj+abbrv]=degr_url
+                        degr_program_to_url[subj+' '+abbrv]=degr_url
         return degr_program_to_url
     except Exception as e:
         print(f"Timeout occurred: {e}")
@@ -183,7 +183,7 @@ def get_rmp_data(prof:str):
         except:
             pass
 
-print(get_degr_progs())
+#print(get_degr_progs())
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
