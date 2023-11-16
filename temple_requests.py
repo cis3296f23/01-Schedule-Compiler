@@ -79,8 +79,6 @@ def get_degr_progs()->dict:
         return degr_program_to_url
     except Exception as e:
         return dict()
-    #return empty dict if error occurred
-    return dict()
 
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
 def get_curric(degr_prog_url:str)->list[str]:
