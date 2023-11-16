@@ -19,20 +19,26 @@ def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)-
 
 def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
     href_ind = degrs_html_str.find('href',start)
+    abbrv_ind = degrs_html_str.find('>',href_ind)
     #if there is a link to a degree program (which is in the href tag) in the current column 
     if href_ind>0 and href_ind<degrs_html_str.find('column'+str(col_num+1)):
         i=0
         degr_url = ''
+        abbrv = ''
         i=href_ind+6
         while degrs_html_str[i]!='\"':
             degr_url+=degrs_html_str[i]
             i+=1
         #next move i to where the abbrev is
+        i=abbrv_ind+1
+        while degrs_html_str[i]!='<':
+            abbrv+=degrs_html_str[i]
+            i+=1
 
         #i is returned to use in making it faster to find the next starting index (where 'column#' is)
-        return degr_url,i
+        return degr_url, abbrv,i
 
-    return '',start
+    return '', '',start
 
 def get_degr_progs()->dict:
     """
@@ -52,18 +58,18 @@ def get_degr_progs()->dict:
                 subj = get_subj(degrs_html_str,'>',degrs_html_str.find('column0'),1)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         #modify to include abbrv with subject
-                        degr_program_to_url[subj]=degr_url
+                        degr_program_to_url[subj]=(degr_url, abbrv)
             elif not html.text.isspace():
                 subj = get_subj(degrs_html_str,'column0',0,9)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         #modify to include abbrv with subject
-                        degr_program_to_url[subj]=degr_url
+                        degr_program_to_url[subj]=(degr_url, abbrv)
             
         return degr_program_to_url
     
@@ -182,7 +188,7 @@ def get_rmp_data(prof:str):
         except:
             pass
 
-get_degr_progs()
+#get_degr_progs()
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
