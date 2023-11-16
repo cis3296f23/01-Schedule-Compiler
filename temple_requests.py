@@ -73,7 +73,7 @@ def get_degr_progs()->dict:
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
                     degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
-                    if abbrv:
+                    if abbrv and 'not currently' not in abbrv:
                         #modify to include abbrv with subject
                         degr_program_to_url[subj+' '+abbrv]=degr_url
         return degr_program_to_url
