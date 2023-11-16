@@ -78,7 +78,7 @@ def get_degr_progs()->dict:
                         degr_program_to_url[subj+' '+abbrv]=degr_url
         return degr_program_to_url
     except Exception as e:
-        print(f"Timeout occurred: {e}")
+        return dict()
     #return empty dict if error occurred
     return dict()
 
