@@ -88,9 +88,3 @@ class GUI():
         low_value = self.low_entry.get()
         high_value = self.high_entry.get()
         self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")
-
-if __name__=='__main__':
-    root = Tk()
-    app = GUI(root)
-    root.mainloop()
-    exit(0)
