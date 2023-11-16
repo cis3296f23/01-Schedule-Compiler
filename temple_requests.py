@@ -18,19 +18,20 @@ def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)-
         i+=1
     return subj
 
-def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
+def get_degr_urls_and_abbrvs(degrs_html_str:str,col_num:int,start:int):
     """
     Retrieves the url for a specific degree program and the abbreviation of the level (i.e. MS or BA)
     @param degrs_html_str : str with a portion of html to parse
     @param col_num : column number to indicate section of html to look at (1:undergraduate, 2:graduate, 3:professional)
     @param start : current index in degrs_html_str
-    @return : degr_url, abbrv, i if there is a link and abbreviation, otherwise two empty strings and the parameter start
+    @return : array of tuples in the form (degr_url, abbrv) and i if there is at least one link and abbreviation, otherwise an empty array and the parameter start are returned
     """
+    urls_and_abbrvs_arr = []
     href_ind = degrs_html_str.find('href',start)
     abbrv_ind = degrs_html_str.find('>',href_ind)
+    i=0
     #if there is a link to a degree program (which is in the href tag) in the current column 
-    if href_ind>0 and href_ind<degrs_html_str.find('column'+str(col_num+1)):
-        i=0
+    while href_ind>0 and href_ind<degrs_html_str.find('column'+str(col_num+1)):
         degr_url = ''
         abbrv = ''
         i=href_ind+6
@@ -43,9 +44,14 @@ def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
             abbrv+=degrs_html_str[i]
             i+=1
         #i is returned to use in making it faster to find the next starting index with find() (where 'column#' is)
-        return degr_url, abbrv,i
-    #return blank strs if there is no link/degree program for the current column indicated by col_num
-    return '', '',start
+        urls_and_abbrvs_arr.append((degr_url, abbrv))
+        href_ind = degrs_html_str.find('href',i)
+        if href_ind!=-1:
+            abbrv_ind = degrs_html_str.find('>',href_ind)
+    #return blank strs if there is no link/degree program for the current column indicated by col_num (while loop never executed)
+    if not i:
+        return [],start
+    return urls_and_abbrvs_arr,i
 
 def get_degr_progs()->dict:
     """
@@ -64,20 +70,23 @@ def get_degr_progs()->dict:
                 subj = get_subj(degrs_html_str,'>',degrs_html_str.find('column0'),1)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
-                    if abbrv:
-                        #modify to include abbrv with subject
-                        degr_program_to_url[subj+' '+abbrv]=degr_url
+                    urls_and_abbrvs_arr, next_col_str_search_start_ind = get_degr_urls_and_abbrvs(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    for url_and_abbrv in urls_and_abbrvs_arr:
+                        abbrv = url_and_abbrv[1]
+                        if abbrv and 'not currently' not in abbrv:
+                            degr_program_to_url[subj+' '+abbrv]=url_and_abbrv[0]
             elif not html.text.isspace():
                 subj = get_subj(degrs_html_str,'column0',0,9)
                 next_col_str_search_start_ind = 0
                 for i in range(1,4):
-                    degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
-                    if abbrv and 'not currently' not in abbrv:
-                        #modify to include abbrv with subject
-                        degr_program_to_url[subj+' '+abbrv]=degr_url
+                    urls_and_abbrvs_arr, next_col_str_search_start_ind = get_degr_urls_and_abbrvs(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
+                    for url_and_abbrv in urls_and_abbrvs_arr:
+                        abbrv = url_and_abbrv[1]
+                        if abbrv and 'not currently' not in abbrv:
+                            degr_program_to_url[subj+' '+abbrv]=url_and_abbrv[0]
         return degr_program_to_url
     except Exception as e:
+        print(e)
         return dict()
 
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
@@ -101,7 +110,8 @@ def get_curric(degr_prog_url:str)->list[str]:
             #can later account for the "\xa0" in the middle of each, but printing each element produces the desired format
             curric.append(c.text)
         return curric
-    except:
+    except Exception as e:
+        print(e)
         return []
 
 def get_term_codes()->dict:
