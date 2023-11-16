@@ -87,19 +87,24 @@ def get_curric(degr_prog_url:str)->list[str]:
     """
     Retrieves the curriculum for the specified degree program
     @param degr_prog_url : the portion of the url for the specific degree program
-    @return curric : list of courses in the curriculum in the requirements section of the degree program link specified by degr_prog_url
+    @return : list of courses in the curriculum in the requirements section of the degree program link specified by degr_prog_url, otherwise empty array on failure or if Temple is not accepting applications
     """
-    req = requests.get("https://bulletin.temple.edu/" + degr_prog_url + "/#requirementstext")
-    soup=BeautifulSoup(req.content,'html.parser')
-    requirements_html = soup.find('div',id='requirementstextcontainer')
-    if requirements_html==None:
-        requirements_html = soup.find('div', id='programrequirementstextcontainer')
-    courses_html = requirements_html.find_all('a',class_='bubblelink code')
-    curric = []
-    for c in courses_html:
-        #can later account for the "\xa0" in the middle of each, but printing each element produces the desired format
-        curric.append(c.text)
-    return curric
+    try:
+        req = requests.get("https://bulletin.temple.edu/" + degr_prog_url + "#requirementstext")
+        soup=BeautifulSoup(req.content,'html.parser')
+        requirements_html = soup.find('div',id='requirementstextcontainer')
+        if requirements_html==None:
+            requirements_html = soup.find('div', id='programrequirementstextcontainer')
+            if requirements_html == None:
+                return []
+        courses_html = requirements_html.find_all('a',class_='bubblelink code')
+        curric = []
+        for c in courses_html:
+            #can later account for the "\xa0" in the middle of each, but printing each element produces the desired format
+            curric.append(c.text)
+        return curric
+    except:
+        return []
 
 def get_term_codes()->dict:
     """
