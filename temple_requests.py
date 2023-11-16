@@ -83,17 +83,17 @@ def get_degr_progs()->dict:
     return dict()
 
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
-def get_curric(degr_program:str)->list[str]:
+def get_curric(degr_prog_url:str)->list[str]:
     """
     Retrieves the curriculum for the specified degree program
-    @param degr_program : the name of the degree program to retrieve required courses for
+    @param degr_prog_url : the portion of the url for the specific degree program
+    @return curric : list of courses in the curriculum in the requirements section of the degree program link specified by degr_prog_url
     """
-    #create dictionary to match up level and school to each degree program
-    level = 'undergraduate/'
-    school = 'science-technology/'
-    req = requests.get("https://bulletin.temple.edu/" + level +school+ '-'.join(degr_program.lower().split()) + "/#requirementstext")
+    req = requests.get("https://bulletin.temple.edu/" + degr_prog_url + "/#requirementstext")
     soup=BeautifulSoup(req.content,'html.parser')
     requirements_html = soup.find('div',id='requirementstextcontainer')
+    if requirements_html==None:
+        requirements_html = soup.find('div', id='programrequirementstextcontainer')
     courses_html = requirements_html.find_all('a',class_='bubblelink code')
     curric = []
     for c in courses_html:
@@ -193,8 +193,10 @@ def get_rmp_data(prof:str):
             return [rating,num_ratings]
         except:
             return [None,0]
-#print(get_degr_progs())
-#print(get_curric("Computer Science BS"))
+        
+"""degr_progs= get_degr_progs()
+for dgpg in degr_progs:
+    get_curric(degr_progs[dgpg])"""
 #print(get_term_codes())
 #print(get_course_sections_info("202336","EES","2021",''))
 #print(get_rmp_rating("Sarah Stapleton"))
