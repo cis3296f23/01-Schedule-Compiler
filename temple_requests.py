@@ -9,6 +9,7 @@ def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)-
     @param str_to_search : unique part of the html to search for to bring index i closer to subject text
     @param start : starting index of degrs_html_str for find() method to start looking for str_to_search
     @param offset_to_subject : offset needed to get i to be the index of the first character of subject
+    @return subj : str representing a subject for a degree program (i.e. Biology)
     """
     subj = ''
     i = degrs_html_str.find(str_to_search,start)+offset_to_subj
@@ -18,6 +19,13 @@ def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)-
     return subj
 
 def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
+    """
+    Retrieves the url for a specific degree program and the abbreviation of the level (i.e. MS or BA)
+    @param degrs_html_str : str with a portion of html to parse
+    @param col_num : column number to indicate section of html to look at (1:undergraduate, 2:graduate, 3:professional)
+    @param start : current index in degrs_html_str
+    @return : degr_url, abbrv, i if there is a link and abbreviation, otherwise two empty strings and the parameter start
+    """
     href_ind = degrs_html_str.find('href',start)
     abbrv_ind = degrs_html_str.find('>',href_ind)
     #if there is a link to a degree program (which is in the href tag) in the current column 
@@ -34,15 +42,15 @@ def get_degr_url_and_abbrv(degrs_html_str:str,col_num:int,start:int):
         while degrs_html_str[i]!='<':
             abbrv+=degrs_html_str[i]
             i+=1
-
-        #i is returned to use in making it faster to find the next starting index (where 'column#' is)
+        #i is returned to use in making it faster to find the next starting index with find() (where 'column#' is)
         return degr_url, abbrv,i
-
+    #return blank strs if there is no link/degree program for the current column indicated by col_num
     return '', '',start
 
 def get_degr_progs()->dict:
     """
     Retrieves all degree programs at Temple University from its Academic Bulletin
+    @return : a dictionary of degree program strings mapped to their corresponding links, otherwise an empty dictionary
     """
     try: 
         degr_program_to_url = dict()
@@ -97,6 +105,7 @@ def get_term_codes()->dict:
     """
     Retrieves the numbers used to specify the semester in url queries
     Credit: Neil Conley (Github: gummyfrog)
+    @return : dictionary mapping str term codes to str semester
     """
     PAGINATION_OPTS = {
      "offset": "1",
@@ -112,6 +121,7 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dic
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
     @param attr : attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
+    @return : dictionary of course section information that students can see when clicking on a course section for registration or planning
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
     session = requests.Session()
@@ -155,6 +165,7 @@ def get_rmp_data(prof:str):
     """
     Retrieves information from ratemyprofessors.com related to the specified professor's ratings
     @param prof : professor to retrieve information about on ratemyprofessors.com
+    @return : array of non-zero rating and non-zero rating amount on success, array of None and 0 on failure
     """
     prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
@@ -181,8 +192,7 @@ def get_rmp_data(prof:str):
                 i+=1
             return [rating,num_ratings]
         except:
-            pass
-
+            return [None,0]
 #print(get_degr_progs())
 #print(get_curric("Computer Science BS"))
 #print(get_term_codes())
