@@ -44,11 +44,9 @@ def get_degr_progs()->dict:
     """
     Retrieves all degree programs at Temple University from its Academic Bulletin
     """
-    #Remember to use the keys from the return for the dropdown list when finished this function
-    degr_program_to_url = dict()
     try: 
+        degr_program_to_url = dict()
         req = requests.get("https://bulletin.temple.edu/academic-programs/")
-        req.raise_for_status()
         soup = BeautifulSoup(req.content,'html.parser')
         degr_programs_htmls = soup.find('tbody', class_='fixedTH',id='degree_body')
         for html in degr_programs_htmls:
@@ -69,14 +67,11 @@ def get_degr_progs()->dict:
                     degr_url, abbrv, next_col_str_search_start_ind = get_degr_url_and_abbrv(degrs_html_str, i,degrs_html_str.find('column' + str(i),next_col_str_search_start_ind))
                     if not degr_url.isspace():
                         #modify to include abbrv with subject
-                        degr_program_to_url[subj]=(degr_url, abbrv)
-            
+                        degr_program_to_url[subj+abbrv]=degr_url
         return degr_program_to_url
-    
-    except requests.exceptions.Timeout as e:
+    except Exception as e:
         print(f"Timeout occurred: {e}")
-    
-    #return none if error occurred
+    #return empty dict if error occurred
     return dict()
 
 #degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
