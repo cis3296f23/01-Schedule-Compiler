@@ -87,4 +87,14 @@ class GUI():
     def submit_range(self):
         low_value = self.low_entry.get()
         high_value = self.high_entry.get()
-        self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")
+        self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")   
+
+    def course_selection(self, master):
+        # label for dropdown
+        ttk.Label(master, text="Required Courses:").grid(row=20, column=0)
+
+        # dropdown for courses
+        self.course_dropdown = ttk.Combobox(master)
+        self.course_dropdown.grid(row=20, column=0)
+    
+    
