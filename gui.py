@@ -97,6 +97,14 @@ class GUI():
         self.course_dropdown = ttk.Combobox(master)
         self.course_dropdown['values'] = self.get_courses_list()
         self.course_dropdown.grid(row=20, column=0)
+
+        # add courses
+        self.add_course_btn = ttk.Button(master, text="Add Course", command=self.add_course_to_list)
+        self.add_course_btn.grid(row=20, column=0)
+
+        # display courses
+        self.selected_courses_box = Text(master, width=50, height=5)
+        self.selected_courses_box.grid(row=20, column=0)
     
     def get_courses_list(self):
         return temple_requests.get_curric(self.degree_prog_entry.get())
