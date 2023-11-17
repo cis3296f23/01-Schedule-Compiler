@@ -47,7 +47,7 @@ class GUI():
         self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
         self.degr_prog_listbox.grid(row=2,column=0)
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
-        self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_course)
+        self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
         self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
         #course entry gui
@@ -106,10 +106,15 @@ class GUI():
         for degr_prog in data: 
             self.degr_prog_listbox.insert('end', degr_prog)
         
-    def pick_course(self,event):
-        curric = Variable()
-        curric.set(temple_requests.get_curric(self.degr_prog_to_url[self.degr_prog_listbox.get(self.degr_prog_listbox.curselection())]))
-        self.course_lstbox.config(listvariable=curric) 
+    def pick_degr_prog(self,event):
+        self.degr_prog_entry.delete(0,END)
+        selec_ind = self.degr_prog_listbox.curselection()
+        if selec_ind:
+            degr_prog = self.degr_prog_listbox.get(selec_ind)
+            self.degr_prog_entry.insert(0,degr_prog)
+            curric = Variable()
+            curric.set(temple_requests.get_curric(self.degr_prog_to_url[degr_prog]))
+            self.course_lstbox.config(listvariable=curric) 
 
     def get_courses(self):
         self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
