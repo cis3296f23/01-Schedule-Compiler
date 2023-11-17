@@ -29,7 +29,7 @@ class GUI():
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
 
-        self.course_selection(master)
+        self.course_selection(secondFrame)
     
     def build_general_frame(self,master):
         """
