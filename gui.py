@@ -100,6 +100,10 @@ class GUI():
         self.course_dropdown['values'] = self.get_courses_list()
         self.course_dropdown.grid(row=20, column=0)
 
+        # add course manually
+        self.manual_course_entry = ttk.Entry(master, width=50)
+        self.manual_course_entry.grid(row=20, column=0)
+
         # add courses
         self.add_course_btn = ttk.Button(master, text="Add Course", command=self.add_course_to_list)
         self.add_course_btn.grid(row=20, column=0)
@@ -115,6 +119,8 @@ class GUI():
         selected_course = self.course_dropdown.get()
         if selected_course:
             self.selected_courses_box.insert(END, selected_course + '\n')
+            # clear manual entry
+            self.manual_course_entry.delete(0, END)
     
 
     
