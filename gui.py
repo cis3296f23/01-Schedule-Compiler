@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 import temple_requests
-import threading
 
 class GUI():
     def __init__(self,root):
@@ -47,7 +46,7 @@ class GUI():
         self.degr_prog_listbox.grid(row=1,column=0)
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
-        self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search_thread) 
+        self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
         ttk.Label(master,text="Enter your CST degree program (i.e Computer Science BS):").grid(row=2,column=0)
         self.degree_prog_entry=ttk.Entry(master,width=50)
         self.degree_prog_entry.grid(row=3,column=0)
@@ -83,16 +82,10 @@ class GUI():
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=19, column=0)
 
-    def narrow_search_thread(self,filler):
-        """
-        Enables the GUI to run as one thread and the autocomplete as another
-        """
-        #need to add synchronization
-        threading.Thread(target=self.narrow_search).start()
-    
-    def narrow_search(self):
+    def narrow_search(self,filler):
         """
         Narrows down degree programs based on the string the user is entering
+        @param filler : placeholder for when the function is called as an event and an extra parameter is given
         """
         query = self.degr_prog_entry.get()
         if not query:
