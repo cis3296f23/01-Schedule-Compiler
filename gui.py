@@ -22,49 +22,50 @@ class GUI():
         secondFrame = Frame(canv)
         secondFrame.pack(fill=BOTH,expand=1)
         canv.create_window((0,0), window=secondFrame, anchor = "nw",height=800,width=3000)
-
-
+        
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
-
-        self.course_selection(secondFrame)
     
     def build_general_frame(self,master):
         """
         Builds the GUI
         @param master : root application
         """
-        ttk.Label(master,text='Select a degree program:').grid(row=0,column=0)
-        self.all_degr_progs = list(temple_requests.get_degr_progs().keys())
+        #degree program selection gui
+        ttk.Label(master,text='Select a degree program (can type to narrow down, no worries if your program is not in the list):').grid(row=0,column=0)
+        self.degr_prog_to_url = temple_requests.get_degr_progs()
+        self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = ttk.Entry(master,width=30)
-        self.degr_prog_entry.grid(row=0,column=0)
+        self.degr_prog_entry.grid(row=1,column=0)
         degr_prog_scrollbar = ttk.Scrollbar(master,orient=VERTICAL)
         degr_prog_scrollbar.grid(row = 1, column =1, sticky = N+S+W+E)
-        self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=40,height=10)
-        self.degr_prog_listbox.grid(row=1,column=0)
+        self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
+        self.degr_prog_listbox.grid(row=2,column=0)
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
+        self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
         self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
-        ttk.Label(master,text="Enter your CST degree program (i.e Computer Science BS):").grid(row=2,column=0)
-        self.degree_prog_entry=ttk.Entry(master,width=50)
-        self.degree_prog_entry.grid(row=3,column=0)
-        #only works for cst degree programs (need to fix)
-
-        self.course_retrieval_btn = ttk.Button(master,text='Get Required Courses',command=self.get_courses)
-        self.course_retrieval_btn.grid(row=4,column=0)
-        ttk.Label(master,text="Courses in the curriculum:").grid(row=5,column=0)
-        self.retrieval_btn_output = Text(master,width=150,height=7)
-        self.retrieval_btn_output.grid(row=6,column=0)
+        #course entry gui
+        self.curr_curric = None
+        ttk.Label(master,text="Enter your course (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
+        self.course_entry=ttk.Entry(master,width=50)
+        self.course_entry.grid(row=4,column=0)
+        self.course_lstbox = Listbox(master,selectmode='single',width=30,height=10)
+        self.course_lstbox.grid(row=5,column=0)
+        self.course_retrieval_btn = ttk.Button(master,text='Add Course',command=self.get_courses)
+        self.course_retrieval_btn.grid(row=6,column=0)
+        #schedule info gui
         self.course_entry=ttk.Entry(master,width=20)
         self.course_entry.grid(row=7,column=0)
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
         self.schedule_info_btn.grid(row=8,column=0)
         self.schedule__info_btn_output = Text(master,width=150,height=7)
         self.schedule__info_btn_output.grid(row=9,column=0)
+        #professor name entry
         ttk.Label(master,text="Enter a professor name:").grid(row=10,column=0)
         self.prof_entry=ttk.Entry(master,width=30)
         self.prof_entry.grid(row=11,column=0)
@@ -72,7 +73,7 @@ class GUI():
         self.rmp_button.grid(row=12,column=0)
         self.rmp_output = Text(master,width=80,height=5)
         self.rmp_output.grid(row=13,column=0)
-        # Entering number of credits
+        #enter number of credits
         ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=14, column=0)
         self.low_entry = ttk.Entry(master, width=3)
         self.low_entry.grid(row=15, column=0, padx=2, pady=2)
@@ -83,6 +84,20 @@ class GUI():
         self.submit_range_btn.grid(row=18, column=0)
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=19, column=0)
+        #required courses dropdown label
+        required_courses_label = ttk.Label(master, text="Select Required Course:")
+        required_courses_label.grid(row=20, column=0, padx=5, pady=5, sticky='w')
+        #required courses dropdown
+        self.required_courses_var = StringVar()
+        self.required_courses_combobox = ttk.Combobox(master, textvariable=self.required_courses_var)
+        self.required_courses_combobox.grid(row=21, column=10, padx=5, pady=5, sticky='we')
+        #text box to display added courses
+        self.added_courses_textbox = Text(master, height=5, width=50)
+        self.added_courses_textbox.grid(row=22, column=10, padx=5, pady=5,sticky='we')
+        #button to add selected course
+        self.add_course_button = ttk.Button(master, text="Add Course", command=self.add_course_to_list)
+        self.add_course_button.grid(row=23, column=0, padx=5, pady=5, sticky='w')
+
 
     def narrow_search(self,filler):
         """
@@ -97,7 +112,6 @@ class GUI():
             for degr_prog in self.all_degr_progs:
                 if query.lower() in degr_prog.lower():
                     data.append(degr_prog)
-            self.update_degr_prog_listbox(data)
 
     def update_degr_prog_listbox(self,data):
         """
@@ -107,6 +121,17 @@ class GUI():
         for degr_prog in data: 
             self.degr_prog_listbox.insert('end', degr_prog)
         
+    def pick_degr_prog(self,event):
+        self.degr_prog_entry.delete(0,END)
+        selec_ind = self.degr_prog_listbox.curselection()
+        if selec_ind:
+            degr_prog = self.degr_prog_listbox.get(selec_ind)
+            self.degr_prog_entry.insert(0,degr_prog)
+            curric = Variable()
+            self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[degr_prog])
+            curric.set(self.curr_curric)
+            self.course_lstbox.config(listvariable=curric) 
+
     def get_courses(self):
         self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
 
@@ -124,41 +149,7 @@ class GUI():
         high_value = self.high_entry.get()
         self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")   
 
-    def course_selection(self, master):
-        # label for dropdown
-        ttk.Label(master, text="Required Courses:").grid(row=20, column=0)
-
-        # dropdown for courses
-        self.course_dropdown = ttk.Combobox(master)
-        self.course_dropdown['values'] = self.get_courses_list()
-        self.course_dropdown.grid(row=20, column=0)
-
-        # add course manually
-        self.manual_course_entry = ttk.Entry(master, width=50)
-        self.manual_course_entry.grid(row=20, column=0)
-
-        # add courses
-        self.add_course_btn = ttk.Button(master, text="Add Course", command=self.add_course_to_list)
-        self.add_course_btn.grid(row=20, column=0)
-
-        # display courses
-        self.selected_courses_box = Text(master, width=50, height=5)
-        self.selected_courses_box.grid(row=20, column=0)
-    
-    def get_courses_list(self):
-        return temple_requests.get_curric(self.degree_prog_entry.get())
-    
     def add_course_to_list(self):
-        selected_course = self.course_dropdown.get()
-        if selected_course:
-            self.selected_courses_box.insert(END, selected_course + '\n')
-            # clear manual entry
-            self.manual_course_entry.delete(0, END)
-    
-
-    
-
-
-
-    
-    
+        selected_course = self.required_courses_combobox.get()
+        if selected_course:  
+            self.added_courses_textbox.insert(END, selected_course + '\n')
