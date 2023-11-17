@@ -109,4 +109,15 @@ class GUI():
     def get_courses_list(self):
         return temple_requests.get_curric(self.degree_prog_entry.get())
     
+    def add_course_to_list(self):
+        selected_course = self.course_dropdown.get()
+        if selected_course:
+            self.selected_courses_box.insert(END, selected_course + '\n')
+    
+
+    
+
+
+
+    
     
