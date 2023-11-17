@@ -22,8 +22,7 @@ class GUI():
         secondFrame = Frame(canv)
         secondFrame.pack(fill=BOTH,expand=1)
         canv.create_window((0,0), window=secondFrame, anchor = "nw",height=800,width=3000)
-
-
+        
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
@@ -51,6 +50,7 @@ class GUI():
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
         self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
         #course entry gui
+        self.curr_curric = None
         ttk.Label(master,text="Enter your course (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
         self.course_entry=ttk.Entry(master,width=50)
         self.course_entry.grid(row=4,column=0)
@@ -113,7 +113,8 @@ class GUI():
             degr_prog = self.degr_prog_listbox.get(selec_ind)
             self.degr_prog_entry.insert(0,degr_prog)
             curric = Variable()
-            curric.set(temple_requests.get_curric(self.degr_prog_to_url[degr_prog]))
+            self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[degr_prog])
+            curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
 
     def get_courses(self):
