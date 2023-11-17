@@ -36,7 +36,8 @@ class GUI():
         """
         #degree program selection gui
         ttk.Label(master,text='Select a degree program (can type to narrow down, no worries if your program is not in the list):').grid(row=0,column=0)
-        self.all_degr_progs = list(temple_requests.get_degr_progs().keys())
+        self.degr_prog_to_url = temple_requests.get_degr_progs()
+        self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = ttk.Entry(master,width=30)
@@ -46,19 +47,17 @@ class GUI():
         self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
         self.degr_prog_listbox.grid(row=2,column=0)
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
+        self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_course)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
         self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
         #course entry gui
-        ttk.Label(master,text="Enter your course (Note: add by top priority to least priority if desired, can type to search, can still add if not in list):").grid(row=3,column=0)
+        ttk.Label(master,text="Enter your course (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
         self.course_entry=ttk.Entry(master,width=50)
         self.course_entry.grid(row=4,column=0)
-        #only works for cst degree programs (need to fix)
-        self.course_lst = Listbox(master,selectmode='single',width=30,height=10)
+        self.course_lstbox = Listbox(master,selectmode='single',width=30,height=10)
+        self.course_lstbox.grid(row=5,column=0)
         self.course_retrieval_btn = ttk.Button(master,text='Add Course',command=self.get_courses)
-        self.course_retrieval_btn.grid(row=5,column=0)
-        ttk.Label(master,text="Courses in the curriculum:").grid(row=5,column=0)
-        self.retrieval_btn_output = Text(master,width=50,height=7)
-        self.retrieval_btn_output.grid(row=6,column=0)
+        self.course_retrieval_btn.grid(row=6,column=0)
         self.course_entry=ttk.Entry(master,width=20)
         self.course_entry.grid(row=7,column=0)
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
@@ -107,6 +106,11 @@ class GUI():
         for degr_prog in data: 
             self.degr_prog_listbox.insert('end', degr_prog)
         
+    def pick_course(self,event):
+        curric = Variable()
+        curric.set(temple_requests.get_curric(self.degr_prog_to_url[self.degr_prog_listbox.get(self.degr_prog_listbox.curselection())]))
+        self.course_lstbox.config(listvariable=curric) 
+
     def get_courses(self):
         self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
 
