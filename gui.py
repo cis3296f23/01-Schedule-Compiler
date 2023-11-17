@@ -21,7 +21,7 @@ class GUI():
         canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
         secondFrame = Frame(canv)
         secondFrame.pack(fill=BOTH,expand=1)
-        canv.create_window((0,0), window=secondFrame, anchor = "nw",height=800,width=3000)
+        canv.create_window((0,0), window=secondFrame, anchor = "nw")
         
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
