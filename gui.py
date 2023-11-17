@@ -28,6 +28,8 @@ class GUI():
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
+
+        self.course_selection(master)
     
     def build_general_frame(self,master):
         """
