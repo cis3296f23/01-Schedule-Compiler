@@ -89,7 +89,6 @@ def get_degr_progs()->dict:
         print(e)
         return dict()
 
-#degree_program will need to be formatted specifically for certain degree programs, but for most it can be assumed to just join the phrases with a '-'
 def get_curric(degr_prog_url:str)->list[str]:
     """
     Retrieves the curriculum for the specified degree program
