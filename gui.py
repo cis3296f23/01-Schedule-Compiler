@@ -71,6 +71,16 @@ class GUI():
         self.submit_range_btn.grid(row=18, column=0)
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=19, column=0)
+        ttk.Label(master, text="Enter days available (comma-separated):").grid(row=20, column=0)
+        self.days_entry = ttk.Entry(master, width=30)
+        self.days_entry.grid(row=21, column=0)
+
+        ttk.Label(master, text="Enter times available (comma-separated):").grid(row=22, column=0)
+        self.times_entry = ttk.Entry(master, width=30)
+        self.times_entry.grid(row=23, column=0)
+
+        self.schedule_button = ttk.Button(master, text="Generate Schedule", command=self.generate_schedule)
+        self.schedule_button.grid(row=24, column=0)
 
     def get_courses(self):
         self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
@@ -88,3 +98,12 @@ class GUI():
         low_value = self.low_entry.get()
         high_value = self.high_entry.get()
         self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")
+
+    def generate_schedule(self):
+        # Get user input for days and times
+        days_available = self.days_entry.get()
+        times_available = self.times_entry.get()
+
+
+        print("Days available:", days_available)
+        print("Times available:", times_available)
