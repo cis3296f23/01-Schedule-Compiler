@@ -48,7 +48,7 @@ class GUI():
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
-        self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
+        self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = None
         ttk.Label(master,text="Enter your course (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
@@ -83,28 +83,28 @@ class GUI():
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=19, column=0)
 
-    def narrow_search(self,filler):
+    def narrow_search(self,filler,entry:Entry,lst:list[str],lstbox:Listbox):
         """
         Narrows down degree programs based on the string the user is entering
         @param filler : placeholder for when the function is called as an event and an extra parameter is given
         """
-        query = self.degr_prog_entry.get()
+        query = entry.get()
         if not query:
-            self.update_degr_prog_listbox(self.all_degr_progs)
+            self.update_lstbox_options(lst,lstbox)
         else:
             data = []
-            for degr_prog in self.all_degr_progs:
-                if query.lower() in degr_prog.lower():
-                    data.append(degr_prog)
-            self.update_degr_prog_listbox(data)
+            for item in lst:
+                if query.lower() in item.lower():
+                    data.append(item)
+            self.update_lstbox_options(data,lstbox)
 
-    def update_degr_prog_listbox(self,data):
+    def update_lstbox_options(self,data,lstbox:Listbox):
         """
         Updates the listbox with the degree programs in data
         """
-        self.degr_prog_listbox.delete(0, 'end')
-        for degr_prog in data: 
-            self.degr_prog_listbox.insert('end', degr_prog)
+        lstbox.delete(0, 'end')
+        for item in data: 
+            lstbox.insert('end', item)
         
     def pick_degr_prog(self,event):
         self.degr_prog_entry.delete(0,END)
