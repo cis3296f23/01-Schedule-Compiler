@@ -125,7 +125,11 @@ def get_term_codes()->dict:
      "max": "10",
     }
     response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
-    return(response.json())
+    term_to_code = dict()
+    data=response.json()
+    for term_data in data:
+        term_to_code[term_data['description']]=term_data['code']
+    return term_to_code
 
 def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dict:
     """
