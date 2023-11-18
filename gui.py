@@ -22,13 +22,14 @@ class GUI():
         secondFrame = Frame(canv)
         secondFrame.pack(fill=BOTH,expand=1)
         canv.create_window((0,0), window=secondFrame, anchor = "nw")
+        self.added_courses = []
 
-        
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
     
+
     def build_general_frame(self,master):
         """
         Builds the GUI
@@ -62,20 +63,19 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_retrieval_btn = ttk.Button(master,text='Add Course')
         self.course_retrieval_btn.grid(row=6,column=0)
+        self.course_entry.grid(row=7,column=0)
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
-        self.add_course_btn.grid(row=7, column=0)
+        self.add_course_btn.grid(row=8, column=0)
         #remove course button
         self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
-        self.remove_course_btn.grid(row=8, column=0)
-        self.added_courses_textbox = Text(master, width=30, height=10)
-        self.added_courses_textbox.config(state=DISABLED)
-        self.added_courses_textbox.grid(row=9, column=0, columnspan=2) 
+        self.remove_course_btn.grid(row=9, column=0)
+        #listbox for display added courses
+        self.added_courses_listbox = Listbox(master, width=30, height=10)
+        self.added_courses_listbox.grid(row=10, column=0, columnspan=2)
         #schedule info gui
-        self.course_entry.grid(row=10,column=0)
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info")
         self.schedule_info_btn.grid(row=11,column=0)
-
         self.schedule__info_btn_output = Text(master,width=150,height=7)
         self.schedule__info_btn_output.grid(row=12,column=0)
         #professor name entry
@@ -142,10 +142,8 @@ class GUI():
 
     def add_course_to_list(self):
         selected_course = self.course_lstbox.get(ANCHOR)
-        if selected_course:
-            self.added_courses_textbox.config(state=NORMAL)
-            self.added_courses_textbox.insert(END, selected_course + '\n')
-            self.added_courses_textbox.config(state=DISABLED)
+        if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
+            self.added_courses_listbox.insert(END, selected_course)
     
     def get_courses(self):
         courses = temple_requests.get_curric(self.degree_prog_entry.get())
@@ -154,12 +152,6 @@ class GUI():
             self.course_lstbox.insert(END, course)
 
     def remove_course_from_list(self):
-        lines = self.added_courses_textbox.get("1.0", "end-1c").split('\n')
-        if lines:
-            self.added_courses_textbox.config(state=NORMAL)
-            self.added_courses_textbox.delete("1.0", END)
-            selected_course = self.course_lstbox.get(ANCHOR)
-            lines = [line for line in lines if line != selected_course]
-            for line in lines:
-                self.added_courses_textbox.insert(END, line + '\n')
-            self.added_courses_textbox.config(state=DISABLED)
+        selected_index = self.added_courses_listbox.curselection()
+        if selected_index:
+            self.added_courses_listbox.delete(selected_index)
