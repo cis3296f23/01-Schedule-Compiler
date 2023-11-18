@@ -49,7 +49,6 @@ class GUI():
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
-
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = []
@@ -73,9 +72,8 @@ class GUI():
         self.added_courses_textbox.config(state=DISABLED)
         self.added_courses_textbox.grid(row=9, column=0, columnspan=2) 
         #schedule info gui
-        self.course_entry=ttk.Entry(master,width=20)
         self.course_entry.grid(row=10,column=0)
-        self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
+        self.schedule_info_btn = ttk.Button(master,text="Get schedule info")
         self.schedule_info_btn.grid(row=11,column=0)
 
         self.schedule__info_btn_output = Text(master,width=150,height=7)
@@ -83,11 +81,9 @@ class GUI():
         #professor name entry
         ttk.Label(master,text="Enter a professor name:").grid(row=13,column=0)
         self.prof_entry=ttk.Entry(master,width=30)
-
         self.prof_entry.grid(row=14,column=0)
         self.rmp_button = ttk.Button(master,text="Get RMP Rating")
         self.rmp_button.grid(row=15,column=0)
-
         self.rmp_output = Text(master,width=80,height=5)
         self.rmp_output.grid(row=16,column=0)
         #enter number of credits
@@ -138,7 +134,7 @@ class GUI():
                 self.curr_curric[c]=self.curr_curric[c].replace('\xa0',' ')
             curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
-            
+
     def submit_range(self):
         low_value = self.low_entry.get()
         high_value = self.high_entry.get()
