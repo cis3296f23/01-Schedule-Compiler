@@ -21,7 +21,8 @@ class GUI():
         canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
         secondFrame = Frame(canv)
         secondFrame.pack(fill=BOTH,expand=1)
-        canv.create_window((0,0), window=secondFrame, anchor = "nw",height=800,width=3000)
+        canv.create_window((0,0), window=secondFrame, anchor = "nw")
+
         
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
@@ -48,15 +49,19 @@ class GUI():
         self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
-        self.degr_prog_entry.bind('<KeyRelease>', self.narrow_search) 
+
+        self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
-        self.curr_curric = None
+        self.curr_curric = []
         ttk.Label(master,text="Enter your course (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
         self.course_entry=ttk.Entry(master,width=50)
         self.course_entry.grid(row=4,column=0)
-        self.course_lstbox = Listbox(master,selectmode='single',width=30,height=10)
+        self.curr_curric_var = Variable()
+        self.curr_curric_var.set(self.curr_curric)
+        self.course_lstbox = Listbox(master,selectmode='single',listvariable=self.curr_curric_var,width=30,height=10)
         self.course_lstbox.grid(row=5,column=0)
-        self.course_retrieval_btn = ttk.Button(master,text='Add Course',command=self.get_courses)
+        self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
+        self.course_retrieval_btn = ttk.Button(master,text='Add Course')
         self.course_retrieval_btn.grid(row=6,column=0)
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
@@ -72,14 +77,17 @@ class GUI():
         self.course_entry.grid(row=10,column=0)
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
         self.schedule_info_btn.grid(row=11,column=0)
+
         self.schedule__info_btn_output = Text(master,width=150,height=7)
         self.schedule__info_btn_output.grid(row=12,column=0)
         #professor name entry
         ttk.Label(master,text="Enter a professor name:").grid(row=13,column=0)
         self.prof_entry=ttk.Entry(master,width=30)
+
         self.prof_entry.grid(row=14,column=0)
-        self.rmp_button = ttk.Button(master,text="Get RMP Rating",command=self.retrieve_rmp_data)
+        self.rmp_button = ttk.Button(master,text="Get RMP Rating")
         self.rmp_button.grid(row=15,column=0)
+
         self.rmp_output = Text(master,width=80,height=5)
         self.rmp_output.grid(row=16,column=0)
         #enter number of credits
@@ -94,29 +102,30 @@ class GUI():
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=22, column=0)
 
-    def narrow_search(self,filler):
+    def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
         Narrows down degree programs based on the string the user is entering
         @param filler : placeholder for when the function is called as an event and an extra parameter is given
         """
-        query = self.degr_prog_entry.get()
+        query = entry.get()
         if not query:
-            self.update_degr_prog_listbox(self.all_degr_progs)
+            self.update_lstbox_options(event,lst,lstbox)
         else:
             data = []
-            for degr_prog in self.all_degr_progs:
-                if query.lower() in degr_prog.lower():
-                    data.append(degr_prog)
+            for item in lst:
+                if query.lower() in item.lower():
+                    data.append(item)
+            self.update_lstbox_options(event, data,lstbox)
 
-    def update_degr_prog_listbox(self,data):
+    def update_lstbox_options(self,event:Event,data:list[str],lstbox:Listbox):
         """
         Updates the listbox with the degree programs in data
         """
-        self.degr_prog_listbox.delete(0, 'end')
-        for degr_prog in data: 
-            self.degr_prog_listbox.insert('end', degr_prog)
+        lstbox.delete(0, 'end')
+        for item in data: 
+            lstbox.insert('end', item)
         
-    def pick_degr_prog(self,event):
+    def pick_degr_prog(self,event:Event):
         self.degr_prog_entry.delete(0,END)
         selec_ind = self.degr_prog_listbox.curselection()
         if selec_ind:
@@ -124,21 +133,12 @@ class GUI():
             self.degr_prog_entry.insert(0,degr_prog)
             curric = Variable()
             self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[degr_prog])
+            num_courses = len(self.curr_curric)
+            for c in range(num_courses):
+                self.curr_curric[c]=self.curr_curric[c].replace('\xa0',' ')
             curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
-
-    def get_courses(self):
-        self.retrieval_btn_output.insert(END,temple_requests.get_curric(self.degree_prog_entry.get()))
-
-    def get_schedule_info(self):
-        course = self.course_entry.get()
-        self.schedule__info_btn_output.insert(END,temple_requests.get_course_sections_info('202403',course[:course.find(' ')],course[course.find(' ')+1:],''))
-
-    def retrieve_rmp_data(self):
-        prof = self.prof_entry.get()
-        rating_info = temple_requests.get_rmp_data(prof)
-        self.rmp_output.insert(END,"Professor " + prof + " has a rating of " + str(rating_info[0]) + " from " + str(rating_info[1]) + " reviews.")
-
+            
     def submit_range(self):
         low_value = self.low_entry.get()
         high_value = self.high_entry.get()
