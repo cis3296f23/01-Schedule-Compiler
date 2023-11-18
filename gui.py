@@ -62,6 +62,7 @@ class GUI():
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
         self.add_course_btn.grid(row=7, column=0)
         self.added_courses_textbox = Text(master, width=30, height=10)
+        self.added_courses_textbox.config(state=DISABLED)
         self.added_courses_textbox.grid(row=8, column=0, columnspan=2) 
         #schedule info gui
         self.course_entry=ttk.Entry(master,width=20)
@@ -143,7 +144,9 @@ class GUI():
     def add_course_to_list(self):
         selected_course = self.course_lstbox.get(ANCHOR)
         if selected_course:
+            self.added_courses_textbox.config(state=NORMAL)
             self.added_courses_textbox.insert(END, selected_course + '\n')
+            self.added_courses_textbox.config(state=DISABLED)
     
     def get_courses(self):
         courses = temple_requests.get_curric(self.degree_prog_entry.get())
