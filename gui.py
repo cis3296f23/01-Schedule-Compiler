@@ -58,6 +58,11 @@ class GUI():
         self.course_lstbox.grid(row=5,column=0)
         self.course_retrieval_btn = ttk.Button(master,text='Add Course',command=self.get_courses)
         self.course_retrieval_btn.grid(row=6,column=0)
+        #add course to list
+        self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
+        self.add_course_btn.grid(row=7, column=0)
+        self.added_courses_textbox = Text(master, width=30, height=10)
+        self.added_courses_textbox.grid(row=8, column=0, columnspan=2) 
         #schedule info gui
         self.course_entry=ttk.Entry(master,width=20)
         self.course_entry.grid(row=7,column=0)
@@ -84,20 +89,6 @@ class GUI():
         self.submit_range_btn.grid(row=18, column=0)
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=19, column=0)
-        #required courses dropdown label
-        required_courses_label = ttk.Label(master, text="Select Required Course:")
-        required_courses_label.grid(row=20, column=0, padx=5, pady=5, sticky='w')
-        #required courses dropdown
-        self.required_courses_var = StringVar()
-        self.required_courses_combobox = ttk.Combobox(master, textvariable=self.required_courses_var)
-        self.required_courses_combobox.grid(row=21, column=10, padx=5, pady=5, sticky='we')
-        #text box to display added courses
-        self.added_courses_textbox = Text(master, height=5, width=50)
-        self.added_courses_textbox.grid(row=22, column=10, padx=5, pady=5,sticky='we')
-        #button to add selected course
-        self.add_course_button = ttk.Button(master, text="Add Course", command=self.add_course_to_list)
-        self.add_course_button.grid(row=23, column=0, padx=5, pady=5, sticky='w')
-
 
     def narrow_search(self,filler):
         """
@@ -150,6 +141,12 @@ class GUI():
         self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")   
 
     def add_course_to_list(self):
-        selected_course = self.required_courses_combobox.get()
-        if selected_course:  
+        selected_course = self.course_lstbox.get(ANCHOR)
+        if selected_course:
             self.added_courses_textbox.insert(END, selected_course + '\n')
+    
+    def get_courses(self):
+        courses = temple_requests.get_curric(self.degree_prog_entry.get())
+        self.course_lstbox.delete(0, END)
+        for course in courses:
+            self.course_lstbox.insert(END, course)
