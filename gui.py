@@ -61,35 +61,38 @@ class GUI():
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
         self.add_course_btn.grid(row=7, column=0)
+        #remove course button
+        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
+        self.remove_course_btn.grid(row=8, column=0)
         self.added_courses_textbox = Text(master, width=30, height=10)
         self.added_courses_textbox.config(state=DISABLED)
-        self.added_courses_textbox.grid(row=8, column=0, columnspan=2) 
+        self.added_courses_textbox.grid(row=9, column=0, columnspan=2) 
         #schedule info gui
         self.course_entry=ttk.Entry(master,width=20)
-        self.course_entry.grid(row=9,column=0)
+        self.course_entry.grid(row=10,column=0)
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info",command=self.get_schedule_info)
-        self.schedule_info_btn.grid(row=10,column=0)
+        self.schedule_info_btn.grid(row=11,column=0)
         self.schedule__info_btn_output = Text(master,width=150,height=7)
-        self.schedule__info_btn_output.grid(row=11,column=0)
+        self.schedule__info_btn_output.grid(row=12,column=0)
         #professor name entry
-        ttk.Label(master,text="Enter a professor name:").grid(row=12,column=0)
+        ttk.Label(master,text="Enter a professor name:").grid(row=13,column=0)
         self.prof_entry=ttk.Entry(master,width=30)
-        self.prof_entry.grid(row=13,column=0)
+        self.prof_entry.grid(row=14,column=0)
         self.rmp_button = ttk.Button(master,text="Get RMP Rating",command=self.retrieve_rmp_data)
-        self.rmp_button.grid(row=14,column=0)
+        self.rmp_button.grid(row=15,column=0)
         self.rmp_output = Text(master,width=80,height=5)
-        self.rmp_output.grid(row=15,column=0)
+        self.rmp_output.grid(row=16,column=0)
         #enter number of credits
-        ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=16, column=0)
+        ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=17, column=0)
         self.low_entry = ttk.Entry(master, width=3)
-        self.low_entry.grid(row=17, column=0, padx=2, pady=2)
-        ttk.Label(master, text="to").grid(row=18, column=0, padx=2, pady=2)
+        self.low_entry.grid(row=18, column=0, padx=2, pady=2)
+        ttk.Label(master, text="to").grid(row=19, column=0, padx=2, pady=2)
         self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=19, column=0, padx=2, pady=2)
+        self.high_entry.grid(row=20, column=0, padx=2, pady=2)
         self.submit_range_btn = ttk.Button(master, text="Submit Range", command=self.submit_range)
-        self.submit_range_btn.grid(row=20, column=0)
+        self.submit_range_btn.grid(row=21, column=0)
         self.outputt= Text(master, width = 50, height=1)
-        self.outputt.grid(row=21, column=0)
+        self.outputt.grid(row=22, column=0)
 
     def narrow_search(self,filler):
         """
@@ -153,3 +156,14 @@ class GUI():
         self.course_lstbox.delete(0, END)
         for course in courses:
             self.course_lstbox.insert(END, course)
+
+    def remove_course_from_list(self):
+        lines = self.added_courses_textbox.get("1.0", "end-1c").split('\n')
+        if lines:
+            self.added_courses_textbox.config(state=NORMAL)
+            self.added_courses_textbox.delete("1.0", END)
+            selected_course = self.course_lstbox.get(ANCHOR)
+            lines = [line for line in lines if line != selected_course]
+            for line in lines:
+                self.added_courses_textbox.insert(END, line + '\n')
+            self.added_courses_textbox.config(state=DISABLED)
