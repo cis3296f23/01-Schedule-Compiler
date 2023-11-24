@@ -29,7 +29,6 @@ class GUI():
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
     
-
     def build_general_frame(self,master):
         """
         Builds the GUI
@@ -63,7 +62,6 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_retrieval_btn = ttk.Button(master,text='Add Course')
         self.course_retrieval_btn.grid(row=6,column=0)
-        self.course_entry.grid(row=7,column=0)
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
         self.add_course_btn.grid(row=8, column=0)
