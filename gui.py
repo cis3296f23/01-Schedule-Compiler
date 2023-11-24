@@ -29,7 +29,6 @@ class GUI():
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
     
-
     def build_general_frame(self,master):
         """
         Builds the GUI
@@ -60,10 +59,10 @@ class GUI():
         self.curr_curric_var.set(self.curr_curric)
         self.course_lstbox = Listbox(master,selectmode='single',listvariable=self.curr_curric_var,width=30,height=10)
         self.course_lstbox.grid(row=5,column=0)
+        self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_retrieval_btn = ttk.Button(master,text='Add Course')
         self.course_retrieval_btn.grid(row=6,column=0)
-        self.course_entry.grid(row=7,column=0)
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
         self.add_course_btn.grid(row=8, column=0)
@@ -121,14 +120,21 @@ class GUI():
         for item in data: 
             lstbox.insert('end', item)
         
-    def pick_degr_prog(self,event:Event):
-        self.degr_prog_entry.delete(0,END)
-        selec_ind = self.degr_prog_listbox.curselection()
+    def insert_selection(self,event: Event, entry:Entry,lstbox:Listbox):
+        entry.delete(0,END)
+        selec_ind = lstbox.curselection()
         if selec_ind:
-            degr_prog = self.degr_prog_listbox.get(selec_ind)
-            self.degr_prog_entry.insert(0,degr_prog)
+            selection = lstbox.get(selec_ind)
+            entry.insert(0,selection)
+            return selec_ind, selection
+        return None,None
+
+
+    def pick_degr_prog(self,event:Event):
+        selec_ind, selection = self.insert_selection(None,self.degr_prog_entry,self.degr_prog_listbox)
+        if selec_ind:
             curric = Variable()
-            self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[degr_prog])
+            self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
             num_courses = len(self.curr_curric)
             for c in range(num_courses):
                 self.curr_curric[c]=self.curr_curric[c].replace('\xa0',' ')

@@ -5,7 +5,7 @@ This is a desktop application for Temple students which helps create a schedule 
 
 ## For Windows
 1. Click on Releases to get the latest release
-2. Click on gui.exe to download the executable
+2. Click on schedule_compiler.exe to download the executable
 3. Move the file whereever you would like and double click to run
 
 ## For Mac and Linux
@@ -14,8 +14,8 @@ This is a desktop application for Temple students which helps create a schedule 
 3. Set up virtual environment once by running "py -3 -m venv .venv"
 4. Run virtual environment by typing and entering ".venv/scripts/activate" (Do this every time you enter the project)
 5. Run "pip install -r requirements.txt"
-6. Run "pyinstaller --onefile gui.py"
-7. When the command is finished, run "./dist/gui.exe"
+6. Run "pyinstaller --onefile schedule_compiler.py"
+7. When the command is finished, run "./dist/schedule_compiler.exe"
 
 # How to contribute
 Follow this project board to know the latest status of the project: [http://...]([http://...])  

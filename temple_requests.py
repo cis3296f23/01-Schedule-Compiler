@@ -56,7 +56,7 @@ def get_degr_urls_and_abbrvs(degrs_html_str:str,col_num:int,start:int):
 def get_degr_progs()->dict:
     """
     Retrieves all degree programs at Temple University from its Academic Bulletin
-    @return : a dictionary of degree program strings mapped to their corresponding links, otherwise an empty dictionary
+    @return : a dictionary of degree program strings mapped to their corresponding links, otherwise None on error
     """
     try: 
         degr_program_to_url = dict()
@@ -87,7 +87,7 @@ def get_degr_progs()->dict:
         return degr_program_to_url
     except Exception as e:
         print(e)
-        return dict()
+        return None
 
 def get_curric(degr_prog_url:str)->list[str]:
     """
@@ -106,8 +106,9 @@ def get_curric(degr_prog_url:str)->list[str]:
         courses_html = requirements_html.find_all('a',class_='bubblelink code')
         curric = []
         for c in courses_html:
-            #can later account for the "\xa0" in the middle of each, but printing each element produces the desired format
-            curric.append(c.text)
+            course = c.text
+            if course not in curric:
+                curric.append(course)
         return curric
     except Exception as e:
         print(e)
@@ -117,18 +118,22 @@ def get_term_codes()->dict:
     """
     Retrieves the numbers used to specify the semester in url queries
     Credit: Neil Conley (Github: gummyfrog)
-    @return : dictionary mapping str term codes to str semester
+    @return : dictionary mapping str term codes to str semester on success, otherwise None on error
     """
     PAGINATION_OPTS = {
      "offset": "1",
      "max": "10",
     }
-    response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
-    term_to_code = dict()
-    data=response.json()
-    for term_data in data:
-        term_to_code[term_data['description']]=term_data['code']
-    return term_to_code
+    try:
+        response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
+        term_to_code = dict()
+        data=response.json()
+        for term_data in data:
+            term_to_code[term_data['description']]=term_data['code']
+        return term_to_code
+    except Exception as e:
+        print(e)
+        return None
 
 def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dict:
     """
@@ -137,7 +142,7 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dic
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
     @param attr : attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
-    @return : dictionary of course section information that students can see when clicking on a course section for registration or planning
+    @return : dictionary of course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
     session = requests.Session()
@@ -160,21 +165,23 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dic
     RESULTS_ARGS = dict()
     RESULTS_ARGS.update(SEARCH_REQ)
     RESULTS_ARGS.update(RESULTS_OPTS)
-
-    # Establish session
-    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
-    # Select a term
-    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
-    # Start subject search for the chosen term
-    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=1&max=10", SEARCH_REQ)
-    # Clear old results, if any
-    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
-    # Execute search
-    response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", RESULTS_ARGS)
-
-    data = response.json()
-    data["ztcEncodedImage"] = ""
-    return data
+    try:
+        # Establish session
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
+        # Select a term
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
+        # Start subject search for the chosen term
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=1&max=10", SEARCH_REQ)
+        # Clear old results, if any
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
+        # Execute search
+        response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", RESULTS_ARGS)
+        data = response.json()
+        data["ztcEncodedImage"] = ""
+        return data
+    except Exception as e:
+        print(e)
+        return None
 
 #can retrieve other info such as "Would take again" and difficulty later on if it helps
 def get_rmp_data(prof:str):
@@ -183,7 +190,11 @@ def get_rmp_data(prof:str):
     @param prof : professor to retrieve information about on ratemyprofessors.com
     @return : array of non-zero rating and non-zero rating amount on success, array of None and 0 on failure
     """
-    prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
+    try:
+        prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
+    except Exception as e:
+        print(e)
+        return [None, 0]
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
     prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
     #loops through the professor ids found based on search by professsor name
@@ -207,7 +218,8 @@ def get_rmp_data(prof:str):
                 num_ratings+=num_reviews_html[i]
                 i+=1
             return [rating,num_ratings]
-        except:
+        except Exception as e:
+            print(e)
             return [None,0]
         
 """degr_progs= get_degr_progs()
