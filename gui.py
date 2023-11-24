@@ -22,12 +22,14 @@ class GUI():
         secondFrame = Frame(canv)
         secondFrame.pack(fill=BOTH,expand=1)
         canv.create_window((0,0), window=secondFrame, anchor = "nw")
-        
+        self.added_courses = []
+
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
     
+
     def build_general_frame(self,master):
         """
         Builds the GUI
@@ -61,28 +63,40 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_retrieval_btn = ttk.Button(master,text='Add Course')
         self.course_retrieval_btn.grid(row=6,column=0)
+        self.course_entry.grid(row=7,column=0)
+        #add course to list
+        self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
+        self.add_course_btn.grid(row=8, column=0)
+        #remove course button
+        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
+        self.remove_course_btn.grid(row=9, column=0)
+        #listbox for display added courses
+        self.added_courses_listbox = Listbox(master, width=30, height=10)
+        self.added_courses_listbox.grid(row=10, column=0, columnspan=2)
+        #schedule info gui
         self.schedule_info_btn = ttk.Button(master,text="Get schedule info")
-        self.schedule_info_btn.grid(row=8,column=0)
+        self.schedule_info_btn.grid(row=11,column=0)
         self.schedule__info_btn_output = Text(master,width=150,height=7)
-        self.schedule__info_btn_output.grid(row=9,column=0)
-        ttk.Label(master,text="Enter a professor name:").grid(row=10,column=0)
+        self.schedule__info_btn_output.grid(row=12,column=0)
+        #professor name entry
+        ttk.Label(master,text="Enter a professor name:").grid(row=13,column=0)
         self.prof_entry=ttk.Entry(master,width=30)
-        self.prof_entry.grid(row=11,column=0)
+        self.prof_entry.grid(row=14,column=0)
         self.rmp_button = ttk.Button(master,text="Get RMP Rating")
-        self.rmp_button.grid(row=12,column=0)
+        self.rmp_button.grid(row=15,column=0)
         self.rmp_output = Text(master,width=80,height=5)
-        self.rmp_output.grid(row=13,column=0)
-        # Entering number of credits
-        ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=14, column=0)
+        self.rmp_output.grid(row=16,column=0)
+        #enter number of credits
+        ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=17, column=0)
         self.low_entry = ttk.Entry(master, width=3)
-        self.low_entry.grid(row=15, column=0, padx=2, pady=2)
-        ttk.Label(master, text="to").grid(row=16, column=0, padx=2, pady=2)
+        self.low_entry.grid(row=18, column=0, padx=2, pady=2)
+        ttk.Label(master, text="to").grid(row=19, column=0, padx=2, pady=2)
         self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=17, column=0, padx=2, pady=2)
+        self.high_entry.grid(row=20, column=0, padx=2, pady=2)
         self.submit_range_btn = ttk.Button(master, text="Submit Range", command=self.submit_range)
-        self.submit_range_btn.grid(row=18, column=0)
+        self.submit_range_btn.grid(row=21, column=0)
         self.outputt= Text(master, width = 50, height=1)
-        self.outputt.grid(row=19, column=0)
+        self.outputt.grid(row=22, column=0)
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
@@ -124,4 +138,20 @@ class GUI():
     def submit_range(self):
         low_value = self.low_entry.get()
         high_value = self.high_entry.get()
-        self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")
+        self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")   
+
+    def add_course_to_list(self):
+        selected_course = self.course_lstbox.get(ANCHOR)
+        if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
+            self.added_courses_listbox.insert(END, selected_course)
+    
+    def get_courses(self):
+        courses = temple_requests.get_curric(self.degree_prog_entry.get())
+        self.course_lstbox.delete(0, END)
+        for course in courses:
+            self.course_lstbox.insert(END, course)
+
+    def remove_course_from_list(self):
+        selected_index = self.added_courses_listbox.curselection()
+        if selected_index:
+            self.added_courses_listbox.delete(selected_index)

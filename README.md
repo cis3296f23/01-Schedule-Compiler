@@ -14,7 +14,7 @@ This is a desktop application for Temple students which helps create a schedule 
 3. Set up virtual environment once by running "py -3 -m venv .venv"
 4. Run virtual environment by typing and entering ".venv/scripts/activate" (Do this every time you enter the project)
 5. Run "pip install -r requirements.txt"
-6. Run "pyinstaller -onefile gui.py"
+6. Run "pyinstaller --onefile gui.py"
 7. When the command is finished, run "./dist/gui.exe"
 
 # How to contribute
