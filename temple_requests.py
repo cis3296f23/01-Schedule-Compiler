@@ -106,7 +106,9 @@ def get_curric(degr_prog_url:str)->list[str]:
         courses_html = requirements_html.find_all('a',class_='bubblelink code')
         curric = []
         for c in courses_html:
-            curric.append(c.text)
+            course = c.text
+            if course not in curric:
+                curric.append(course)
         return curric
     except Exception as e:
         print(e)
