@@ -114,27 +114,28 @@ def get_curric(degr_prog_url:str)->list[str]:
         print(e)
         return []
 
-def get_term_codes()->dict:
+def get_param_data_codes(endpoint:str)->dict:
     """
-    Retrieves the numbers used to specify the semester in url queries
+    Retrieves the code used to specify the certain parameter data in url queries such as semester and campus
     Credit: Neil Conley (Github: gummyfrog)
-    @return : dictionary mapping str term codes to str semester on success, otherwise None on error
+    @param endpoint: str representing endpoint for specific parameter data (i.e. "getTerms" or "get_campus")
+    @return : dictionary mapping data codes to corresponding potential parameter data on success, otherwise None on error
     """
     PAGINATION_OPTS = {
      "offset": "1",
      "max": "10",
     }
     try:
-        response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
-        term_to_code = dict()
+        response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/"+endpoint, PAGINATION_OPTS)
+        param_data_to_code = dict()
         data=response.json()
-        for term_data in data:
-            term_to_code[term_data['description']]=term_data['code']
-        return term_to_code
+        for descrip_and_code in data:
+            param_data_to_code[descrip_and_code['description']]=descrip_and_code['code']
+        return param_data_to_code
     except Exception as e:
         print(e)
         return None
-
+    
 def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN')->dict:
     """
     Retrieves info on the sections available during the specified term for the specified class
@@ -226,6 +227,7 @@ def get_rmp_data(prof:str):
 """degr_progs= get_degr_progs()
 for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
-#print(get_term_codes())
+#print(get_param_data_codes('getTerms'))
+#print(get_param_data_codes('get_campus'))
 #print(get_course_sections_info("202336","EES","2021",''))
 #print(get_rmp_rating("Sarah Stapleton"))
