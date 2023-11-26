@@ -136,7 +136,7 @@ def get_param_data_codes(endpoint:str)->dict:
         print(e)
         return None
     
-def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN')->dict:
+def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param term_code : number representing the semester
@@ -156,34 +156,45 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', camp
         "txt_attribute": attr,
         "txt_campus": campus_code
     }
+    pageOffset = 0
+    PAGE_MAX_SIZE = 50
     # extra stuff for the results
-    RESULTS_OPTS = {
-        "pageOffset": 0,
-        "pageMaxSize": 10,
+    results_opts = {
+        "pageOffset": pageOffset,
+        "pageMaxSize": PAGE_MAX_SIZE,
         "sortColumn": "subjectDescription",
         "sortDirection": "asc",
     }
 
-    RESULTS_ARGS = dict()
-    RESULTS_ARGS.update(SEARCH_REQ)
-    RESULTS_ARGS.update(RESULTS_OPTS)
-    try:
-        # Establish session
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
-        # Select a term
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
-        # Start subject search for the chosen term
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=1&max=10", SEARCH_REQ)
-        # Clear old results, if any
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
-        # Execute search
-        response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", RESULTS_ARGS)
-        data = response.json()
-        data["ztcEncodedImage"] = ""
-        return data
-    except Exception as e:
-        print(e)
-        return None
+    results_args = dict()
+    results_args.update(SEARCH_REQ)
+    results_args.update(results_opts)
+    moreResults=True
+    course_sect_info = dict()
+    # Establish session
+    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
+    # Select a term
+    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
+    while moreResults:
+        try:
+            # Start subject search for the chosen term and current page offset
+            session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=" + str(int(pageOffset/PAGE_MAX_SIZE)+1) + "&max="+str(PAGE_MAX_SIZE), SEARCH_REQ)
+            # Clear old results, if any
+            session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
+            # Execute search
+            response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", results_args)
+            data = response.json()
+            data["ztcEncodedImage"] = ""
+            if data['totalCount']>pageOffset+PAGE_MAX_SIZE:
+                pageOffset+=PAGE_MAX_SIZE
+                results_args['pageOffset']=pageOffset
+            else:
+                moreResults=False
+            course_sect_info|=data
+        except Exception as e:
+            print(e)
+            return None
+    return course_sect_info
 
 #can retrieve other info such as "Would take again" and difficulty later on if it helps
 def get_rmp_data(prof:str):
@@ -229,5 +240,5 @@ for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-#print(get_course_sections_info("202336","EES","2021",''))
+#print(get_course_sections_info("202336","","",'GY'))
 #print(get_rmp_rating("Sarah Stapleton"))
