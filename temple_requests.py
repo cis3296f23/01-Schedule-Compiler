@@ -135,7 +135,7 @@ def get_term_codes()->dict:
         print(e)
         return None
 
-def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dict:
+def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN')->dict:
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param term_code : number representing the semester
@@ -152,7 +152,8 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dic
         "txt_term": term_code,
         "txt_subject": subj,
         "txt_courseNumber": course_num,
-        "txt_attribute": attr
+        "txt_attribute": attr,
+        "txt_campus": campus_code
     }
     # extra stuff for the results
     RESULTS_OPTS = {
