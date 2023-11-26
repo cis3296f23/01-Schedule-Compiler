@@ -142,7 +142,7 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', camp
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
-    @param attr : attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
+    @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
     @return : dictionary of course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
