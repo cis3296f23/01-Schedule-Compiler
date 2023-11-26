@@ -113,7 +113,7 @@ def get_curric(degr_prog_url:str)->list[str]:
     except Exception as e:
         print(e)
         return []
-
+#will likely use output globally from function called twice with "getTerms" and "get_campus" as parameters to avoid overuse
 def get_param_data_codes(endpoint:str)->dict:
     """
     Retrieves the code used to specify the certain parameter data in url queries such as semester and campus
