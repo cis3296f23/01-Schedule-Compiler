@@ -113,35 +113,36 @@ def get_curric(degr_prog_url:str)->list[str]:
     except Exception as e:
         print(e)
         return []
-
-def get_term_codes()->dict:
+#will likely use output globally from function called twice with "getTerms" and "get_campus" as parameters to avoid overuse
+def get_param_data_codes(endpoint:str)->dict:
     """
-    Retrieves the numbers used to specify the semester in url queries
+    Retrieves the code used to specify the certain parameter data in url queries such as semester and campus
     Credit: Neil Conley (Github: gummyfrog)
-    @return : dictionary mapping str term codes to str semester on success, otherwise None on error
+    @param endpoint: str representing endpoint for specific parameter data (i.e. "getTerms" or "get_campus")
+    @return : dictionary mapping data codes to corresponding potential parameter data on success, otherwise None on error
     """
     PAGINATION_OPTS = {
      "offset": "1",
      "max": "10",
     }
     try:
-        response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/getTerms", PAGINATION_OPTS)
-        term_to_code = dict()
+        response = requests.get("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/"+endpoint, PAGINATION_OPTS)
+        param_data_to_code = dict()
         data=response.json()
-        for term_data in data:
-            term_to_code[term_data['description']]=term_data['code']
-        return term_to_code
+        for descrip_and_code in data:
+            param_data_to_code[descrip_and_code['description']]=descrip_and_code['code']
+        return param_data_to_code
     except Exception as e:
         print(e)
         return None
-
-def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dict:
+    
+def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
-    @param attr : attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
+    @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
     @return : dictionary of course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
@@ -152,36 +153,48 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='')->dic
         "txt_term": term_code,
         "txt_subject": subj,
         "txt_courseNumber": course_num,
-        "txt_attribute": attr
+        "txt_attribute": attr,
+        "txt_campus": campus_code
     }
+    pageOffset = 0
+    PAGE_MAX_SIZE = 50
     # extra stuff for the results
-    RESULTS_OPTS = {
-        "pageOffset": 0,
-        "pageMaxSize": 10,
+    results_opts = {
+        "pageOffset": pageOffset,
+        "pageMaxSize": PAGE_MAX_SIZE,
         "sortColumn": "subjectDescription",
         "sortDirection": "asc",
     }
 
-    RESULTS_ARGS = dict()
-    RESULTS_ARGS.update(SEARCH_REQ)
-    RESULTS_ARGS.update(RESULTS_OPTS)
-    try:
-        # Establish session
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
-        # Select a term
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
-        # Start subject search for the chosen term
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=1&max=10", SEARCH_REQ)
-        # Clear old results, if any
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
-        # Execute search
-        response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", RESULTS_ARGS)
-        data = response.json()
-        data["ztcEncodedImage"] = ""
-        return data
-    except Exception as e:
-        print(e)
-        return None
+    results_args = dict()
+    results_args.update(SEARCH_REQ)
+    results_args.update(results_opts)
+    moreResults=True
+    course_sect_info = dict()
+    # Establish session
+    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
+    # Select a term
+    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
+    while moreResults:
+        try:
+            # Start subject search for the chosen term and current page offset
+            session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=" + str(int(pageOffset/PAGE_MAX_SIZE)+1) + "&max="+str(PAGE_MAX_SIZE), SEARCH_REQ)
+            # Clear old results, if any
+            session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
+            # Execute search
+            response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", results_args)
+            data = response.json()
+            data["ztcEncodedImage"] = ""
+            if data['totalCount']>pageOffset+PAGE_MAX_SIZE:
+                pageOffset+=PAGE_MAX_SIZE
+                results_args['pageOffset']=pageOffset
+            else:
+                moreResults=False
+            course_sect_info|=data
+        except Exception as e:
+            print(e)
+            return None
+    return course_sect_info
 
 #can retrieve other info such as "Would take again" and difficulty later on if it helps
 def get_rmp_data(prof:str):
@@ -225,6 +238,7 @@ def get_rmp_data(prof:str):
 """degr_progs= get_degr_progs()
 for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
-#print(get_term_codes())
-#print(get_course_sections_info("202336","EES","2021",''))
+#print(get_param_data_codes('getTerms'))
+#print(get_param_data_codes('get_campus'))
+#print(get_course_sections_info("202336","","",'GY'))
 #print(get_rmp_rating("Sarah Stapleton"))
