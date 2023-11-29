@@ -61,8 +61,6 @@ class GUI():
         self.course_lstbox.grid(row=5,column=0)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
-        self.course_retrieval_btn = ttk.Button(master,text='Add Course')
-        self.course_retrieval_btn.grid(row=6,column=0)
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
         self.add_course_btn.grid(row=8, column=0)
