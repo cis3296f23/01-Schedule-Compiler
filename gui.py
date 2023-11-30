@@ -71,14 +71,9 @@ class GUI():
         self.added_courses_listbox = Listbox(master, width=30, height=10)
         self.added_courses_listbox.grid(row=10, column=0, columnspan=2)
         #enter number of credits
-        ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=17, column=0)
-        self.low_entry = ttk.Entry(master, width=3)
-        self.low_entry.grid(row=18, column=0, padx=2, pady=2)
-        ttk.Label(master, text="to").grid(row=19, column=0, padx=2, pady=2)
+        ttk.Label(master, text="Enter the maximum number of credits you would like to take (leave blank for 18):").grid(row=17, column=0)
         self.high_entry = ttk.Entry(master, width=3)
         self.high_entry.grid(row=20, column=0, padx=2, pady=2)
-        self.submit_range_btn = ttk.Button(master, text="Submit Range", command=self.submit_range)
-        self.submit_range_btn.grid(row=21, column=0)
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=22, column=0)
 
@@ -124,11 +119,6 @@ class GUI():
                 self.curr_curric[c]=self.curr_curric[c].replace('\xa0',' ')
             curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
-
-    def submit_range(self):
-        low_value = self.low_entry.get()
-        high_value = self.high_entry.get()
-        self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")   
 
     def add_course_to_list(self):
         selected_course = self.course_lstbox.get(ANCHOR)
