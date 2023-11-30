@@ -70,19 +70,6 @@ class GUI():
         #listbox for display added courses
         self.added_courses_listbox = Listbox(master, width=30, height=10)
         self.added_courses_listbox.grid(row=10, column=0, columnspan=2)
-        #schedule info gui
-        self.schedule_info_btn = ttk.Button(master,text="Get schedule info")
-        self.schedule_info_btn.grid(row=11,column=0)
-        self.schedule__info_btn_output = Text(master,width=150,height=7)
-        self.schedule__info_btn_output.grid(row=12,column=0)
-        #professor name entry
-        ttk.Label(master,text="Enter a professor name:").grid(row=13,column=0)
-        self.prof_entry=ttk.Entry(master,width=30)
-        self.prof_entry.grid(row=14,column=0)
-        self.rmp_button = ttk.Button(master,text="Get RMP Rating")
-        self.rmp_button.grid(row=15,column=0)
-        self.rmp_output = Text(master,width=80,height=5)
-        self.rmp_output.grid(row=16,column=0)
         #enter number of credits
         ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=17, column=0)
         self.low_entry = ttk.Entry(master, width=3)
@@ -127,7 +114,6 @@ class GUI():
             return selec_ind, selection
         return None,None
 
-
     def pick_degr_prog(self,event:Event):
         selec_ind, selection = self.insert_selection(None,self.degr_prog_entry,self.degr_prog_listbox)
         if selec_ind:
@@ -148,12 +134,6 @@ class GUI():
         selected_course = self.course_lstbox.get(ANCHOR)
         if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
             self.added_courses_listbox.insert(END, selected_course)
-    
-    def get_courses(self):
-        courses = temple_requests.get_curric(self.degree_prog_entry.get())
-        self.course_lstbox.delete(0, END)
-        for course in courses:
-            self.course_lstbox.insert(END, course)
 
     def remove_course_from_list(self):
         selected_index = self.added_courses_listbox.curselection()
