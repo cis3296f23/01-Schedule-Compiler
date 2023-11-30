@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from algo import Schedule
 
 def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)->str:
     """
@@ -245,12 +246,19 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             else:
                 rmp_info = get_rmp_data(professor)
                 prof_rating_cache[professor]=rmp_info
+            sched = Schedule()
+            days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
+            for meeting_type in section['meetingsFaculty']:
+                meet_time_info = meeting_type['meetingTime']
+                for day in days_of_the_week:
+                    if meet_time_info[day]:
+                        sched.add_item(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']))
             #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
             #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
             sect_info = {'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
                          'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
                          'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
-                         'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1]}
+                         'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
             course = section['subject']+section['courseNumber']
             if course not in course_info:
                 course_info[course] = [sect_info]
@@ -265,7 +273,7 @@ for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-course_info = dict()
+"""course_info = dict()
 get_course_sections_info(course_info, "202336","CIS","3207",'')
-print(course_info)
+print(course_info)"""
 #print(get_rmp_rating("Sarah Stapleton"))
