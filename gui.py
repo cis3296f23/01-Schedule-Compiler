@@ -97,6 +97,54 @@ class GUI():
         self.outputt= Text(master, width = 50, height=1)
         self.outputt.grid(row=22, column=0)
 
+        ttk.Label(master, text="Select available days and times:").grid(row=23, column=0, pady=10)
+
+        # Days of the week selection
+        days_label = ttk.Label(master, text="Select Days:")
+        days_label.grid(row=24, column=0, sticky=E)
+        self.selected_days_var = StringVar(value="")
+        self.days_entry = ttk.Entry(master, textvariable=self.selected_days_var, state='readonly', width=20)
+        self.days_entry.grid(row=24, column=1, pady=5)
+
+        # Times selection
+        times_label = ttk.Label(master, text="Select Times:")
+        times_label.grid(row=25, column=0, sticky=E)
+
+        # Hour selection
+        hours = [str(i) for i in range(1, 13)]
+        self.hour_var = StringVar()
+        hour_dropdown = ttk.Combobox(master, textvariable=self.hour_var, values=hours, state="readonly", width=3)
+        hour_dropdown.grid(row=25, column=1, padx=5)
+
+        # Minute selection
+        minutes = [str(i) for i in range(0, 60, 5)]
+        self.minute_var = StringVar()
+        minute_dropdown = ttk.Combobox(master, textvariable=self.minute_var, values=minutes, state="readonly", width=3)
+        minute_dropdown.grid(row=25, column=2, padx=5)
+
+        # AM/PM selection
+        am_pm_values = ["AM", "PM"]
+        self.am_pm_var = StringVar()
+        am_pm_dropdown = ttk.Combobox(master, textvariable=self.am_pm_var, values=am_pm_values, state="readonly",
+                                      width=3)
+        am_pm_dropdown.grid(row=25, column=3, padx=5)
+
+        # Add button to add selected time
+        add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time)
+        add_time_btn.grid(row=25, column=4, padx=5)
+
+    def add_selected_time(self):
+            selected_day = self.days_entry.get()
+            selected_hour = self.hour_var.get()
+            selected_minute = self.minute_var.get()
+            selected_am_pm = self.am_pm_var.get()
+
+            if selected_day and selected_hour and selected_minute and selected_am_pm:
+                selected_time = f"{selected_day} {selected_hour}:{selected_minute} {selected_am_pm}"
+                # Add the selected time to your data structure or display it somewhere
+                print(f"Selected Time: {selected_time}")
+            else:
+                print("Please select all components of the time.")
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
         Narrows down degree programs based on the string the user is entering
