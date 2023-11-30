@@ -238,8 +238,6 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             return None
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
-            #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
-            #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
             professor = section['faculty'][0]['displayName']
             rmp_info = get_rmp_data(professor)
             if professor in prof_rating_cache:
@@ -247,6 +245,8 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             else:
                 rmp_info = get_rmp_data(professor)
                 prof_rating_cache[professor]=rmp_info
+            #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
+            #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
             sect_info = {'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
                          'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
                          'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
