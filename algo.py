@@ -1,11 +1,11 @@
 class Schedule:
     def __init__(self):
         self.days = {
-            'Monday': [],
-            'Tuesday': [],
-            'Wednesday': [],
-            'Thursday': [],
-            'Friday': [],
+            'monday': [],
+            'tuesday': [],
+            'wednesday': [],
+            'thursday': [],
+            'friday': [],
         }
 
     def add_item(self, day, start_time, end_time):
