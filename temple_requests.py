@@ -176,13 +176,15 @@ def get_rmp_data(prof:str):
             return [None,0]
     return [None, 0]
 
-def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
+def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
+    @param course_info : dictionary to store the necessary section information in for each course
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
     @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
+    @param prof_rating_cache : stores previously retrieved professor ratings for the session to reduce the number of requests made
     @return : dictionary of some of the course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
@@ -240,6 +242,11 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
             professor = section['faculty'][0]['displayName']
             rmp_info = get_rmp_data(professor)
+            if professor in prof_rating_cache:
+                rmp_info = prof_rating_cache[professor]
+            else:
+                rmp_info = get_rmp_data(professor)
+                prof_rating_cache[professor]=rmp_info
             sect_info = {'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
                          'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
                          'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
