@@ -3,31 +3,32 @@ from tkinter import ttk
 import temple_requests
 
 class GUI():
-    def __init__(self,root):
+    def __init__(self,root:Tk):
         self.running = True
         self.__root = root
         self.__root.title('Schedule Compiler')
+        root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         #Can pick out style later
         title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER)
         title_label.pack(padx=5,pady=5)
-        generalFrame=ttk.Frame(self.__root)
-        generalFrame.pack(fill=BOTH, expand=1, anchor=CENTER)
+        main_frame=ttk.Frame(self.__root)
+        main_frame.pack(fill=BOTH, expand=1, anchor=CENTER)
         #Scrollbar implementation
-        canv = Canvas(generalFrame)
+        canv = Canvas(main_frame)
         canv.pack(side=LEFT,fill=BOTH,expand=1,anchor=CENTER)
-        mainScrollBar = ttk.Scrollbar(generalFrame,orient=VERTICAL,command=canv.yview)
-        mainScrollBar.pack(side='right',fill=Y)
-        canv.configure(yscrollcommand=mainScrollBar.set)
+        main_scroll_bar = ttk.Scrollbar(main_frame,orient=VERTICAL,command=canv.yview)
+        main_scroll_bar.pack(side='right',fill=Y)
+        canv.configure(yscrollcommand=main_scroll_bar.set,)
         canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
-        secondFrame = Frame(canv)
-        secondFrame.pack(fill=BOTH,expand=1)
-        canv.create_window((0,0), window=secondFrame, anchor = "nw")
+        second_frame = Frame(canv)
+        second_frame.pack(fill=BOTH,expand=1)
+        canv.create_window((0,0), window=second_frame, anchor = "nw")
         self.added_courses = []
 
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
-        self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
+        self.build_general_frame(second_frame) #Second frame is basically the new root/generalFrame now
     
     def build_general_frame(self,master):
         """
@@ -42,13 +43,9 @@ class GUI():
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = ttk.Entry(master,width=30)
         self.degr_prog_entry.grid(row=1,column=0)
-        degr_prog_scrollbar = ttk.Scrollbar(master,orient=VERTICAL)
-        degr_prog_scrollbar.grid(row = 1, column =1, sticky = N+S+W+E)
         self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
         self.degr_prog_listbox.grid(row=2,column=0)
-        self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
-        degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = []
@@ -63,19 +60,19 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
-        self.add_course_btn.grid(row=8, column=0)
+        self.add_course_btn.grid(row=6, column=0)
         #remove course button
         self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
-        self.remove_course_btn.grid(row=9, column=0)
+        self.remove_course_btn.grid(row=7, column=0)
         #listbox for display added courses
         self.added_courses_listbox = Listbox(master, width=30, height=10)
-        self.added_courses_listbox.grid(row=10, column=0, columnspan=2)
+        self.added_courses_listbox.grid(row=8, column=0)
         #enter number of credits
-        ttk.Label(master, text="Enter the maximum number of credits you would like to take (leave blank for 18):").grid(row=17, column=0)
+        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=9, column=0)
         self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=20, column=0, padx=2, pady=2)
+        self.high_entry.grid(row=10, column=0, padx=2, pady=2)
         self.outputt= Text(master, width = 50, height=1)
-        self.outputt.grid(row=22, column=0)
+        self.outputt.grid(row=11, column=0)
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
