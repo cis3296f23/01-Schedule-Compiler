@@ -18,7 +18,7 @@ This is a desktop application for Temple students which helps create a schedule 
 7. When the command is finished, run "./dist/schedule_compiler.exe"
 
 # How to contribute
-Follow this project board to know the latest status of the project: [http://...]([http://...])  
+Follow this project board to know the latest status of the project in the project board. Submit a PR with working code.
 
 ### How to build
 - Use this github repository
