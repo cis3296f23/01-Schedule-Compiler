@@ -60,19 +60,20 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         #add course to list
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
-        self.add_course_btn.grid(row=6, column=0)
+        self.add_course_btn.grid(row=6,column=0)
         #remove course button
         self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
-        self.remove_course_btn.grid(row=7, column=0)
+        self.remove_course_btn.grid(row=7,column=0)
         #listbox for display added courses
         self.added_courses_listbox = Listbox(master, width=30, height=10)
-        self.added_courses_listbox.grid(row=8, column=0)
+        self.added_courses_listbox.grid(row=8,column=0)
         #enter number of credits
-        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=9, column=0)
+        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=9,column=0)
         self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=10, column=0, padx=2, pady=2)
-        self.outputt= Text(master, width = 50, height=1)
-        self.outputt.grid(row=11, column=0)
+        self.high_entry.grid(row=10,column=0)
+        #only looks centered bc of width of this
+        self.outputt= Text(master, width = 200, height=1)
+        self.outputt.grid(row=11,column=0)
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
