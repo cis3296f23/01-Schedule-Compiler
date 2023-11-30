@@ -135,7 +135,46 @@ def get_param_data_codes(endpoint:str)->dict:
     except Exception as e:
         print(e)
         return None
-    
+
+#can retrieve other info such as "Would take again" and difficulty later on if it helps
+def get_rmp_data(prof:str):
+    """
+    Retrieves information from ratemyprofessors.com related to the specified professor's ratings
+    @param prof : professor to retrieve information about on ratemyprofessors.com
+    @return : array of non-zero rating and non-zero rating amount on success, array of None and 0 on failure
+    """
+    try:
+        prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
+    except Exception as e:
+        print(e)
+        return [None, 0]
+    #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
+    prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
+    #loops through the professor ids found based on search by professsor name
+    for id in prof_ids:
+        try:
+            prof_rating_req = requests.get("https://www.ratemyprofessors.com/professor/" + id)
+            soup=BeautifulSoup(prof_rating_req.content,'html.parser')
+            #rating retrieval
+            rating_html = str(soup.find("div",re.compile("^RatingValue__Numerator")))
+            rating = ''
+            i = rating_html.rfind('<')-1
+            while rating_html[i]!='>':
+                rating+=rating_html[i]
+                i-=1
+            rating = rating[::-1]
+            #retrieval of number of ratings
+            num_ratings=''
+            num_reviews_html = str(soup.find("div",re.compile("^RatingValue__NumRatings")))
+            i=num_reviews_html.rfind('\">')+2
+            while num_reviews_html[i]!='<':
+                num_ratings+=num_reviews_html[i]
+                i+=1
+            return [rating,num_ratings]
+        except Exception as e:
+            print(e)
+            return [None,0]
+
 def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
     """
     Retrieves info on the sections available during the specified term for the specified class
@@ -194,7 +233,6 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
         except Exception as e:
             print(e)
             return None
-    print(course_sect_info['data'])
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
             #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
@@ -211,45 +249,6 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
     else:
         return None
     return course_sect_info
-
-#can retrieve other info such as "Would take again" and difficulty later on if it helps
-def get_rmp_data(prof:str):
-    """
-    Retrieves information from ratemyprofessors.com related to the specified professor's ratings
-    @param prof : professor to retrieve information about on ratemyprofessors.com
-    @return : array of non-zero rating and non-zero rating amount on success, array of None and 0 on failure
-    """
-    try:
-        prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
-    except Exception as e:
-        print(e)
-        return [None, 0]
-    #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
-    prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
-    #loops through the professor ids found based on search by professsor name
-    for id in prof_ids:
-        try:
-            prof_rating_req = requests.get("https://www.ratemyprofessors.com/professor/" + id)
-            soup=BeautifulSoup(prof_rating_req.content,'html.parser')
-            #rating retrieval
-            rating_html = str(soup.find("div",re.compile("^RatingValue__Numerator")))
-            rating = ''
-            i = rating_html.rfind('<')-1
-            while rating_html[i]!='>':
-                rating+=rating_html[i]
-                i-=1
-            rating = rating[::-1]
-            #retrieval of number of ratings
-            num_ratings=''
-            num_reviews_html = str(soup.find("div",re.compile("^RatingValue__NumRatings")))
-            i=num_reviews_html.rfind('\">')+2
-            while num_reviews_html[i]!='<':
-                num_ratings+=num_reviews_html[i]
-                i+=1
-            return [rating,num_ratings]
-        except Exception as e:
-            print(e)
-            return [None,0]
         
 """degr_progs= get_degr_progs()
 for dgpg in degr_progs:
