@@ -148,7 +148,7 @@ def get_rmp_data(prof:str):
         prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
     except Exception as e:
         print(e)
-        return [None, 0]
+        return [0, 0]
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
     prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
     #loops through the professor ids found based on search by professsor name
@@ -174,8 +174,8 @@ def get_rmp_data(prof:str):
             return [rating,num_ratings]
         except Exception as e:
             print(e)
-            return [None,0]
-    return [None, 0]
+            return [0,0]
+    return [0, 0]
 
 def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
     """
