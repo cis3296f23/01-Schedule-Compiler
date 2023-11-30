@@ -22,7 +22,7 @@ class GUI():
         canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
         second_frame = Frame(canv)
         second_frame.pack(fill=BOTH,expand=1)
-        canv.create_window((0,0), window=second_frame, anchor = "nw")
+        canv.create_window((int(main_frame.winfo_screenwidth()/4),0), window=second_frame, anchor = "nw")
         self.added_courses = []
 
         self.__style = ttk.Style()
@@ -72,8 +72,8 @@ class GUI():
         self.high_entry = ttk.Entry(master, width=3)
         self.high_entry.grid(row=10,column=0)
         #only looks centered bc of width of this
-        self.outputt= Text(master, width = 200, height=1)
-        self.outputt.grid(row=11,column=0)
+        self.output= Text(master, width = 50, height=1)
+        self.output.grid(row=11,column=0)
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
