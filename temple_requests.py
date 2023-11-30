@@ -113,7 +113,7 @@ def get_curric(degr_prog_url:str)->list[str]:
     except Exception as e:
         print(e)
         return []
-#will likely use output globally from function called twice with "getTerms" and "get_campus" as parameters to avoid overuse
+#will likely use output from this globally from function called twice with "getTerms" and "get_campus" as parameters to avoid overuse
 def get_param_data_codes(endpoint:str)->dict:
     """
     Retrieves the code used to specify the certain parameter data in url queries such as semester and campus
@@ -136,14 +136,14 @@ def get_param_data_codes(endpoint:str)->dict:
         print(e)
         return None
     
-def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
+def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
     @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
-    @return : dictionary of course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
+    @return : dictionary of some of the course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
     session = requests.Session()
@@ -194,6 +194,22 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', camp
         except Exception as e:
             print(e)
             return None
+    print(course_sect_info['data'])
+    if course_sect_info['totalCount']:
+        for section in course_sect_info['data']:
+            #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
+            #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
+            sect_info = {'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
+                         'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
+                         'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
+                         'professor':section['faculty'][0]['displayName']}
+            course = section['subject']+section['courseNumber']
+            if course not in course_info:
+                course_info[course] = [sect_info]
+            else:
+                course_info[course].append(sect_info)
+    else:
+        return None
     return course_sect_info
 
 #can retrieve other info such as "Would take again" and difficulty later on if it helps
@@ -240,5 +256,7 @@ for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-#print(get_course_sections_info("202336","","",'GY'))
+course_info = dict()
+get_course_sections_info(course_info, "202336","CIS","3207",'')
+print(course_info)
 #print(get_rmp_rating("Sarah Stapleton"))

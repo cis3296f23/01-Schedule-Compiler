@@ -29,6 +29,7 @@ class GUI():
         second_frame.pack(fill=BOTH,expand=1)
         canv.create_window((int(main_frame.winfo_screenwidth()/4),0), window=second_frame, anchor = "nw")
         self.added_courses = []
+        self.course_info = dict()
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
