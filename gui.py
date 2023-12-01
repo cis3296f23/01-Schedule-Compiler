@@ -73,7 +73,10 @@ class GUI():
         self.added_courses_listbox.grid(row=8,column=0)
         #select a campus
         ttk.Label(master, text="Select a Campus:").grid(row=9, column=0)
-        self.campus_combobox = ttk.Combobox(master, values=["Main", "Ambler", "Rome", "Japan"], state="readonly")
+        self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
+        self.campuses = list(self.campus_to_code.keys())
+        self.campus_combobox = ttk.Combobox(master, values=self.campuses, state="readonly")
+        self.campus_combobox.set('Main')
         self.campus_combobox.grid(row=10, column=0)
         #Credit entry
         ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=11,column=0)
