@@ -82,8 +82,11 @@ class GUI():
         ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=11,column=0)
         self.high_entry = ttk.Entry(master, width=3)
         self.high_entry.grid(row=12,column=0)
+        #button
+        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
+        self.compile_button.grid(row=13)
         self.output= Text(master, width = 50, height=10)
-        self.output.grid(row=13,column=0)
+        self.output.grid(row=14,column=0)
 
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
@@ -167,3 +170,6 @@ class GUI():
         if selected_index:
             self.added_courses_listbox.delete(selected_index)
             self.added_courses.pop(selected_index[0])
+    
+    def compile_schedules(self):
+        pass
