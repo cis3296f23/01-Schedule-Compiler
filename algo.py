@@ -54,7 +54,7 @@ def dfs_build_roster(course_info, course_keys, index, roster):
             if dfs_build_roster(course_info, course_keys, index + 1, roster):
                 return True
             else:
-                remove_class(roster, section.schedule)
+                remove_class(roster, section['schedule'])
 
     return False
 
