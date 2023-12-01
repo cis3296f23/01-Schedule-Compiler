@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk
 import temple_requests
 import algo
+from text_redirection import TextRedirector
+import sys,threading
 
 class GUI():
     def __init__(self,root:Tk):
@@ -83,9 +85,6 @@ class GUI():
         ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=11,column=0)
         self.high_entry = ttk.Entry(master, width=3)
         self.high_entry.grid(row=12,column=0)
-        #button
-        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
-        self.compile_button.grid(row=13)
         self.output= Text(master, width = 50, height=10)
         #day and time input
         ttk.Label(master, text="Select available days and times:").grid(row=14, column=0)
@@ -115,8 +114,11 @@ class GUI():
         # Add button to add selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
         self.add_time_btn.grid(row=19, column=0)
-
-        self.output.grid(row=20,column=0)
+        
+        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
+        self.compile_button.grid(row=19)
+        self.output.grid(row=21,column=0)
+        sys.stdout = TextRedirector(self.output,'stdout')
 
     def add_selected_time(self):
             selected_day = self.days_dropdown.get()
