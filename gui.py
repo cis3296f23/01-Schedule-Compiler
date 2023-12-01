@@ -65,7 +65,7 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         #select a campus
         ttk.Label(master, text="Select a Campus:").grid(row=6, column=0)
-        self.campus_combobox = ttk.Combobox(master, values=["Main", "Ambler", "Rome", "Japan"])
+        self.campus_combobox = ttk.Combobox(master, values=["Main", "Ambler", "Rome", "Japan"], state="readonly")
         self.campus_combobox.grid(row=7, column=0)
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_campus_selected)
         
