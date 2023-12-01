@@ -168,3 +168,4 @@ class GUI():
 
     def on_campus_selected(self, event):
          selected_campus = self.campus_combobox.get()
+         self.__root.focus_set()
