@@ -50,7 +50,7 @@ def dfs_build_roster(course_info, course_keys, index, roster):
 
     course_key = course_keys[index]
     for section in course_info[course_key]:
-        if add_class(roster, section.schedule):
+        if add_class(roster, section['schedule']):
             if dfs_build_roster(course_info, course_keys, index + 1, roster):
                 return True
             else:
