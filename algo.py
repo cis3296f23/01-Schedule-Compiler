@@ -50,7 +50,7 @@ def dfs_build_roster(course_info, course_keys, index, roster):
 
     course_key = course_keys[index]
     for section in course_info[course_key]:
-        if add_class(roster, section.schedule):
+        if add_class(roster, section['schedule']):
             if dfs_build_roster(course_info, course_keys, index + 1, roster):
                 return True
             else:
@@ -60,10 +60,6 @@ def dfs_build_roster(course_info, course_keys, index, roster):
 
 def build_complete_roster(course_info):
     roster = Schedule()
-    # Sorts the sections of each course in descending order of profRating so highest rated courses are looked at first
-    for course in course_info:
-        course_info[course].sort(key=lambda x: x['profRating'], reverse=True)
-        
     course_keys = list(course_info.keys())
     if dfs_build_roster(course_info, course_keys, 0, roster):
         return roster
