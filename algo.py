@@ -60,10 +60,6 @@ def dfs_build_roster(course_info, course_keys, index, roster):
 
 def build_complete_roster(course_info):
     roster = Schedule()
-    # Sorts the sections of each course in descending order of profRating so highest rated courses are looked at first
-    for course in course_info:
-        course_info[course].sort(key=lambda x: x['profRating'], reverse=True)
-        
     course_keys = list(course_info.keys())
     if dfs_build_roster(course_info, course_keys, 0, roster):
         return roster
