@@ -142,13 +142,13 @@ def get_rmp_data(prof:str):
     """
     Retrieves information from ratemyprofessors.com related to the specified professor's ratings
     @param prof : professor to retrieve information about on ratemyprofessors.com
-    @return : array of non-zero rating and non-zero rating amount on success, array of None and 0 on failure
+    @return : array of non-zero rating and non-zero rating amount on success, array of 0.0 and 0.0 on failure or if no entry can be found for the professor
     """
     try:
         prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
     except Exception as e:
         print(e)
-        return [0, 0]
+        return [0.0, 0.0]
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
     prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
     #loops through the professor ids found based on search by professsor name
@@ -163,7 +163,7 @@ def get_rmp_data(prof:str):
             while rating_html[i]!='>':
                 rating+=rating_html[i]
                 i-=1
-            rating = rating[::-1]
+            rating = float(rating[::-1])
             #retrieval of number of ratings
             num_ratings=''
             num_reviews_html = str(soup.find("div",re.compile("^RatingValue__NumRatings")))
@@ -171,11 +171,14 @@ def get_rmp_data(prof:str):
             while num_reviews_html[i]!='<':
                 num_ratings+=num_reviews_html[i]
                 i+=1
-            return [rating,num_ratings]
+            return [rating,float(num_ratings)]
         except Exception as e:
             print(e)
-            return [0,0]
-    return [0, 0]
+            return [0.0,0.0]
+    return [0.0, 0.0]
+
+def get_weighted_rating(sect_info):
+    return sect_info['profRating']*sect_info['numReviews']
 
 def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
     """
@@ -264,6 +267,8 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
                 course_info[course] = [sect_info]
             else:
                 course_info[course].append(sect_info)
+        if sort_by_prof_rating:
+            course_info[subj+course_num].sort(reverse=True,key=get_weighted_rating)
     else:
         return 'Invalid course or course not available'
     return ''
@@ -274,7 +279,7 @@ for dgpg in degr_progs:
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
 """course_info = dict()
-get_course_sections_info(course_info, "202336","CIS","3207",'')
-get_course_sections_info(course_info, "202336","CIS","2168",'')
+get_course_sections_info(course_info, "202336","CIS","3207",'',sort_by_prof_rating=True)
+get_course_sections_info(course_info, "202336","CIS","2168",'',sort_by_prof_rating=True)
 print(course_info)"""
 #print(get_rmp_rating("Sarah Stapleton"))
