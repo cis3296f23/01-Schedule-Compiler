@@ -152,9 +152,9 @@ class GUI():
 
     def add_course_to_list(self):
         """
-        Adds course selected in course listbox to the added courses listbox
+        Adds course entered in course entry to the added courses listbox
         """
-        selected_course = self.course_lstbox.get(ANCHOR)
+        selected_course = self.course_entry.get()
         if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
             self.added_courses_listbox.insert(END, selected_course)
             self.added_courses.append(selected_course)
