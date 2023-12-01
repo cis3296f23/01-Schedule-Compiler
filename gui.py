@@ -148,6 +148,7 @@ class GUI():
         selected_course = self.course_lstbox.get(ANCHOR)
         if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
             self.added_courses_listbox.insert(END, selected_course)
+            self.added_courses.append(selected_course)
 
     def remove_course_from_list(self):
         """
@@ -156,3 +157,4 @@ class GUI():
         selected_index = self.added_courses_listbox.curselection()
         if selected_index:
             self.added_courses_listbox.delete(selected_index)
+            self.added_courses.pop(selected_index[0])
