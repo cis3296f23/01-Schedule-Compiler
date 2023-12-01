@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import temple_requests
+import algo
 
 class GUI():
     def __init__(self,root:Tk):
@@ -172,4 +173,18 @@ class GUI():
             self.added_courses.pop(selected_index[0])
     
     def compile_schedules(self):
-        pass
+        for course in self.added_courses:
+            #semester hard coded, waiting on semester selection feature
+            subj, course_num, attr = '', '', ''
+            #can use regex later on to check if valid course was entered
+            if course[-1].isnumeric():
+                i = 0
+                strlen_course = len(course)
+                while i<strlen_course and course[i]!=' ':
+                    subj+=course[i]
+                    i+=1
+                if i<strlen_course and course[i]==' ':
+                    course_num+=course[i+1:]
+            else:
+                attr = course
+            #temple_requests.get_course_sections_info(self.course_info,'202403',)
