@@ -146,8 +146,8 @@ def get_rmp_data(prof:str):
     """
     try:
         prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
-    except Exception as e:
-        print(e)
+    except:
+        print("Ignore: Professor rating data not available")
         return [0.0, 0.0]
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
     prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
@@ -173,7 +173,7 @@ def get_rmp_data(prof:str):
                 i+=1
             return [rating,float(num_ratings)]
         except Exception as e:
-            print(e)
+            print(f"Ignore: Professor rating not found for id {id}")
             return [0.0,0.0]
     return [0.0, 0.0]
 
