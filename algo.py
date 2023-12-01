@@ -58,9 +58,8 @@ def dfs_build_roster(course_info, course_keys, index, roster):
 
     return False
 
-def build_complete_roster(course_info):
+def build_complete_roster(course_info, course_list):
     roster = Schedule()
-    course_keys = list(course_info.keys())
-    if dfs_build_roster(course_info, course_keys, 0, roster):
+    if dfs_build_roster(course_info, course_list, 0, roster):
         return roster
     return None

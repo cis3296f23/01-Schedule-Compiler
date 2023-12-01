@@ -248,5 +248,5 @@ class GUI():
                 attr = course
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
             temple_requests.get_course_sections_info(self.course_info,'202403',subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},True)
-        sched = algo.build_complete_roster(self.course_info)
+        sched = algo.build_complete_roster(self.course_info,self.added_courses)
         print(sched.__str__())
