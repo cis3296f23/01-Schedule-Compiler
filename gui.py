@@ -63,24 +63,23 @@ class GUI():
         self.course_lstbox.grid(row=5,column=0)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
-        #select a campus
-        ttk.Label(master, text="Select a Campus:").grid(row=6, column=0)
-        self.campus_combobox = ttk.Combobox(master, values=["Main", "Ambler", "Rome", "Japan"], state="readonly")
-        self.campus_combobox.grid(row=7, column=0)
-        self.campus_combobox.bind('<<ComboboxSelected>>', self.on_campus_selected)
-        
+        #buttons to add and remove courses
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
-        self.add_course_btn.grid(row=8,column=0)
+        self.add_course_btn.grid(row=6,column=0)
         self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
-        self.remove_course_btn.grid(row=9,column=0)
+        self.remove_course_btn.grid(row=7,column=0)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=30, height=10)
-        self.added_courses_listbox.grid(row=10,column=0)
+        self.added_courses_listbox.grid(row=8,column=0)
+        #select a campus
+        ttk.Label(master, text="Select a Campus:").grid(row=9, column=0)
+        self.campus_combobox = ttk.Combobox(master, values=["Main", "Ambler", "Rome", "Japan"], state="readonly")
+        self.campus_combobox.grid(row=10, column=0)
         #Credit entry
         ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=11,column=0)
         self.high_entry = ttk.Entry(master, width=3)
         self.high_entry.grid(row=12,column=0)
-        self.output= Text(master, width = 50, height=1)
+        self.output= Text(master, width = 50, height=10)
         self.output.grid(row=13,column=0)
 
 
@@ -165,7 +164,3 @@ class GUI():
         if selected_index:
             self.added_courses_listbox.delete(selected_index)
             self.added_courses.pop(selected_index[0])
-
-    def on_campus_selected(self, event):
-         selected_campus = self.campus_combobox.get()
-         self.__root.focus_set()
