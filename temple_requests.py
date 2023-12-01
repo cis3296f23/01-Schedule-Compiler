@@ -146,8 +146,8 @@ def get_rmp_data(prof:str):
     """
     try:
         prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
-    except Exception as e:
-        print(e)
+    except:
+        print("Ignore: Professor rating data not available")
         return [0.0, 0.0]
     #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
     prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
@@ -173,7 +173,7 @@ def get_rmp_data(prof:str):
                 i+=1
             return [rating,float(num_ratings)]
         except Exception as e:
-            print(e)
+            print(f"Ignore: Professor rating not found for id {id}")
             return [0.0,0.0]
     return [0.0, 0.0]
 
@@ -266,13 +266,13 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
                          'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
                          'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
                          'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
-            course = section['subject']+section['courseNumber']
+            course = section['subject'] + ' ' + section['courseNumber']
             if course not in course_info:
                 course_info[course] = [sect_info]
             else:
                 course_info[course].append(sect_info)
         if sort_by_prof_rating:
-            course_info[subj+course_num].sort(reverse=True,key=get_weighted_rating)
+            course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
         return 'Invalid course or course not available'
     return ''
