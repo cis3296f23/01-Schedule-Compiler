@@ -180,6 +180,7 @@ def get_rmp_data(prof:str):
 def get_weighted_rating(sect_info):
     """
     Calculates weighted rating for professor based on data in sect_info to help sort the sections for a course
+    @param sect_info : one course section's data
     """
     return sect_info['profRating']*sect_info['numReviews']
 
