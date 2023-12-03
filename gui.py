@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import temple_requests
 import algo
+from algo import Schedule
 from text_redirection import TextRedirector
 import sys,threading
 
@@ -33,6 +34,7 @@ class GUI():
         canv.create_window((int(main_frame.winfo_screenwidth()/4),0), window=second_frame, anchor = "nw")
         self.added_courses = []
         self.course_info = dict()
+        self.unavail_times = Schedule()
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
@@ -128,12 +130,8 @@ class GUI():
             selected_day = self.days_dropdown.get()
             selected_hour = self.hour_var.get()
             selected_minute = self.minute_var.get()
-            selected_am_pm = self.am_pm_var.get()
-
-            if selected_day and selected_hour and selected_minute and selected_am_pm:
-                selected_time = f"{selected_day} {selected_hour}:{selected_minute} {selected_am_pm}"
-                # Add the selected time to your data structure or display it somewhere
-                print(f"Selected Time: {selected_time}")
+            if selected_day and selected_hour and selected_minute:
+                self.unavail_times.add_timeslot(selected_day,int(str(selected_hour)+str(selected_minute)),"""Need to fill in when end time is added""")
             else:
                 print("Please select all components of the time.")
 
