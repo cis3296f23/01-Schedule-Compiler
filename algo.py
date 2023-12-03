@@ -40,27 +40,41 @@ class Schedule:
         start1, end1 = slot1
         start2, end2 = slot2
         return not (end1 <= start2 or end2 <= start1)
+    
+    def copy(self):
+        new_schedule = Schedule()
+        for day, timeslots in self.days.items():
+            for timeslot in timeslots:
+                new_schedule.add_timeslot(day, timeslot[0], timeslot[1])
+        return new_schedule
         
     def __str__(self):
         return str(self.days)
 
-def dfs_build_roster(course_info, course_keys, index, roster):
-    # If all courses have been considered end the search
+def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters):
+    # If all courses have been considered, add the current roster to valid_rosters
     if index == len(course_keys):
-        return True
+        valid_rosters.append(roster.copy())
+        return
 
     course_key = course_keys[index]
     for section in course_info[course_key]:
         if roster.add_class(section['schedule']):
-            if dfs_build_roster(course_info, course_keys, index + 1, roster):
-                return True
-            else:
-                roster.remove_class(section['schedule'])
+            dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters)
+            roster.remove_class(section['schedule'])
 
-    return False
+def build_all_valid_rosters(course_info, course_list):
+    valid_rosters = []
+    dfs_build_rosters(course_info, course_list, 0, Schedule(), valid_rosters)
+    # Sort the times in each schedule before returning
+    sorted_valid_rosters = []
 
-def build_complete_roster(course_info, course_list):
-    roster = Schedule()
-    if dfs_build_roster(course_info, course_list, 0, roster):
-        return roster
-    return None
+    for roster in valid_rosters:
+        sorted_roster = Schedule()
+        for day, timeslots in roster.days.items():
+            sorted_timeslots = sorted(timeslots)
+            for timeslot in sorted_timeslots:
+                sorted_roster.add_timeslot(day, timeslot[0], timeslot[1])
+        sorted_valid_rosters.append(sorted_roster)
+
+    return sorted_valid_rosters
