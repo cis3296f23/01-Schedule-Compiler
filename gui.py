@@ -109,12 +109,6 @@ class GUI():
         self.minute_var = StringVar()
         self.minute_dropdown = ttk.Combobox(master, textvariable=self.minute_var, values=minutes, state="readonly", width=3)
         self.minute_dropdown.grid(row=18, column=1, sticky=W)
-        # AM/PM selection
-        am_pm_values = ["AM", "PM"]
-        self.am_pm_var = StringVar()
-        self.am_pm_dropdown = ttk.Combobox(master, textvariable=self.am_pm_var, values=am_pm_values, state="readonly",
-                                      width=3)
-        self.am_pm_dropdown.grid(row=18, column=2,sticky=W)
         # Add button to add selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
         self.add_time_btn.grid(row=19, column=0)
