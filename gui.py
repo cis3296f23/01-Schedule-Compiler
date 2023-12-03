@@ -59,7 +59,7 @@ class GUI():
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = []
-        ttk.Label(master,text="Enter your course (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
+        ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
         self.course_entry=ttk.Entry(master,width=50)
         self.course_entry.grid(row=4,column=0)
         self.curr_curric_var = Variable()
