@@ -6,6 +6,8 @@ class Schedule:
             'wednesday': [],
             'thursday': [],
             'friday': [],
+            'saturday':[],
+            'sunday':[]
         }
 
     def add_timeslot(self, day, start_time, end_time):
@@ -58,8 +60,7 @@ def dfs_build_roster(course_info, course_keys, index, roster):
 
     return False
 
-def build_complete_roster(course_info, course_list):
-    roster = Schedule()
+def build_complete_roster(course_info, course_list, roster:Schedule()):
     if dfs_build_roster(course_info, course_list, 0, roster):
         return roster
     return None
