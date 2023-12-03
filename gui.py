@@ -68,8 +68,9 @@ class GUI():
         self.course_lstbox.grid(row=5,column=0)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
+        self.course_entry.bind('<Return>',self.add_course_to_list)
         #buttons to add and remove courses
-        self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
+        self.add_course_btn = ttk.Button(master, text="Add Course to List", command= lambda  : self.add_course_to_list(event=None))
         self.add_course_btn.grid(row=6,column=0)
         self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
         self.remove_course_btn.grid(row=7,column=0)
@@ -199,7 +200,7 @@ class GUI():
             curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
 
-    def add_course_to_list(self):
+    def add_course_to_list(self,event:Event):
         """
         Adds course entered in course entry to the added courses listbox
         """
