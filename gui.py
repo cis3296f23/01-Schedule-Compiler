@@ -100,7 +100,7 @@ class GUI():
         # Times selection
         ttk.Label(master, text="Select Times:").grid(row=17, column=0)
         # Hour selection
-        hours = [str(i) for i in range(1, 13)]
+        hours = [str(i) for i in range(0, 24)]
         self.hour_var = StringVar()
         self.hour_dropdown = ttk.Combobox(master, textvariable=self.hour_var, values=hours, state="readonly", width=3)
         self.hour_dropdown.grid(row=18, column=0)
