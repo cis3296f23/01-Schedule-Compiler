@@ -88,7 +88,7 @@ class GUI():
         self.high_entry.grid(row=12,column=0)
         self.output= Text(master, width = 50, height=10)
         #day and time input
-        ttk.Label(master, text="Select available days and times (leave blank if available only Monday-Friday):").grid(row=14, column=0)
+        ttk.Label(master, text="Select days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=14, column=0)
         # Days of the week selection
         ttk.Label(master, text="Select Days:").grid(row=15, column=0)
         self.selected_days_var = StringVar(value="")

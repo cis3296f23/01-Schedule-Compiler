@@ -10,6 +10,12 @@ class Schedule:
             'sunday':[]
         }
 
+    def __init__(self,unavail_day_and_times:dict):
+        """
+        Initializes schedule with unavailable days and times
+        """
+        self.days = unavail_day_and_times
+
     def add_timeslot(self, day, start_time, end_time):
         if day not in self.days:
             print(f"Invalid day: {day}")
