@@ -92,7 +92,7 @@ class GUI():
         # Days of the week selection
         ttk.Label(master, text="Select Days:").grid(row=15, column=0)
         self.selected_days_var = StringVar(value="")
-        self.days_dropdown = ttk.Combobox(master, values=['Monday','Tuesday','Wednesday','Thursday','Friday'] , state='readonly', width=20)
+        self.days_dropdown = ttk.Combobox(master, values=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] , state='readonly', width=20)
         self.days_dropdown.grid(row=16, column=0)
         # Times selection
         ttk.Label(master, text="Select Times:").grid(row=17, column=0)
