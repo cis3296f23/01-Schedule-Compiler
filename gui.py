@@ -94,28 +94,33 @@ class GUI():
         ttk.Label(master, text="Select days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=14, column=0)
         # Days of the week selection
         ttk.Label(master, text="Select Days:").grid(row=15, column=0)
-        self.selected_days_var = StringVar(value="")
-        self.days_dropdown = ttk.Combobox(master, values=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] , state='readonly', width=20)
+        self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
         self.days_dropdown.grid(row=16, column=0)
         # Times selection
         ttk.Label(master, text="Select Times:").grid(row=17, column=0)
         # Hour selection
         hours = [str(i) for i in range(0, 24)]
-        self.hour_var = StringVar()
-        self.hour_dropdown = ttk.Combobox(master, textvariable=self.hour_var, values=hours, state="readonly", width=3)
-        self.hour_dropdown.grid(row=18, column=0)
+        self.start_hour_dropdown = ttk.Combobox(master, values=hours, state="readonly", width=3)
+        self.start_hour_dropdown.grid(row=18, column=0)
+        self.end_hour_dropdown = ttk.Combobox(master, values=hours, state="readonly", width=3)
+        self.end_hour_dropdown.grid(row=19, column=0)
         # Minute selection
         minutes = [str(i) for i in range(0, 60, 5)]
-        self.minute_var = StringVar()
-        self.minute_dropdown = ttk.Combobox(master, textvariable=self.minute_var, values=minutes, state="readonly", width=3)
-        self.minute_dropdown.grid(row=18, column=1, sticky=W)
+        self.start_minute_dropdown = ttk.Combobox(master, values=minutes, state="readonly", width=3)
+        self.start_minute_dropdown.grid(row=18, column=1, sticky=W)
+        self.end_minute_dropdown = ttk.Combobox(master, values=minutes, state="readonly", width=3)
+        self.end_minute_dropdown.grid(row=19, column=1, sticky=W)
         # Add button to add selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
-        self.add_time_btn.grid(row=19, column=0)
-        
+        self.add_time_btn.grid(row=20, column=0)
+        #rmp checkbox
+        ttk.Label(master, text="Check to prioritize courses by ratemyprofessors ratings:").grid(row=21)
+        self.rmp_checkbox = Checkbutton(master)
+        self.rmp_checkbox.grid(row=22)
+        #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
-        self.compile_button.grid(row=19)
-        self.output.grid(row=21,column=0)
+        self.compile_button.grid(row=23)
+        self.output.grid(row=24,column=0)
         sys.stdout = TextRedirector(self.output,'stdout')
 
     def on_campus_selected(self, event):
@@ -123,8 +128,8 @@ class GUI():
 
     def add_selected_time(self):
             selected_day = self.days_dropdown.get()
-            selected_hour = self.hour_var.get()
-            selected_minute = self.minute_var.get()
+            selected_hour = self.start_hour_dropdown.get()
+            selected_minute = self.start_minute_dropdown.get()
             if selected_day and selected_hour and selected_minute:
                 self.unavail_times.add_timeslot(selected_day,int(str(selected_hour)+str(selected_minute)),"""Need to fill in when end time is added""")
             else:
