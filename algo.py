@@ -52,6 +52,9 @@ class Schedule:
         return str(self.days)
 
 def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters):
+    # If 5 schedules have already been created, return
+    if len(valid_rosters) >= 5:
+        return
     # If all courses have been considered, add the current roster to valid_rosters
     if index == len(course_keys):
         valid_rosters.append(roster.copy())
