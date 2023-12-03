@@ -137,18 +137,6 @@ class GUI():
             else:
                 print("Please select all components of the time.")
 
-    def add_selected_time(self):
-            selected_day = self.days_entry.get()
-            selected_hour = self.hour_var.get()
-            selected_minute = self.minute_var.get()
-            selected_am_pm = self.am_pm_var.get()
-
-            if selected_day and selected_hour and selected_minute and selected_am_pm:
-                selected_time = f"{selected_day} {selected_hour}:{selected_minute} {selected_am_pm}"
-                # Add the selected time to your data structure or display it somewhere
-                print(f"Selected Time: {selected_time}")
-            else:
-                print("Please select all components of the time.")
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
         Narrows down degree programs based on the string the user is entering
