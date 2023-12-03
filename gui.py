@@ -97,7 +97,7 @@ class GUI():
         self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
         self.days_dropdown.grid(row=16, column=0)
         # Times selection
-        ttk.Label(master, text="Select Times:").grid(row=17, column=0)
+        ttk.Label(master, text="Select Time Range:").grid(row=17, column=0)
         # Hour selection
         hours = [str(i) for i in range(0, 24)]
         self.start_hour_dropdown = ttk.Combobox(master, values=hours, state="readonly", width=3)
@@ -115,7 +115,8 @@ class GUI():
         self.add_time_btn.grid(row=20, column=0)
         #rmp checkbox
         ttk.Label(master, text="Check to prioritize courses by ratemyprofessors ratings:").grid(row=21)
-        self.rmp_checkbox = Checkbutton(master)
+        self.priorit_by_rmp_rating = BooleanVar()
+        self.rmp_checkbox = Checkbutton(master,variable=self.priorit_by_rmp_rating)
         self.rmp_checkbox.grid(row=22)
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
@@ -233,6 +234,6 @@ class GUI():
             else:
                 attr = course
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
-            temple_requests.get_course_sections_info(self.course_info,'202403',subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},True)
-        sched = algo.build_complete_roster(self.course_info,self.added_courses)
+            temple_requests.get_course_sections_info(self.course_info,'202403',subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},self.priorit_by_rmp_rating.get())
+        sched = algo.build_complete_roster(self.course_info,self.added_courses,self.unavail_times)
         print(sched.__str__())
