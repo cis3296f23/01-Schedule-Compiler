@@ -246,5 +246,17 @@ class GUI():
                 attr = course
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
             temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},self.priorit_by_rmp_rating.get())
-        sched = algo.build_complete_roster(self.course_info,self.added_courses,self.unavail_times)
-        print(sched.__str__())
+        for course, sections in self.course_info.items():
+            # Sorting the array of dictionaries in descending order by 'profRating'
+            sorted_sections = sorted(sections, key=lambda x: x.get('profRating', 0), reverse=True)
+            # Updating the course_info with sorted sections
+            self.course_info[course] = sorted_sections
+            
+        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses)
+        for i, roster in enumerate(valid_rosters):
+            print(f"Valid Roster {i + 1}:")
+            print(roster)  # Print the schedule
+            print("Sections in this Schedule:")
+            for j, section in enumerate(roster.sections):
+                print(str(j+1) + ". " + self.added_courses[i] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
+            print("\n")
