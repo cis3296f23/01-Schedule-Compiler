@@ -106,7 +106,7 @@ class GUI():
         self.days_dropdown.set('Sunday')
         self.days_dropdown.grid(row=17, column=0)
         # Times selection
-        ttk.Label(master, text="Select Time Range:").grid(row=18, column=0)
+        ttk.Label(master, text="Select Time Range (Military Time 0-23 for hours):").grid(row=18, column=0)
         # Hour selection
         hours = [str(i) for i in range(0, 24)]
         self.start_hour_dropdown = ttk.Combobox(master, values=hours, state="readonly", width=3)
@@ -122,15 +122,10 @@ class GUI():
         # Add button to add selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
         self.add_time_btn.grid(row=21, column=0)
-        #rmp checkbox
-        ttk.Label(master, text="Check to prioritize courses by ratemyprofessors ratings:").grid(row=24)
-        self.priorit_by_rmp_rating = BooleanVar()
-        self.rmp_checkbox = Checkbutton(master,variable=self.priorit_by_rmp_rating)
-        self.rmp_checkbox.grid(row=25)
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
-        self.compile_button.grid(row=26)
-        self.output.grid(row=27,column=0)
+        self.compile_button.grid(row=22)
+        self.output.grid(row=23,column=0)
         sys.stdout = TextRedirector(self.output,'stdout')
 
     def on_term_or_campus_selected(self, event):
@@ -248,7 +243,7 @@ class GUI():
                 attr = course
                 print(f"Processing course: {subj} {course_num} {attr}")
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
-            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},self.priorit_by_rmp_rating.get())
+            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{})
             
         valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses)
         print("Schedule compilation complete. Building the rosters...")

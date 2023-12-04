@@ -184,7 +184,7 @@ def get_weighted_rating(sect_info):
     """
     return sect_info['profRating'],sect_info['numReviews']
 
-def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
+def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param course_info : dictionary to store the necessary section information in for each course
@@ -193,7 +193,6 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
     @param course_num : number of the course
     @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
     @param prof_rating_cache : stores previously retrieved professor ratings for the session to reduce the number of requests made
-    @param sort_by_prof_rating : boolean indicating whether the user wants to prioritize professor rating
     @return : empty string on success, error message on failure
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
@@ -271,8 +270,7 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
                 course_info[course] = [sect_info]
             else:
                 course_info[course].append(sect_info)
-        if sort_by_prof_rating:
-            course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
+        course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
         return 'Invalid course or course not available'
     return ''
