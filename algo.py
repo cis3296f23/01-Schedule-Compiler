@@ -73,10 +73,11 @@ def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters):
         return
 
     course_key = course_keys[index]
-    for section in course_info[course_key]:
-        if roster.add_class(section['schedule'], section):  # Pass sect_info
-            dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters)
-            roster.remove_class(section['schedule'], section)  # Pass sect_info
+    if course_key in course_info:
+        for section in course_info[course_key]:
+            if roster.add_class(section['schedule'], section):  # Pass sect_info
+                dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters)
+                roster.remove_class(section['schedule'], section)  # Pass sect_info
 
 def build_all_valid_rosters(course_info, course_list):
     valid_rosters = []
