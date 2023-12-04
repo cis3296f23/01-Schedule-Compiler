@@ -230,6 +230,8 @@ class GUI():
                 print("Please select all components of the time.")
     
     def compile_schedules(self):
+        print("Start schedule compilation process...")
+
         for course in self.added_courses:
             #semester hard coded, waiting on semester selection feature
             subj, course_num, attr = '', '', ''
@@ -244,15 +246,12 @@ class GUI():
                     course_num+=course[i+1:]
             else:
                 attr = course
+                print(f"Processing course: {subj} {course_num} {attr}")
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
             temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},self.priorit_by_rmp_rating.get())
-        for course, sections in self.course_info.items():
-            # Sorting the array of dictionaries in descending order by 'profRating'
-            sorted_sections = sorted(sections, key=lambda x: x.get('profRating', 0), reverse=True)
-            # Updating the course_info with sorted sections
-            self.course_info[course] = sorted_sections
             
         valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses)
+        print("Schedule compilation complete. Building the rosters...")
         for i, roster in enumerate(valid_rosters):
             print(f"Valid Roster {i + 1}:")
             print(roster)  # Print the schedule
