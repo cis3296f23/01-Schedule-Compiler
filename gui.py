@@ -257,5 +257,5 @@ class GUI():
             print(roster)  # Print the schedule
             print("Sections in this Schedule:")
             for j, section in enumerate(roster.sections):
-                print(str(j+1) + ". " + self.added_courses[i] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
+                print(str(j+1) + ". " + self.added_courses[j] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
             print("\n")
