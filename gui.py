@@ -105,13 +105,13 @@ class GUI():
         minutes = [str(i) for i in range(0, 60, 5)]
         self.minute_var = StringVar()
         self.minute_dropdown = ttk.Combobox(master, textvariable=self.minute_var, values=minutes, state="readonly", width=3)
-        self.minute_dropdown.grid(row=18, column=1, sticky=W)
+        self.minute_dropdown.grid(row=18, column=1)
         # AM/PM selection
         am_pm_values = ["AM", "PM"]
         self.am_pm_var = StringVar()
         self.am_pm_dropdown = ttk.Combobox(master, textvariable=self.am_pm_var, values=am_pm_values, state="readonly",
                                       width=3)
-        self.am_pm_dropdown.grid(row=18, column=2,sticky=W)
+        self.am_pm_dropdown.grid(row=18, column=2)
         # Add button to add selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
         self.add_time_btn.grid(row=19, column=0)
@@ -136,6 +136,23 @@ class GUI():
                 print(f"Selected Time: {selected_time}")
             else:
                 print("Please select all components of the time.")
+
+    def add_selected_time_additional(self):
+        selected_hour_additional = self.hour_var_additional.get()
+        selected_minute_additional = self.minute_var_additional.get()
+        selected_am_pm_additional = self.am_pm_var_additional.get()
+
+        if selected_hour_additional and selected_minute_additional and selected_am_pm_additional:
+            selected_time_additional = f"{selected_hour_additional}:{selected_minute_additional} {selected_am_pm_additional}"
+            # Add the selected time to the Textbox for added times
+            self.added_times_output_additional.insert(END, f"{selected_time_additional}\n")
+        else:
+            print("Please select all components of the time.")
+
+    def remove_selected_time_additional(self):
+        selected_index_additional = self.added_times_output_additional.index(SEL_FIRST)
+        if selected_index_additional:
+            self.added_times_output_additional.delete(selected_index_additional, SEL_LAST)
 
     def add_selected_time(self):
             selected_day = self.days_entry.get()
@@ -232,6 +249,8 @@ class GUI():
             self.added_courses.pop(selected_index[0])
     
     def compile_schedules(self):
+        print("Start schedule compilation process...")
+
         for course in self.added_courses:
             #semester hard coded, waiting on semester selection feature
             subj, course_num, attr = '', '', ''
@@ -246,7 +265,10 @@ class GUI():
                     course_num+=course[i+1:]
             else:
                 attr = course
+                print(f"Processing course: {subj} {course_num} {attr}")
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
             temple_requests.get_course_sections_info(self.course_info,'202403',subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},True)
+
+        print("Schedule compilation complete. Building the roster...")
         sched = algo.build_complete_roster(self.course_info,self.added_courses)
         print(sched.__str__())
