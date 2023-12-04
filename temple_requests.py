@@ -182,7 +182,7 @@ def get_weighted_rating(sect_info):
     Calculates weighted rating for professor based on data in sect_info to help sort the sections for a course
     @param sect_info : one course section's data
     """
-    return sect_info['profRating']*sect_info['numReviews']
+    return sect_info['profRating'],sect_info['numReviews']
 
 def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
     """
