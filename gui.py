@@ -250,12 +250,12 @@ class GUI():
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
             temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},self.priorit_by_rmp_rating.get())
             
-        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses)
+        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
         print("Schedule compilation complete. Building the rosters...")
         for i, roster in enumerate(valid_rosters):
             print(f"Valid Roster {i + 1}:")
             print(roster)  # Print the schedule
-            print("Sections in this Schedule:")
+            print("\nSections in this Schedule:")
             for j, section in enumerate(roster.sections):
-                print(str(j+1) + ". " + self.added_courses[i] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
+                print(str(j+1) + ". " + self.added_courses[i] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " , # of ratings: " + str(section['numReviews']))  # Print each section's information
             print("\n")

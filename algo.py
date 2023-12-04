@@ -63,7 +63,7 @@ class Schedule:
     def __str__(self):
         return str(self.days)
 
-def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters):
+def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters, unavail_times):
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
         return
@@ -74,13 +74,25 @@ def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters):
 
     course_key = course_keys[index]
     for section in course_info[course_key]:
-        if roster.add_class(section['schedule'], section):  # Pass sect_info
-            dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters)
-            roster.remove_class(section['schedule'], section)  # Pass sect_info
+        overlaps_with_unavail = False
+        for day, new_timeslots in section['schedule'].days.items():
+            for new_timeslot in new_timeslots:
+                for unavail_slot in unavail_times.days[day]:
+                    if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
+                        overlaps_with_unavail = True
+                        break
+                if overlaps_with_unavail:
+                    break
+            if overlaps_with_unavail:
+                break
+        
+        if not overlaps_with_unavail and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
+            dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters, unavail_times)
+            roster.remove_class(section['schedule'], section)
 
-def build_all_valid_rosters(course_info, course_list):
+def build_all_valid_rosters(course_info, course_list, unavail_times):
     valid_rosters = []
-    dfs_build_rosters(course_info, course_list, 0, Schedule(), valid_rosters)
+    dfs_build_rosters(course_info, course_list, 0, Schedule(), valid_rosters, unavail_times)
     # Sort the times in each schedule before returning
     sorted_valid_rosters = []
 
