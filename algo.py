@@ -1,13 +1,13 @@
 class Schedule:
     def __init__(self):
         self.days = {
+            'sunday':[],
             'monday': [],
             'tuesday': [],
             'wednesday': [],
             'thursday': [],
             'friday': [],
-            'saturday':[],
-            'sunday':[]
+            'saturday':[]
         }
 
     def add_timeslot(self, day, start_time, end_time):
