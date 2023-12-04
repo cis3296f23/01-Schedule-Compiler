@@ -1,33 +1,42 @@
 from tkinter import *
 from tkinter import ttk
 import temple_requests
+import algo
+from text_redirection import TextRedirector
+import sys,threading
 
 class GUI():
-    def __init__(self,root):
+    def __init__(self,root:Tk):
+        """
+        Initializes the title, screen, and frames used
+        """
         self.running = True
         self.__root = root
         self.__root.title('Schedule Compiler')
+        root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         #Can pick out style later
         title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER)
         title_label.pack(padx=5,pady=5)
-        generalFrame=ttk.Frame(self.__root)
-        generalFrame.pack(fill=BOTH, expand=1, anchor=CENTER)
+        main_frame=ttk.Frame(self.__root)
+        main_frame.pack(fill=BOTH, expand=1, anchor=CENTER)
         #Scrollbar implementation
-        canv = Canvas(generalFrame)
+        canv = Canvas(main_frame)
         canv.pack(side=LEFT,fill=BOTH,expand=1,anchor=CENTER)
-        mainScrollBar = ttk.Scrollbar(generalFrame,orient=VERTICAL,command=canv.yview)
-        mainScrollBar.pack(side='right',fill=Y)
-        canv.configure(yscrollcommand=mainScrollBar.set)
+        #creating a scroll bar and binding it to the entrire screen that the user uses
+        main_scroll_bar = ttk.Scrollbar(main_frame,orient=VERTICAL,command=canv.yview)
+        main_scroll_bar.pack(side='right',fill=Y)
+        canv.configure(yscrollcommand=main_scroll_bar.set,)
         canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
-        secondFrame = Frame(canv)
-        secondFrame.pack(fill=BOTH,expand=1)
-        canv.create_window((0,0), window=secondFrame, anchor = "nw")
+        #separate frame for all the widgets
+        second_frame = Frame(canv)
+        second_frame.pack(fill=BOTH,expand=1)
+        canv.create_window((int(main_frame.winfo_screenwidth()/4),0), window=second_frame, anchor = "nw")
         self.added_courses = []
-
+        self.course_info = dict()
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
-        self.build_general_frame(secondFrame) #Second frame is basically the new root/generalFrame now
+        self.build_general_frame(second_frame)
     
     def build_general_frame(self,master):
         """
@@ -42,13 +51,9 @@ class GUI():
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = ttk.Entry(master,width=30)
         self.degr_prog_entry.grid(row=1,column=0)
-        degr_prog_scrollbar = ttk.Scrollbar(master,orient=VERTICAL)
-        degr_prog_scrollbar.grid(row = 1, column =1, sticky = N+S+W+E)
         self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
         self.degr_prog_listbox.grid(row=2,column=0)
-        self.degr_prog_listbox.configure(yscrollcommand=degr_prog_scrollbar.set)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
-        degr_prog_scrollbar.config(command=self.degr_prog_listbox.yview)
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = []
@@ -61,77 +66,76 @@ class GUI():
         self.course_lstbox.grid(row=5,column=0)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
-        self.course_retrieval_btn = ttk.Button(master,text='Add Course')
-        self.course_retrieval_btn.grid(row=6,column=0)
-        #add course to list
+        #buttons to add and remove courses
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=self.add_course_to_list)
-        self.add_course_btn.grid(row=8, column=0)
-        #remove course button
+        self.add_course_btn.grid(row=6,column=0)
         self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
-        self.remove_course_btn.grid(row=9, column=0)
-        #listbox for display added courses
+        self.remove_course_btn.grid(row=7,column=0)
+        #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=30, height=10)
-        self.added_courses_listbox.grid(row=10, column=0, columnspan=2)
-        #schedule info gui
-        self.schedule_info_btn = ttk.Button(master,text="Get schedule info")
-        self.schedule_info_btn.grid(row=11,column=0)
-        self.schedule__info_btn_output = Text(master,width=150,height=7)
-        self.schedule__info_btn_output.grid(row=12,column=0)
-        #professor name entry
-        ttk.Label(master,text="Enter a professor name:").grid(row=13,column=0)
-        self.prof_entry=ttk.Entry(master,width=30)
-        self.prof_entry.grid(row=14,column=0)
-        self.rmp_button = ttk.Button(master,text="Get RMP Rating")
-        self.rmp_button.grid(row=15,column=0)
-        self.rmp_output = Text(master,width=80,height=5)
-        self.rmp_output.grid(row=16,column=0)
-        #enter number of credits
-        ttk.Label(master, text="Enter the number of credits (min to max):").grid(row=17, column=0)
-        self.low_entry = ttk.Entry(master, width=3)
-        self.low_entry.grid(row=18, column=0, padx=2, pady=2)
-        ttk.Label(master, text="to").grid(row=19, column=0, padx=2, pady=2)
+        self.added_courses_listbox.grid(row=8,column=0)
+        #select a campus
+        ttk.Label(master, text="Select a Campus:").grid(row=9, column=0)
+        self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
+        self.campuses = list(self.campus_to_code.keys())
+        self.campus_combobox = ttk.Combobox(master, values=self.campuses, state="readonly")
+        self.campus_combobox.set('Main')
+        self.campus_combobox.grid(row=10, column=0)
+        self.campus_combobox.bind('<<ComboboxSelected>>', self.on_campus_selected)
+        #Credit entry
+        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=11,column=0)
         self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=20, column=0, padx=2, pady=2)
-        self.submit_range_btn = ttk.Button(master, text="Submit Range", command=self.submit_range)
-        self.submit_range_btn.grid(row=21, column=0)
-        self.outputt= Text(master, width = 50, height=1)
-        self.outputt.grid(row=22, column=0)
-
-        ttk.Label(master, text="Select available days and times:").grid(row=23, column=0, pady=10)
-
+        self.high_entry.grid(row=12,column=0)
+        self.output= Text(master, width = 50, height=10)
+        #day and time input
+        ttk.Label(master, text="Select available days and times:").grid(row=14, column=0)
         # Days of the week selection
-        days_label = ttk.Label(master, text="Select Days:")
-        days_label.grid(row=24, column=0, sticky=E)
+        ttk.Label(master, text="Select Days:").grid(row=15, column=0)
         self.selected_days_var = StringVar(value="")
-        self.days_entry = ttk.Entry(master, textvariable=self.selected_days_var, state='readonly', width=20)
-        self.days_entry.grid(row=24, column=1, pady=5)
-
+        self.days_dropdown = ttk.Combobox(master, values=['Monday','Tuesday','Wednesday','Thursday','Friday'] , state='readonly', width=20)
+        self.days_dropdown.grid(row=16, column=0)
         # Times selection
-        times_label = ttk.Label(master, text="Select Times:")
-        times_label.grid(row=25, column=0, sticky=E)
-
+        ttk.Label(master, text="Select Times:").grid(row=17, column=0)
         # Hour selection
         hours = [str(i) for i in range(1, 13)]
         self.hour_var = StringVar()
-        hour_dropdown = ttk.Combobox(master, textvariable=self.hour_var, values=hours, state="readonly", width=3)
-        hour_dropdown.grid(row=25, column=1, padx=5)
-
+        self.hour_dropdown = ttk.Combobox(master, textvariable=self.hour_var, values=hours, state="readonly", width=3)
+        self.hour_dropdown.grid(row=18, column=0)
         # Minute selection
         minutes = [str(i) for i in range(0, 60, 5)]
         self.minute_var = StringVar()
-        minute_dropdown = ttk.Combobox(master, textvariable=self.minute_var, values=minutes, state="readonly", width=3)
-        minute_dropdown.grid(row=25, column=2, padx=5)
-
+        self.minute_dropdown = ttk.Combobox(master, textvariable=self.minute_var, values=minutes, state="readonly", width=3)
+        self.minute_dropdown.grid(row=18, column=1, sticky=W)
         # AM/PM selection
         am_pm_values = ["AM", "PM"]
         self.am_pm_var = StringVar()
-        am_pm_dropdown = ttk.Combobox(master, textvariable=self.am_pm_var, values=am_pm_values, state="readonly",
+        self.am_pm_dropdown = ttk.Combobox(master, textvariable=self.am_pm_var, values=am_pm_values, state="readonly",
                                       width=3)
-        am_pm_dropdown.grid(row=25, column=3, padx=5)
-
+        self.am_pm_dropdown.grid(row=18, column=2,sticky=W)
         # Add button to add selected time
-        add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time)
-        add_time_btn.grid(row=25, column=4, padx=5)
+        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
+        self.add_time_btn.grid(row=19, column=0)
+        
+        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
+        self.compile_button.grid(row=19)
+        self.output.grid(row=21,column=0)
+        sys.stdout = TextRedirector(self.output,'stdout')
+
+    def on_campus_selected(self, event):
+         self.__root.focus_set()
+
+    def add_selected_time(self):
+            selected_day = self.days_dropdown.get()
+            selected_hour = self.hour_var.get()
+            selected_minute = self.minute_var.get()
+            selected_am_pm = self.am_pm_var.get()
+
+            if selected_day and selected_hour and selected_minute and selected_am_pm:
+                selected_time = f"{selected_day} {selected_hour}:{selected_minute} {selected_am_pm}"
+                # Add the selected time to your data structure or display it somewhere
+                print(f"Selected Time: {selected_time}")
+            else:
+                print("Please select all components of the time.")
 
     def add_selected_time(self):
             selected_day = self.days_entry.get()
@@ -148,38 +152,58 @@ class GUI():
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
         Narrows down degree programs based on the string the user is entering
-        @param filler : placeholder for when the function is called as an event and an extra parameter is given
+        @param event : implicit parameter entered when a function is called as part of an event bind
+        @param entry : entry to extract a string from (what the user has typed) to help narrow the search
+        @param lst : master list to narrow down choices from
+        @param lstbox : listbox/dropdown to update with narrowed down options
         """
         query = entry.get()
         if not query:
+            #if the entry box has been cleared, updates the listbox with lst
             self.update_lstbox_options(event,lst,lstbox)
         else:
             data = []
             for item in lst:
                 if query.lower() in item.lower():
                     data.append(item)
-            self.update_lstbox_options(event, data,lstbox)
+            self.update_lstbox_options(event,data,lstbox)
 
     def update_lstbox_options(self,event:Event,data:list[str],lstbox:Listbox):
         """
         Updates the listbox with the degree programs in data
+        @param event : implicit parameter entered when a function is called as part of an event bind
+        @param data : list with items to update the listbox with
+        @param lstbox : listbox to update
         """
         lstbox.delete(0, 'end')
         for item in data: 
             lstbox.insert('end', item)
         
-    def insert_selection(self,event: Event, entry:Entry,lstbox:Listbox):
+    def insert_selection(self,event: Event,entry:Entry,lstbox:Listbox):
+        """
+        Updates an entry box with the selected item in the listbox
+        @param event : implicit parameter entered when a function is called as part of an event bind
+        @param entry : entry to update
+        @param lstbox : listbox from which to use value to update entry
+        @return : index of selected item and the selected item if an item has been selected, otherwise None and None
+        """
         entry.delete(0,END)
         selec_ind = lstbox.curselection()
+        #if an item has been selected,
         if selec_ind:
             selection = lstbox.get(selec_ind)
             entry.insert(0,selection)
             return selec_ind, selection
         return None,None
 
-
     def pick_degr_prog(self,event:Event):
+        """
+        Updates degree program entry box with selected degree program and updates course listbox with the curriculum of the selected degree program
+        @param event : implicit parameter entered when a function is called as part of an event bind
+        """
+        #updates degree program entry box
         selec_ind, selection = self.insert_selection(None,self.degr_prog_entry,self.degr_prog_listbox)
+        #updates course selection listbox if a degree program was selected
         if selec_ind:
             curric = Variable()
             self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
@@ -189,23 +213,40 @@ class GUI():
             curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
 
-    def submit_range(self):
-        low_value = self.low_entry.get()
-        high_value = self.high_entry.get()
-        self.outputt.insert(END, "From " + str(low_value) + " to " + str(high_value) + " credits.")   
-
     def add_course_to_list(self):
-        selected_course = self.course_lstbox.get(ANCHOR)
+        """
+        Adds course entered in course entry to the added courses listbox
+        """
+        selected_course = self.course_entry.get()
         if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
             self.added_courses_listbox.insert(END, selected_course)
-    
-    def get_courses(self):
-        courses = temple_requests.get_curric(self.degree_prog_entry.get())
-        self.course_lstbox.delete(0, END)
-        for course in courses:
-            self.course_lstbox.insert(END, course)
+            self.added_courses.append(selected_course)
 
     def remove_course_from_list(self):
+        """
+        Removes selected course in the added courses listbox from that listbox
+        """
         selected_index = self.added_courses_listbox.curselection()
         if selected_index:
             self.added_courses_listbox.delete(selected_index)
+            self.added_courses.pop(selected_index[0])
+    
+    def compile_schedules(self):
+        for course in self.added_courses:
+            #semester hard coded, waiting on semester selection feature
+            subj, course_num, attr = '', '', ''
+            #can use regex later on to check if valid course was entered
+            if course[-1].isnumeric():
+                i = 0
+                strlen_course = len(course)
+                while i<strlen_course and course[i]!=' ':
+                    subj+=course[i]
+                    i+=1
+                if i<strlen_course and course[i]==' ':
+                    course_num+=course[i+1:]
+            else:
+                attr = course
+            #will instantiate prof_rating_cache when prof rating prioritization gui option is available
+            temple_requests.get_course_sections_info(self.course_info,'202403',subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},True)
+        sched = algo.build_complete_roster(self.course_info,self.added_courses)
+        print(sched.__str__())
