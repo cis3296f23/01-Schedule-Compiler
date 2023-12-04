@@ -99,10 +99,11 @@ class GUI():
         self.high_entry.grid(row=14,column=0)
         self.output= Text(master, width = 50, height=10)
         #day and time input
-        ttk.Label(master, text="Select days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=15, column=0)
+        ttk.Label(master, text="Add days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=15, column=0)
         # Days of the week selection
-        ttk.Label(master, text="Select Days:").grid(row=16, column=0)
+        ttk.Label(master, text="Select Day:").grid(row=16, column=0)
         self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
+        self.days_dropdown.set('Sunday')
         self.days_dropdown.grid(row=17, column=0)
         # Times selection
         ttk.Label(master, text="Select Time Range:").grid(row=18, column=0)
@@ -134,15 +135,6 @@ class GUI():
 
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
-
-    def add_selected_time(self):
-            selected_day = self.days_dropdown.get()
-            selected_hour = self.start_hour_dropdown.get()
-            selected_minute = self.start_minute_dropdown.get()
-            if selected_day and selected_hour and selected_minute:
-                self.unavail_times.add_timeslot(selected_day,int(str(selected_hour)+str(selected_minute)),"""Need to fill in when end time is added""")
-            else:
-                print("Please select all components of the time.")
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
         """
@@ -225,6 +217,17 @@ class GUI():
         if selected_index:
             self.added_courses_listbox.delete(selected_index)
             self.added_courses.pop(selected_index[0])
+
+    def add_selected_time(self):
+            selected_day = self.days_dropdown.get()
+            start_hour = self.start_hour_dropdown.get()
+            start_minute = self.start_minute_dropdown.get()
+            end_hour = self.end_hour_dropdown.get()
+            end_minute = self.end_minute_dropdown.get()
+            if selected_day and start_hour and start_minute:
+                self.unavail_times.add_timeslot(selected_day[0].lower()+selected_day[1:],int(str(start_hour)+str(start_minute)),int(str(end_hour)+str(end_minute)))
+            else:
+                print("Please select all components of the time.")
     
     def compile_schedules(self):
         for course in self.added_courses:
