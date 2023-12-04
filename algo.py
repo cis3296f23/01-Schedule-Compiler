@@ -14,6 +14,9 @@ class Schedule:
         if day not in self.days:
             print(f"Invalid day: {day}")
             return
+        if start_time>end_time:
+            print("Start time cannot be after end time.")
+            return
         
         time_slot = (start_time, end_time)
         
