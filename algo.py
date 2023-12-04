@@ -1,16 +1,21 @@
 class Schedule:
     def __init__(self):
         self.days = {
+            'sunday':[],
             'monday': [],
             'tuesday': [],
             'wednesday': [],
             'thursday': [],
             'friday': [],
+            'saturday':[]
         }
 
     def add_timeslot(self, day, start_time, end_time):
         if day not in self.days:
             print(f"Invalid day: {day}")
+            return
+        if start_time>end_time:
+            print("Start time cannot be after end time.")
             return
         
         time_slot = (start_time, end_time)
@@ -61,10 +66,20 @@ def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters):
         return
 
     course_key = course_keys[index]
+<<<<<<< HEAD
     for section in course_info[course_key]:
         if roster.add_class(section['schedule']):
             dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters)
             roster.remove_class(section['schedule'])
+=======
+    if course_key in course_info:
+        for section in course_info[course_key]:
+            if add_class(roster, section['schedule']):
+                if dfs_build_roster(course_info, course_keys, index + 1, roster):
+                    return True
+                else:
+                    remove_class(roster, section['schedule'])
+>>>>>>> reizas-dev
 
 def build_all_valid_rosters(course_info, course_list):
     valid_rosters = []
@@ -72,6 +87,7 @@ def build_all_valid_rosters(course_info, course_list):
     # Sort the times in each schedule before returning
     sorted_valid_rosters = []
 
+<<<<<<< HEAD
     for roster in valid_rosters:
         sorted_roster = Schedule()
         for day, timeslots in roster.days.items():
@@ -81,3 +97,9 @@ def build_all_valid_rosters(course_info, course_list):
         sorted_valid_rosters.append(sorted_roster)
 
     return sorted_valid_rosters
+=======
+def build_complete_roster(course_info, course_list, roster:Schedule):
+    if dfs_build_roster(course_info, course_list, 0, roster):
+        return roster
+    return None
+>>>>>>> reizas-dev
