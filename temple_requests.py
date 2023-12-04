@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+from algo import Schedule
 
 def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)->str:
     """
@@ -113,7 +114,7 @@ def get_curric(degr_prog_url:str)->list[str]:
     except Exception as e:
         print(e)
         return []
-#will likely use output globally from function called twice with "getTerms" and "get_campus" as parameters to avoid overuse
+
 def get_param_data_codes(endpoint:str)->dict:
     """
     Retrieves the code used to specify the certain parameter data in url queries such as semester and campus
@@ -135,15 +136,65 @@ def get_param_data_codes(endpoint:str)->dict:
     except Exception as e:
         print(e)
         return None
-    
-def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN'):
+
+#can retrieve other info such as "Would take again" and difficulty later on if it helps
+def get_rmp_data(prof:str):
+    """
+    Retrieves information from ratemyprofessors.com related to the specified professor's ratings
+    @param prof : professor to retrieve information about on ratemyprofessors.com
+    @return : array of non-zero rating and non-zero rating amount on success, array of 0.0 and 0.0 on failure or if no entry can be found for the professor
+    """
+    try:
+        prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
+    except:
+        print("Ignore: Professor rating data not available")
+        return [0.0, 0.0]
+    #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
+    prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
+    #loops through the professor ids found based on search by professsor name
+    for id in prof_ids:
+        try:
+            prof_rating_req = requests.get("https://www.ratemyprofessors.com/professor/" + id)
+            soup=BeautifulSoup(prof_rating_req.content,'html.parser')
+            #rating retrieval
+            rating_html = str(soup.find("div",re.compile("^RatingValue__Numerator")))
+            rating = ''
+            i = rating_html.rfind('<')-1
+            while rating_html[i]!='>':
+                rating+=rating_html[i]
+                i-=1
+            rating = float(rating[::-1])
+            #retrieval of number of ratings
+            num_ratings=''
+            num_reviews_html = str(soup.find("div",re.compile("^RatingValue__NumRatings")))
+            i=num_reviews_html.rfind('\">')+2
+            while num_reviews_html[i]!='<':
+                num_ratings+=num_reviews_html[i]
+                i+=1
+            return [rating,float(num_ratings)]
+        except Exception as e:
+            print(f"Ignore: Professor rating not found for id {id}")
+            return [0.0,0.0]
+    return [0.0, 0.0]
+
+def get_weighted_rating(sect_info):
+    """
+    Calculates weighted rating for professor based on data in sect_info to help sort the sections for a course
+    @param sect_info : one course section's data
+    """
+    return sect_info['profRating']*sect_info['numReviews']
+
+def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
     """
     Retrieves info on the sections available during the specified term for the specified class
+    @param course_info : dictionary to store the necessary section information in for each course
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
     @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
-    @return : dictionary of course section information that students can see when clicking on a course section for registration or planning on success, otherwise None on error
+    @param prof_rating_cache : stores previously retrieved professor ratings for the session to reduce the number of requests made
+    @param sort_by_prof_rating : boolean indicating whether the user wants to prioritize professor rating
+    @return : empty string on success, error message on failure
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
     session = requests.Session()
@@ -192,53 +243,47 @@ def get_course_sections_info(term_code:str,subj:str,course_num:str,attr='', camp
                 moreResults=False
             course_sect_info|=data
         except Exception as e:
-            print(e)
-            return None
-    return course_sect_info
-
-#can retrieve other info such as "Would take again" and difficulty later on if it helps
-def get_rmp_data(prof:str):
-    """
-    Retrieves information from ratemyprofessors.com related to the specified professor's ratings
-    @param prof : professor to retrieve information about on ratemyprofessors.com
-    @return : array of non-zero rating and non-zero rating amount on success, array of None and 0 on failure
-    """
-    try:
-        prof_search_req = requests.get("https://www.ratemyprofessors.com/search/professors/999?q="+'%20'.join(prof.split()))
-    except Exception as e:
-        print(e)
-        return [None, 0]
-    #credit to Nobelz in https://github.com/Nobelz/RateMyProfessorAPI for retrieval of RMP professor ids
-    prof_ids = re.findall(r'"legacyId":(\d+)', prof_search_req.text)
-    #loops through the professor ids found based on search by professsor name
-    for id in prof_ids:
-        try:
-            prof_rating_req = requests.get("https://www.ratemyprofessors.com/professor/" + id)
-            soup=BeautifulSoup(prof_rating_req.content,'html.parser')
-            #rating retrieval
-            rating_html = str(soup.find("div",re.compile("^RatingValue__Numerator")))
-            rating = ''
-            i = rating_html.rfind('<')-1
-            while rating_html[i]!='>':
-                rating+=rating_html[i]
-                i-=1
-            rating = rating[::-1]
-            #retrieval of number of ratings
-            num_ratings=''
-            num_reviews_html = str(soup.find("div",re.compile("^RatingValue__NumRatings")))
-            i=num_reviews_html.rfind('\">')+2
-            while num_reviews_html[i]!='<':
-                num_ratings+=num_reviews_html[i]
-                i+=1
-            return [rating,num_ratings]
-        except Exception as e:
-            print(e)
-            return [None,0]
+            return str(e)
+    if course_sect_info['totalCount']:
+        for section in course_sect_info['data']:
+            professor = section['faculty'][0]['displayName']
+            rmp_info = get_rmp_data(professor)
+            if professor in prof_rating_cache:
+                rmp_info = prof_rating_cache[professor]
+            else:
+                rmp_info = get_rmp_data(professor)
+                prof_rating_cache[professor]=rmp_info
+            sched = Schedule()
+            days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
+            for meeting_type in section['meetingsFaculty']:
+                meet_time_info = meeting_type['meetingTime']
+                for day in days_of_the_week:
+                    if meet_time_info[day]:
+                        sched.add_timeslot(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']))
+            #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
+            #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
+            sect_info = {'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
+                         'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
+                         'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
+                         'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
+            course = section['subject'] + ' ' + section['courseNumber']
+            if course not in course_info:
+                course_info[course] = [sect_info]
+            else:
+                course_info[course].append(sect_info)
+        if sort_by_prof_rating:
+            course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
+    else:
+        return 'Invalid course or course not available'
+    return ''
         
 """degr_progs= get_degr_progs()
 for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-#print(get_course_sections_info("202336","","",'GY'))
+"""course_info = dict()
+get_course_sections_info(course_info, "202336","CIS","3207",'',sort_by_prof_rating=True)
+get_course_sections_info(course_info, "202336","CIS","2168",'',sort_by_prof_rating=True)
+print(course_info)"""
 #print(get_rmp_rating("Sarah Stapleton"))
