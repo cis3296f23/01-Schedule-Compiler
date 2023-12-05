@@ -53,11 +53,19 @@ class GUI():
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = ttk.Entry(self.degr_prog_label,width=30)
-        self.degr_prog_entry.grid(row=0,column=0)
+        self.degr_prog_entry.grid(row=2,column=0)
+
+        '''
+        self.degr_prog_combo = ttk.Combobox(self.degr_prog_label,textvariable=self.all_degr_progs_var, values=self.all_degr_progs,width=30,mode="dropdown")
+        self.degr_prog_combo.grid(row=3, column=0)
+        self.degr_prog_combo.bind("<Keypress>",lambda event: self.narrow_search(event, entry=self.degr_prog_combo, lst=self.all_degr_progs, lstbox=self.degr_prog_combo))
+        self.degr_prog_combo.bind("<<ComboboxSelected>>",lambda event: self.insert_selection(event, entry=self.degr_prog_entry, lstbox=self.degr_prog_combo))
+        '''
         self.degr_prog_listbox = Listbox(self.degr_prog_label,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
         self.degr_prog_listbox.grid(row=1,column=0)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
-        self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
+        self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox))
+
         #course entry gui
         self.curr_curric = []
         self.entry_label= ttk.LabelFrame(master,text="Add courses") # and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):")
@@ -144,10 +152,11 @@ class GUI():
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
         self.compile_button.grid(row=6, column = 0)
-        self.output= Text(master, width = 50, height=10)
+        self.output= Text(master, width = 100, height=10)
         self.output.grid(row=7,column=0)
 
         sys.stdout = TextRedirector(self.output,'stdout')
+
 
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
@@ -270,8 +279,18 @@ class GUI():
         print("Schedule compilation complete. Building the rosters...")
         for i, roster in enumerate(valid_rosters):
             print(f"Valid Roster {i + 1}:")
+            print(type(roster))
             print(roster)  # Print the schedule
             print("\nSections in this Schedule:")
+
+            for day, timeslots in roster.days.items():
+                print("heeeeeee\n")
+                print(f"\nDay: {day}")
+                for start_time, end_time in timeslots:
+                    print(f"- {start_time} - {end_time}")
+
+
             for j, section in enumerate(roster.sections):
                 print(str(j+1) + ". " + self.added_courses[i] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " , # of ratings: " + str(section['numReviews']))  # Print each section's information
             print("\n")
+
