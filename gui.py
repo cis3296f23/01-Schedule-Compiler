@@ -230,10 +230,6 @@ class GUI():
             end_hour = self.end_hour_dropdown.get()
             end_minute = self.end_minute_dropdown.get()
             if selected_day and start_hour and start_minute and end_hour and end_minute:
-                if len(start_minute)==1:
-                    start_minute='0'+start_minute
-                if len(end_minute)==1:
-                    end_minute='0'+end_minute
                 self.unavail_times.add_timeslot(selected_day[0].lower()+selected_day[1:],int(str(start_hour)+str(start_minute)),int(str(end_hour)+str(end_minute)))
                 self.day_and_time_slots.append(selected_day + ' ' + start_hour + start_minute + '-' + end_hour + end_minute)
                 day_and_time_slots_var = Variable()
