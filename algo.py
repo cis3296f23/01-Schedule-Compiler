@@ -15,11 +15,15 @@ class Schedule:
     def add_timeslot(self, day, start_time, end_time):
         if day not in self.days:
             print(f"Invalid day: {day}")
-            return
-        
+            return False
+        if start_time>end_time:
+            print("Invalid Range: Start time must be before end time")
+            return False
+
         time_slot = (start_time, end_time)
         
         self.days[day].append(time_slot)
+        return True
     
     def remove_timeslot(self, day:str, start_time:int, end_time:int):
         """
