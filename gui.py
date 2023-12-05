@@ -245,7 +245,10 @@ class GUI():
     def remove_timeslot(self):
         timeslot = self.remove_item_from_lstbox(self.times_unavail_lstbox,self.day_and_time_slots)
         if timeslot:
-            pass
+            space_ind = timeslot.find(' ')
+            day = timeslot[0].lower()+timeslot[1:space_ind]
+            dash_ind = timeslot.find('-',space_ind+1)
+            self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
 
     def compile_schedules(self):
         print("Start schedule compilation process...")
