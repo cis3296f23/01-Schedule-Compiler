@@ -75,7 +75,7 @@ class GUI():
         #buttons to add and remove courses
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command= lambda  : self.add_course_to_list(event=None))
         self.add_course_btn.grid(row=6)
-        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
+        self.remove_course_btn = ttk.Button(master, text="Remove Course from List", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
         self.remove_course_btn.grid(row=7)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=15, height=7)
