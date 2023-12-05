@@ -95,8 +95,8 @@ class GUI():
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
         ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=13,column=0)
-        self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=14,column=0)
+        self.max_cred_entry = ttk.Entry(master, width=3)
+        self.max_cred_entry.grid(row=14,column=0)
         self.output= Text(master, width = 50, height=10)
         #day and time input
         ttk.Label(master, text="Add days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=15, column=0)
