@@ -39,6 +39,9 @@ class GUI():
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(second_frame)
+        
+    def schedule_compiler_thread(self):
+        threading.Thread(target=self.compile_schedules).start()
     
     def build_general_frame(self,master):
         """
@@ -128,7 +131,7 @@ class GUI():
         self.rmp_checkbox = Checkbutton(master,variable=self.priorit_by_rmp_rating)
         self.rmp_checkbox.grid(row=25)
         #compilation of schedules
-        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
+        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.schedule_compiler_thread)
         self.compile_button.grid(row=26)
         self.output.grid(row=27,column=0)
         sys.stdout = TextRedirector(self.output,'stdout')
