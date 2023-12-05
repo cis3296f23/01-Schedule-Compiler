@@ -39,6 +39,9 @@ class GUI():
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(second_frame)
+        
+    def schedule_compiler_thread(self):
+        threading.Thread(target=self.compile_schedules).start()
     
     def build_general_frame(self,master):
         """
@@ -106,19 +109,24 @@ class GUI():
         self.days_dropdown.set('Sunday')
         self.days_dropdown.grid(row=17)
         # Times selection
-        ttk.Label(master, text="Select Time Range (Military Time 0-23 for hours):").grid(row=18)
+        ttk.Label(master, text="Select Time Range:").grid(row=18, column=0, columnspan=2)
+        start_time_frame = ttk.Frame(master)
+        start_time_frame.grid(row=19, column=0)
+        end_time_frame = ttk.Frame(master)
+        end_time_frame.grid(row=20, column=0)
+        master.grid_columnconfigure(0, weight=1)
         # Hour selection
-        hours = [str(i) for i in range(0, 24)]
-        self.start_hour_dropdown = ttk.Combobox(master, values=hours, state="readonly", width=3)
-        self.start_hour_dropdown.grid(row=19)
-        self.end_hour_dropdown = ttk.Combobox(master, values=hours, state="readonly", width=3)
-        self.end_hour_dropdown.grid(row=20)
+        hours = [str(i).zfill(2) for i in range(0, 24)]
+        self.start_hour_dropdown = ttk.Combobox(start_time_frame, values=hours, state="readonly", width=3)
+        self.start_hour_dropdown.pack(side='left', anchor='w')
+        self.end_hour_dropdown = ttk.Combobox(end_time_frame, values=hours, state="readonly", width=3)
+        self.end_hour_dropdown.pack(side='left', anchor='w')
         # Minute selection
-        minutes = [str(i) for i in range(0, 60, 5)]
-        self.start_minute_dropdown = ttk.Combobox(master, values=minutes, state="readonly", width=3)
-        self.start_minute_dropdown.grid(row=19, column=1, sticky=W)
-        self.end_minute_dropdown = ttk.Combobox(master, values=minutes, state="readonly", width=3)
-        self.end_minute_dropdown.grid(row=20, column=1, sticky=W)
+        minutes = [str(i).zfill(2) for i in range(0, 60, 5)]
+        self.start_minute_dropdown = ttk.Combobox(start_time_frame, values=minutes, state="readonly", width=3)
+        self.start_minute_dropdown.pack(side='left', anchor='w')
+        self.end_minute_dropdown = ttk.Combobox(end_time_frame, values=minutes, state="readonly", width=3)
+        self.end_minute_dropdown.pack(side='left', anchor='w')
         # Add and remove button to add/remove selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot,width=15)
         self.add_time_btn.grid(row=21)
@@ -130,9 +138,9 @@ class GUI():
         self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=15,height=10)
         self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
-        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
-        self.compile_button.grid(row=24)
-        self.output.grid(row=25)
+        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.schedule_compiler_thread)
+        self.compile_button.grid(row=26)
+        self.output.grid(row=27,column=0)
         sys.stdout = TextRedirector(self.output,'stdout')
 
     def on_term_or_campus_selected(self, event):
@@ -267,12 +275,12 @@ class GUI():
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
             temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{})
             
-        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses)
+        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
         print("Schedule compilation complete. Building the rosters...")
         for i, roster in enumerate(valid_rosters):
             print(f"Valid Roster {i + 1}:")
             print(roster)  # Print the schedule
-            print("Sections in this Schedule:")
+            print("\nSections in this Schedule:")
             for j, section in enumerate(roster.sections):
                 print(str(j+1) + ". " + self.added_courses[j] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
             print("\n")
