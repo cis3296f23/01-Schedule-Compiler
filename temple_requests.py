@@ -245,13 +245,14 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             return str(e)
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
-            professor = section['faculty'][0]['displayName']
-            rmp_info = get_rmp_data(professor)
-            if professor in prof_rating_cache:
-                rmp_info = prof_rating_cache[professor]
-            else:
+            if len(section['faculty'])>0:
+                professor = section['faculty'][0]['displayName']
                 rmp_info = get_rmp_data(professor)
-                prof_rating_cache[professor]=rmp_info
+                if professor in prof_rating_cache:
+                    rmp_info = prof_rating_cache[professor]
+                else:
+                    rmp_info = get_rmp_data(professor)
+                    prof_rating_cache[professor]=rmp_info
             sched = Schedule()
             days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
             for meeting_type in section['meetingsFaculty']:
