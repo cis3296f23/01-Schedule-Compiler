@@ -99,7 +99,7 @@ class GUI():
         self.max_cred_entry.grid(row=14)
         self.output= Text(master, width = 50, height=10)
         #day and time input
-        ttk.Label(master, text="Add days and times you are NOT available (Do not fill in if available only Monday-Friday and not available during the weekend):").grid(row=15)
+        ttk.Label(master, text="Add days and times you are NOT available:").grid(row=15)
         # Days of the week selection
         ttk.Label(master, text="Select Day:").grid(row=16)
         self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
@@ -120,12 +120,14 @@ class GUI():
         self.end_minute_dropdown = ttk.Combobox(master, values=minutes, state="readonly", width=3)
         self.end_minute_dropdown.grid(row=20, column=1, sticky=W)
         # Add and remove button to add/remove selected time
-        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
+        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot,width=15)
         self.add_time_btn.grid(row=21)
         self.remove_time_btn = ttk.Button(master, text="Remove Time", command = None, width=15)
         self.remove_time_btn.grid(row=22)
-        day_and_time_slots_var = Variable()
-        self.times_unavail_lstbox = Listbox(master,listvariable=day_and_time_slots_var,selectmode='single',width=15,height=10)
+        self.day_and_time_slots = []
+        self.day_and_time_slots_var = Variable()
+        self.day_and_time_slots_var.set(self.day_and_time_slots)
+        self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=15,height=10)
         self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
@@ -218,14 +220,22 @@ class GUI():
             self.added_courses_listbox.delete(selected_index)
             self.added_courses.pop(selected_index[0])
 
-    def add_selected_time(self):
+    def add_timeslot(self):
             selected_day = self.days_dropdown.get()
             start_hour = self.start_hour_dropdown.get()
             start_minute = self.start_minute_dropdown.get()
             end_hour = self.end_hour_dropdown.get()
             end_minute = self.end_minute_dropdown.get()
-            if selected_day and start_hour and start_minute:
+            if selected_day and start_hour and start_minute and end_hour and end_minute:
+                if len(start_minute)==1:
+                    start_minute='0'+start_minute
+                if len(end_minute)==1:
+                    end_minute='0'+end_minute
                 self.unavail_times.add_timeslot(selected_day[0].lower()+selected_day[1:],int(str(start_hour)+str(start_minute)),int(str(end_hour)+str(end_minute)))
+                self.day_and_time_slots.append(selected_day + ' ' + start_hour + start_minute + '-' + end_hour + end_minute)
+                day_and_time_slots_var = Variable()
+                day_and_time_slots_var.set(self.day_and_time_slots)
+                self.times_unavail_lstbox.config(listvariable=day_and_time_slots_var)
             else:
                 print("Please select all components of the time.")
     
