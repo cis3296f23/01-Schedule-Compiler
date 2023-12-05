@@ -72,7 +72,7 @@ class GUI():
         #buttons to add and remove courses
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command= lambda  : self.add_course_to_list(event=None))
         self.add_course_btn.grid(row=6)
-        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
+        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
         self.remove_course_btn.grid(row=7)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=15, height=7)
@@ -122,7 +122,7 @@ class GUI():
         # Add and remove button to add/remove selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot,width=15)
         self.add_time_btn.grid(row=21)
-        self.remove_time_btn = ttk.Button(master, text="Remove Time", command = None, width=15)
+        self.remove_time_btn = ttk.Button(master, text="Remove Time", command = self.remove_timeslot, width=15)
         self.remove_time_btn.grid(row=22)
         self.day_and_time_slots = []
         self.day_and_time_slots_var = Variable()
@@ -211,14 +211,14 @@ class GUI():
             self.added_courses_listbox.insert(END, selected_course)
             self.added_courses.append(selected_course)
 
-    def remove_course_from_list(self):
+    def remove_item_from_lstbox(self,lstbox:Listbox,lst:list[str]):
         """
-        Removes selected course in the added courses listbox from that listbox
+        Removes selected course in the  listbox from that listbox and from the corresponding list
         """
-        selected_index = self.added_courses_listbox.curselection()
+        selected_index = lstbox.curselection()
         if selected_index:
-            self.added_courses_listbox.delete(selected_index)
-            self.added_courses.pop(selected_index[0])
+            lstbox.delete(selected_index)
+            lst.pop(selected_index[0])
 
     def add_timeslot(self):
             selected_day = self.days_dropdown.get()
@@ -238,6 +238,9 @@ class GUI():
                 self.times_unavail_lstbox.config(listvariable=day_and_time_slots_var)
             else:
                 print("Please select all components of the time.")
+    
+    def remove_timeslot(self):
+        self.remove_item_from_lstbox(self.times_unavail_lstbox,self.day_and_time_slots)
     
     def compile_schedules(self):
         print("Start schedule compilation process...")
