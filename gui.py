@@ -49,92 +49,94 @@ class GUI():
         @param master : root application
         """
         #degree program selection gui
-        ttk.Label(master,text='Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):').grid(row=0,column=0)
+        ttk.Label(master,text='Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):').grid(row=0)
         self.degr_prog_to_url = temple_requests.get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = ttk.Entry(master,width=30)
-        self.degr_prog_entry.grid(row=1,column=0)
+        self.degr_prog_entry.grid(row=1)
         self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
-        self.degr_prog_listbox.grid(row=2,column=0)
+        self.degr_prog_listbox.grid(row=2)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = []
-        ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3,column=0)
+        ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3)
         self.course_entry=ttk.Entry(master,width=50)
-        self.course_entry.grid(row=4,column=0)
+        self.course_entry.grid(row=4)
         self.curr_curric_var = Variable()
         self.curr_curric_var.set(self.curr_curric)
         self.course_lstbox = Listbox(master,selectmode='single',listvariable=self.curr_curric_var,width=15,height=10)
-        self.course_lstbox.grid(row=5,column=0)
+        self.course_lstbox.grid(row=5)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
         #buttons to add and remove courses
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command= lambda  : self.add_course_to_list(event=None))
-        self.add_course_btn.grid(row=6,column=0)
-        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command=self.remove_course_from_list)
-        self.remove_course_btn.grid(row=7,column=0)
+        self.add_course_btn.grid(row=6)
+        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
+        self.remove_course_btn.grid(row=7)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=15, height=7)
-        self.added_courses_listbox.grid(row=8,column=0)
+        self.added_courses_listbox.grid(row=8)
         #semester selection
-        ttk.Label(master, text="Select the semester to create a schedule for:").grid(row=9, column=0)
+        ttk.Label(master, text="Select the semester to create a schedule for:").grid(row=9)
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(master, values=self.terms, state="readonly")
         self.term_combobox.set(self.terms[1])
-        self.term_combobox.grid(row=10, column=0)
+        self.term_combobox.grid(row=10)
         self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus
-        ttk.Label(master, text="Select a Campus:").grid(row=11, column=0)
+        ttk.Label(master, text="Select a Campus:").grid(row=11)
         self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
         self.campuses = list(self.campus_to_code.keys())
         self.campus_combobox = ttk.Combobox(master, values=self.campuses, state="readonly")
         self.campus_combobox.set('Main')
-        self.campus_combobox.grid(row=12, column=0)
+        self.campus_combobox.grid(row=12)
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
-        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=13,column=0)
-        self.high_entry = ttk.Entry(master, width=3)
-        self.high_entry.grid(row=14,column=0)
+        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=13)
+        self.max_cred_entry = ttk.Entry(master, width=3)
+        self.max_cred_entry.grid(row=14)
         self.output= Text(master, width = 50, height=10)
         #day and time input
-        ttk.Label(master, text="Add days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=15, column=0)
+        ttk.Label(master, text="Add days and times you are NOT available:").grid(row=15)
         # Days of the week selection
-        ttk.Label(master, text="Select Day:").grid(row=16, column=0)
+        ttk.Label(master, text="Select Day:").grid(row=16)
         self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
         self.days_dropdown.set('Sunday')
-        self.days_dropdown.grid(row=17, column=0)
+        self.days_dropdown.grid(row=17)
         # Times selection
         ttk.Label(master, text="Select Time Range:").grid(row=18, column=0, columnspan=2)
-        start_time = ttk.Frame(master)
-        start_time.grid(row=19, column=0)
-        end_time = ttk.Frame(master)
-        end_time.grid(row=20, column=0)
+        start_time_frame = ttk.Frame(master)
+        start_time_frame.grid(row=19, column=0)
+        end_time_frame = ttk.Frame(master)
+        end_time_frame.grid(row=20, column=0)
         master.grid_columnconfigure(0, weight=1)
         # Hour selection
         hours = [str(i).zfill(2) for i in range(0, 24)]
-        self.start_hour_dropdown = ttk.Combobox(start_time, values=hours, state="readonly", width=3)
+        self.start_hour_dropdown = ttk.Combobox(start_time_frame, values=hours, state="readonly", width=3)
         self.start_hour_dropdown.pack(side='left', anchor='w')
-        self.end_hour_dropdown = ttk.Combobox(end_time, values=hours, state="readonly", width=3)
+        self.end_hour_dropdown = ttk.Combobox(end_time_frame, values=hours, state="readonly", width=3)
         self.end_hour_dropdown.pack(side='left', anchor='w')
         # Minute selection
         minutes = [str(i).zfill(2) for i in range(0, 60, 5)]
-        self.start_minute_dropdown = ttk.Combobox(start_time, values=minutes, state="readonly", width=3)
+        self.start_minute_dropdown = ttk.Combobox(start_time_frame, values=minutes, state="readonly", width=3)
         self.start_minute_dropdown.pack(side='left', anchor='w')
-        self.end_minute_dropdown = ttk.Combobox(end_time, values=minutes, state="readonly", width=3)
+        self.end_minute_dropdown = ttk.Combobox(end_time_frame, values=minutes, state="readonly", width=3)
         self.end_minute_dropdown.pack(side='left', anchor='w')
-        # Add button to add selected time
-        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
-        self.add_time_btn.grid(row=21, column=0)
-        #rmp checkbox
-        ttk.Label(master, text="Check to prioritize courses by ratemyprofessors ratings:").grid(row=24)
-        self.priorit_by_rmp_rating = BooleanVar()
-        self.rmp_checkbox = Checkbutton(master,variable=self.priorit_by_rmp_rating)
-        self.rmp_checkbox.grid(row=25)
+        # Add and remove button to add/remove selected time
+        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot,width=15)
+        self.add_time_btn.grid(row=21)
+        self.remove_time_btn = ttk.Button(master, text="Remove Time", command = self.remove_timeslot, width=15)
+        self.remove_time_btn.grid(row=22)
+        self.day_and_time_slots = []
+        self.day_and_time_slots_var = Variable()
+        self.day_and_time_slots_var.set(self.day_and_time_slots)
+        self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=30,height=10)
+        self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.schedule_compiler_thread)
         self.compile_button.grid(row=26)
@@ -217,26 +219,41 @@ class GUI():
             self.added_courses_listbox.insert(END, selected_course)
             self.added_courses.append(selected_course)
 
-    def remove_course_from_list(self):
+    def remove_item_from_lstbox(self,lstbox:Listbox,lst:list[str]):
         """
-        Removes selected course in the added courses listbox from that listbox
+        Removes selected course in the  listbox from that listbox and from the corresponding list
+        @return item : removed data
         """
-        selected_index = self.added_courses_listbox.curselection()
+        selected_index = lstbox.curselection()
         if selected_index:
-            self.added_courses_listbox.delete(selected_index)
-            self.added_courses.pop(selected_index[0])
+            item = lstbox.get(selected_index)
+            lstbox.delete(selected_index)
+            lst.pop(selected_index[0])
+            return item
 
-    def add_selected_time(self):
+    def add_timeslot(self):
             selected_day = self.days_dropdown.get()
             start_hour = self.start_hour_dropdown.get()
             start_minute = self.start_minute_dropdown.get()
             end_hour = self.end_hour_dropdown.get()
             end_minute = self.end_minute_dropdown.get()
-            if selected_day and start_hour and start_minute:
+            if selected_day and start_hour and start_minute and end_hour and end_minute:
                 self.unavail_times.add_timeslot(selected_day[0].lower()+selected_day[1:],int(str(start_hour)+str(start_minute)),int(str(end_hour)+str(end_minute)))
+                self.day_and_time_slots.append(selected_day + ' ' + start_hour + start_minute + '-' + end_hour + end_minute)
+                day_and_time_slots_var = Variable()
+                day_and_time_slots_var.set(self.day_and_time_slots)
+                self.times_unavail_lstbox.config(listvariable=day_and_time_slots_var)
             else:
                 print("Please select all components of the time.")
     
+    def remove_timeslot(self):
+        timeslot = self.remove_item_from_lstbox(self.times_unavail_lstbox,self.day_and_time_slots)
+        if timeslot:
+            space_ind = timeslot.find(' ')
+            day = timeslot[0].lower()+timeslot[1:space_ind]
+            dash_ind = timeslot.find('-',space_ind+1)
+            self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
+
     def compile_schedules(self):
         print("Start schedule compilation process...")
 
@@ -256,14 +273,18 @@ class GUI():
                 attr = course
                 print(f"Processing course: {subj} {course_num} {attr}")
             #will instantiate prof_rating_cache when prof rating prioritization gui option is available
-            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{},self.priorit_by_rmp_rating.get())
+            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{})
             
         valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
-        print("Schedule compilation complete. Building the rosters...")
-        for i, roster in enumerate(valid_rosters):
-            print(f"Valid Roster {i + 1}:")
-            print(roster)  # Print the schedule
-            print("\nSections in this Schedule:")
-            for j, section in enumerate(roster.sections):
-                print(str(j+1) + ". " + self.added_courses[i] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " , # of ratings: " + str(section['numReviews']))  # Print each section's information
-            print("\n")
+        if valid_rosters:
+            print("Schedule compilation complete. Building the rosters...")
+            for i, roster in enumerate(valid_rosters):
+                print(f"Valid Roster {i + 1}:")
+                print(roster)  # Print the schedule
+                print("\nSections in this Schedule:")
+                for j, section in enumerate(roster.sections):
+                    print(str(j+1) + ". " + self.added_courses[j] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
+                print("\n")
+        else:
+            print("No valid rosters.")
+        print('Done')

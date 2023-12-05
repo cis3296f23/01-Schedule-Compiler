@@ -1,11 +1,13 @@
 class Schedule:
     def __init__(self):
         self.days = {
+            'sunday':[],
             'monday': [],
             'tuesday': [],
             'wednesday': [],
             'thursday': [],
             'friday': [],
+            'saturday':[]
         }
         
         self.sections = []
@@ -18,6 +20,15 @@ class Schedule:
         time_slot = (start_time, end_time)
         
         self.days[day].append(time_slot)
+    
+    def remove_timeslot(self, day:str, start_time:int, end_time:int):
+        """
+        Remove method for external modules to call
+        @param day : day of the week in all lowercase for the timeslot
+        @param start_time
+        @param end_time
+        """
+        self.days[day].remove((start_time,end_time))
         
     def add_class(self, class_meetingTimes, sect_info):
         for day, new_timeslots in class_meetingTimes.days.items():
@@ -66,6 +77,8 @@ class Schedule:
 def dfs_build_rosters(course_info, course_keys, index, roster, valid_rosters, unavail_times):
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
+        return
+    if len(course_info)==0:
         return
     # If all courses have been considered, add the current roster to valid_rosters
     if index == len(course_keys):
