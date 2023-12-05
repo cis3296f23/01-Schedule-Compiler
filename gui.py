@@ -99,7 +99,7 @@ class GUI():
         self.max_cred_entry.grid(row=14)
         self.output= Text(master, width = 50, height=10)
         #day and time input
-        ttk.Label(master, text="Add days and times you are NOT available (leave blank if available only Monday-Friday and not available during the weekend):").grid(row=15)
+        ttk.Label(master, text="Add days and times you are NOT available (Do not fill in if available only Monday-Friday and not available during the weekend):").grid(row=15)
         # Days of the week selection
         ttk.Label(master, text="Select Day:").grid(row=16)
         self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
@@ -122,12 +122,15 @@ class GUI():
         # Add and remove button to add/remove selected time
         self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_selected_time,width=15)
         self.add_time_btn.grid(row=21)
-        self.remove_time_btn = ttk.Button(master, text="Add Time", command = None, width=15)
+        self.remove_time_btn = ttk.Button(master, text="Remove Time", command = None, width=15)
         self.remove_time_btn.grid(row=22)
+        day_and_time_slots_var = Variable()
+        self.times_unavail_lstbox = Listbox(master,listvariable=day_and_time_slots_var,selectmode='single',width=15,height=10)
+        self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.compile_schedules)
-        self.compile_button.grid(row=22)
-        self.output.grid(row=23)
+        self.compile_button.grid(row=24)
+        self.output.grid(row=25)
         sys.stdout = TextRedirector(self.output,'stdout')
 
     def on_term_or_campus_selected(self, event):
