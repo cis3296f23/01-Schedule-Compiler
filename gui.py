@@ -214,11 +214,14 @@ class GUI():
     def remove_item_from_lstbox(self,lstbox:Listbox,lst:list[str]):
         """
         Removes selected course in the  listbox from that listbox and from the corresponding list
+        @return item : removed data
         """
         selected_index = lstbox.curselection()
         if selected_index:
+            item = lstbox.get(selected_index)
             lstbox.delete(selected_index)
             lst.pop(selected_index[0])
+            return item
 
     def add_timeslot(self):
             selected_day = self.days_dropdown.get()
@@ -240,8 +243,10 @@ class GUI():
                 print("Please select all components of the time.")
     
     def remove_timeslot(self):
-        self.remove_item_from_lstbox(self.times_unavail_lstbox,self.day_and_time_slots)
-    
+        timeslot = self.remove_item_from_lstbox(self.times_unavail_lstbox,self.day_and_time_slots)
+        if timeslot:
+            pass
+
     def compile_schedules(self):
         print("Start schedule compilation process...")
 
