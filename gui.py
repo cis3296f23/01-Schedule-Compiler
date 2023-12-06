@@ -34,14 +34,12 @@ class GUI():
         canv.create_window((int(main_frame.winfo_screenwidth()/4),0), window=second_frame, anchor = "nw")
         self.added_courses = []
         self.course_info = dict()
+        self.prof_rating_cache = dict()
         self.unavail_times = Schedule()
         self.__style = ttk.Style()
         self.__style.configure('TButton', font = ('Courier',12,'bold'))
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.build_general_frame(second_frame)
-        
-    def schedule_compiler_thread(self):
-        threading.Thread(target=self.compile_schedules).start()
     
     def build_general_frame(self,master):
         """
@@ -75,7 +73,7 @@ class GUI():
         #buttons to add and remove courses
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command= lambda  : self.add_course_to_list(event=None))
         self.add_course_btn.grid(row=6)
-        self.remove_course_btn = ttk.Button(master, text="Remove Course from list", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
+        self.remove_course_btn = ttk.Button(master, text="Remove Course from List", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
         self.remove_course_btn.grid(row=7)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=15, height=7)
@@ -135,7 +133,7 @@ class GUI():
         self.day_and_time_slots = []
         self.day_and_time_slots_var = Variable()
         self.day_and_time_slots_var.set(self.day_and_time_slots)
-        self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=15,height=10)
+        self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=30,height=10)
         self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
         self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.schedule_compiler_thread)
@@ -221,8 +219,8 @@ class GUI():
 
     def remove_item_from_lstbox(self,lstbox:Listbox,lst:list[str]):
         """
-        Removes selected course in the  listbox from that listbox and from the corresponding list
-        @return item : removed data
+        Removes selected course in the listbox from that listbox and from the corresponding list
+        @return item : removed data, None if no item was selected for removal
         """
         selected_index = lstbox.curselection()
         if selected_index:
@@ -232,21 +230,27 @@ class GUI():
             return item
 
     def add_timeslot(self):
-            selected_day = self.days_dropdown.get()
-            start_hour = self.start_hour_dropdown.get()
-            start_minute = self.start_minute_dropdown.get()
-            end_hour = self.end_hour_dropdown.get()
-            end_minute = self.end_minute_dropdown.get()
-            if selected_day and start_hour and start_minute and end_hour and end_minute:
-                self.unavail_times.add_timeslot(selected_day[0].lower()+selected_day[1:],int(str(start_hour)+str(start_minute)),int(str(end_hour)+str(end_minute)))
+        """
+        Adds the unavailable time entered to the corresponding listbox and to self.unavail_times
+        """
+        selected_day = self.days_dropdown.get()
+        start_hour = self.start_hour_dropdown.get()
+        start_minute = self.start_minute_dropdown.get()
+        end_hour = self.end_hour_dropdown.get()
+        end_minute = self.end_minute_dropdown.get()
+        if selected_day and start_hour and start_minute and end_hour and end_minute:
+            if self.unavail_times.add_timeslot(selected_day[0].lower()+selected_day[1:],int(str(start_hour)+str(start_minute)),int(str(end_hour)+str(end_minute))):
                 self.day_and_time_slots.append(selected_day + ' ' + start_hour + start_minute + '-' + end_hour + end_minute)
                 day_and_time_slots_var = Variable()
                 day_and_time_slots_var.set(self.day_and_time_slots)
                 self.times_unavail_lstbox.config(listvariable=day_and_time_slots_var)
-            else:
-                print("Please select all components of the time.")
+        else:
+            print("Please select all components of the time.")
     
     def remove_timeslot(self):
+        """
+        Removes the timeslot selected in the listbox from the listbox and from self.unavail_times
+        """
         timeslot = self.remove_item_from_lstbox(self.times_unavail_lstbox,self.day_and_time_slots)
         if timeslot:
             space_ind = timeslot.find(' ')
@@ -255,12 +259,13 @@ class GUI():
             self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
 
     def compile_schedules(self):
+        """
+        Collects information for the user's desired courses for the selected semester and 
+        """
         print("Start schedule compilation process...")
-
         for course in self.added_courses:
-            #semester hard coded, waiting on semester selection feature
             subj, course_num, attr = '', '', ''
-            #can use regex later on to check if valid course was entered
+            #can use regex later on to check if valid course was entered (Two letters for attribute or Subj course_num format)
             if course[-1].isnumeric():
                 i = 0
                 strlen_course = len(course)
@@ -271,11 +276,16 @@ class GUI():
                     course_num+=course[i+1:]
             else:
                 attr = course
-                print(f"Processing course: {subj} {course_num} {attr}")
-            #will instantiate prof_rating_cache when prof rating prioritization gui option is available
-            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],{})
-            
+            print(f"Processing course: {subj} {course_num} {attr}")
+            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
         valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
         print("Schedule compilation complete. Building the rosters...")
         multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,)).start()
         multiprocessing.Process(target=algo.display_course_info, args=(valid_rosters,)).start()
+
+
+    def schedule_compiler_thread(self):
+        """
+        Creates thread for schedule compilation to be executed separate from the GUI
+        """
+        threading.Thread(target=self.compile_schedules).start()
