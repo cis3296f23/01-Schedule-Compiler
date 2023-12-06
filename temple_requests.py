@@ -114,7 +114,7 @@ def get_curric(degr_prog_url:str)->list[str]:
     except Exception as e:
         print(e)
         return []
-#will likely use output from this globally from function called twice with "getTerms" and "get_campus" as parameters to avoid overuse
+
 def get_param_data_codes(endpoint:str)->dict:
     """
     Retrieves the code used to specify the certain parameter data in url queries such as semester and campus
@@ -182,9 +182,9 @@ def get_weighted_rating(sect_info):
     Calculates weighted rating for professor based on data in sect_info to help sort the sections for a course
     @param sect_info : one course section's data
     """
-    return sect_info['profRating']*sect_info['numReviews']
+    return sect_info['profRating'],sect_info['numReviews']
 
-def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
+def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param course_info : dictionary to store the necessary section information in for each course
@@ -193,7 +193,6 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
     @param course_num : number of the course
     @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
     @param prof_rating_cache : stores previously retrieved professor ratings for the session to reduce the number of requests made
-    @param sort_by_prof_rating : boolean indicating whether the user wants to prioritize professor rating
     @return : empty string on success, error message on failure
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
@@ -246,13 +245,14 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             return str(e)
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
-            professor = section['faculty'][0]['displayName']
-            rmp_info = get_rmp_data(professor)
-            if professor in prof_rating_cache:
-                rmp_info = prof_rating_cache[professor]
-            else:
+            if len(section['faculty'])>0:
+                professor = section['faculty'][0]['displayName']
                 rmp_info = get_rmp_data(professor)
-                prof_rating_cache[professor]=rmp_info
+                if professor in prof_rating_cache:
+                    rmp_info = prof_rating_cache[professor]
+                else:
+                    rmp_info = get_rmp_data(professor)
+                    prof_rating_cache[professor]=rmp_info
             sched = Schedule()
             days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
             for meeting_type in section['meetingsFaculty']:
@@ -271,8 +271,7 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
                 course_info[course] = [sect_info]
             else:
                 course_info[course].append(sect_info)
-        if sort_by_prof_rating:
-            course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
+        course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
         return 'Invalid course or course not available'
     return ''
