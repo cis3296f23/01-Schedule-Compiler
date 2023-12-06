@@ -16,9 +16,12 @@ class GUI():
         self.__root.title('Schedule Compiler')
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         #Can pick out style later
-        title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER)
+        title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER, background='#3498db', foreground='white')
         title_label.pack(padx=5,pady=5)
-        main_frame=ttk.Frame(self.__root)
+
+        self.__style.configure('TFrame', background='#ecf0f1')
+
+        main_frame=ttk.Frame(self.__root, style='TFrame')
         main_frame.pack(fill=BOTH, expand=1, anchor=CENTER)
         #Scrollbar implementation
         canv = Canvas(main_frame)
@@ -37,8 +40,12 @@ class GUI():
         self.prof_rating_cache = dict()
         self.unavail_times = Schedule()
         self.__style = ttk.Style()
-        self.__style.configure('TButton', font = ('Courier',12,'bold'))
+        self.__style.configure('Green.TButton', font=('Helvetica', 12, 'bold'), background='#2ecc71',
+                               foreground='white')
+        self.__style.configure('Red.TButton', font=('Helvetica', 12, 'bold'), background='#e74c3c', foreground='white')
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
+        self.__style.configure('Custom.TLabel', font=('Arial', 12), foreground='#34495e')
+
         self.build_general_frame(second_frame)
     
     def build_general_frame(self,master):
@@ -71,9 +78,13 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
         #buttons to add and remove courses
-        self.add_course_btn = ttk.Button(master, text="Add Course to List", command= lambda  : self.add_course_to_list(event=None))
+        self.add_course_btn = ttk.Button(master, text="Add Course to List", command=lambda: self.add_course_to_list(event=None),
+            style='Green.TButton')
         self.add_course_btn.grid(row=6)
-        self.remove_course_btn = ttk.Button(master, text="Remove Course from List", command= lambda : self.remove_item_from_lstbox(lstbox=self.added_courses_listbox,lst=self.added_courses))
+        self.remove_course_btn = ttk.Button(
+            master, text="Remove Course from List",
+            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses),
+            style='Red.TButton')
         self.remove_course_btn.grid(row=7)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=15, height=7)
@@ -126,9 +137,9 @@ class GUI():
         self.end_minute_dropdown = ttk.Combobox(end_time_frame, values=minutes, state="readonly", width=3)
         self.end_minute_dropdown.pack(side='left', anchor='w')
         # Add and remove button to add/remove selected time
-        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot,width=15)
+        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot, width=15, style='Green.TButton')
         self.add_time_btn.grid(row=21)
-        self.remove_time_btn = ttk.Button(master, text="Remove Time", command = self.remove_timeslot, width=15)
+        self.remove_time_btn = ttk.Button(master, text="Remove Time", command=self.remove_timeslot, width=15, style='Red.TButton')
         self.remove_time_btn.grid(row=22)
         self.day_and_time_slots = []
         self.day_and_time_slots_var = Variable()
@@ -136,8 +147,11 @@ class GUI():
         self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=30,height=10)
         self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
-        self.compile_button = ttk.Button(master,width=28,text="Compile Possible Schedules",command=self.schedule_compiler_thread)
+        self.compile_button = ttk.Button(
+            master, width=28, text="Compile Possible Schedules", command=self.schedule_compiler_thread,
+            style='Green.TButton')
         self.compile_button.grid(row=26)
+        self.output = Text(master, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0)
         sys.stdout = TextRedirector(self.output,'stdout')
 
