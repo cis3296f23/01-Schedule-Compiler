@@ -4,7 +4,7 @@ import temple_requests
 import algo
 from algo import Schedule
 from text_redirection import TextRedirector
-import sys,threading
+import sys,threading, multiprocessing
 
 class GUI():
     def __init__(self,root:Tk):
@@ -279,18 +279,10 @@ class GUI():
             print(f"Processing course: {subj} {course_num} {attr}")
             temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
         valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
-        if valid_rosters:
-            print("Schedule compilation complete. Building the rosters...")
-            for i, roster in enumerate(valid_rosters):
-                print(f"Valid Roster {i + 1}:")
-                print(roster)  # Print the schedule
-                print("\nSections in this Schedule:")
-                for j, section in enumerate(roster.sections):
-                    print(str(j+1) + ". " + self.added_courses[j] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
-                print("\n")
-        else:
-            print("No valid rosters.")
-        print('Done')
+        print("Schedule compilation complete. Building the rosters...")
+        multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,)).start()
+        multiprocessing.Process(target=algo.display_course_info, args=(valid_rosters,)).start()
+
 
     def schedule_compiler_thread(self):
         """
