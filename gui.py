@@ -5,6 +5,7 @@ import algo
 from algo import Schedule
 from text_redirection import TextRedirector
 import sys,threading, multiprocessing
+import customtkinter
 
 class GUI():
     def __init__(self,root:Tk):
@@ -81,10 +82,9 @@ class GUI():
         self.add_course_btn = ttk.Button(master, text="Add Course to List", command=lambda: self.add_course_to_list(event=None),
             style='Green.TButton')
         self.add_course_btn.grid(row=6)
-        self.remove_course_btn = ttk.Button(
+        self.remove_course_btn = customtkinter.CTkButton(
             master, text="Remove Course from List",
-            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses),
-            style='Red.TButton')
+            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses))
         self.remove_course_btn.grid(row=7)
         #listbox for displaying added courses
         self.added_courses_listbox = Listbox(master, width=15, height=7)
