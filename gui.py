@@ -18,7 +18,7 @@ class GUI():
         #Can pick out style later
         title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER, background='#3498db', foreground='white')
         title_label.pack(padx=5,pady=5)
-
+        self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
 
         main_frame=ttk.Frame(self.__root, style='TFrame')
@@ -41,8 +41,8 @@ class GUI():
         self.unavail_times = Schedule()
         self.__style = ttk.Style()
         self.__style.configure('Green.TButton', font=('Helvetica', 12, 'bold'), background='#2ecc71',
-                               foreground='white')
-        self.__style.configure('Red.TButton', font=('Helvetica', 12, 'bold'), background='#e74c3c', foreground='white')
+                               foreground='black')
+        self.__style.configure('Red.TButton', font=('Helvetica', 12, 'bold'), background='#e74c3c', foreground='black')
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.__style.configure('Custom.TLabel', font=('Arial', 12), foreground='#34495e')
 
