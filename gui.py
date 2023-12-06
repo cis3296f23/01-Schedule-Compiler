@@ -15,6 +15,7 @@ class GUI():
         self.running = True
         self.__root = root
         self.__root.title('Schedule Compiler')
+        customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         #Can pick out style later
         title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER, background='#3498db', foreground='white')
@@ -22,7 +23,7 @@ class GUI():
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
 
-        main_frame=ttk.Frame(self.__root, style='TFrame')
+        main_frame=customtkinter.CTkFrame(self.__root, fg_color = 'transparent')
         main_frame.pack(fill=BOTH, expand=1, anchor=CENTER)
         #Scrollbar implementation
         canv = Canvas(main_frame)
@@ -33,7 +34,7 @@ class GUI():
         canv.configure(yscrollcommand=main_scroll_bar.set,)
         canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
         #separate frame for all the widgets
-        second_frame = Frame(canv)
+        second_frame = customtkinter.CTkFrame(canv,  fg_color = 'transparent')
         second_frame.pack(fill=BOTH,expand=1)
         canv.create_window((int(main_frame.winfo_screenwidth()/4),0), window=second_frame, anchor = "nw")
         self.added_courses = []
@@ -60,7 +61,7 @@ class GUI():
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
-        self.degr_prog_entry = ttk.Entry(master,width=30)
+        self.degr_prog_entry = customtkinter.CTkEntry(master,width=250)
         self.degr_prog_entry.grid(row=1)
         self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
         self.degr_prog_listbox.grid(row=2)
@@ -69,7 +70,7 @@ class GUI():
         #course entry gui
         self.curr_curric = []
         ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3)
-        self.course_entry=ttk.Entry(master,width=50)
+        self.course_entry=customtkinter.CTkEntry(master,width=250)
         self.course_entry.grid(row=4)
         self.curr_curric_var = Variable()
         self.curr_curric_var.set(self.curr_curric)
@@ -79,8 +80,7 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
         #buttons to add and remove courses
-        self.add_course_btn = ttk.Button(master, text="Add Course to List", command=lambda: self.add_course_to_list(event=None),
-            style='Green.TButton')
+        self.add_course_btn = customtkinter.CTkButton(master, text="Add Course to List", command=lambda: self.add_course_to_list(event=None),)
         self.add_course_btn.grid(row=6)
         self.remove_course_btn = customtkinter.CTkButton(
             master, text="Remove Course from List",
@@ -107,7 +107,7 @@ class GUI():
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
         ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=13)
-        self.max_cred_entry = ttk.Entry(master, width=3)
+        self.max_cred_entry = customtkinter.CTkEntry(master, width=50)
         self.max_cred_entry.grid(row=14)
         self.output= Text(master, width = 50, height=10)
         #day and time input
@@ -137,9 +137,9 @@ class GUI():
         self.end_minute_dropdown = ttk.Combobox(end_time_frame, values=minutes, state="readonly", width=3)
         self.end_minute_dropdown.pack(side='left', anchor='w')
         # Add and remove button to add/remove selected time
-        self.add_time_btn = ttk.Button(master, text="Add Time", command=self.add_timeslot, width=15, style='Green.TButton')
+        self.add_time_btn = customtkinter.CTkButton(master, text="Add Time", command=self.add_timeslot, width=15)
         self.add_time_btn.grid(row=21)
-        self.remove_time_btn = ttk.Button(master, text="Remove Time", command=self.remove_timeslot, width=15, style='Red.TButton')
+        self.remove_time_btn = customtkinter.CTkButton(master, text="Remove Time", command=self.remove_timeslot, width=15)
         self.remove_time_btn.grid(row=22)
         self.day_and_time_slots = []
         self.day_and_time_slots_var = Variable()
@@ -147,9 +147,8 @@ class GUI():
         self.times_unavail_lstbox = Listbox(master,listvariable=self.day_and_time_slots_var,selectmode='single',width=30,height=10)
         self.times_unavail_lstbox.grid(row=23)
         #compilation of schedules
-        self.compile_button = ttk.Button(
-            master, width=28, text="Compile Possible Schedules", command=self.schedule_compiler_thread,
-            style='Green.TButton')
+        self.compile_button =customtkinter.CTkButton(
+            master, width=28, text="Compile Possible Schedules", command=self.schedule_compiler_thread)
         self.compile_button.grid(row=26)
         self.output = Text(master, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0)
