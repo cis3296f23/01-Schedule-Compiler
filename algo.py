@@ -126,21 +126,22 @@ def dfs_build_rosters(course_info:dict, course_keys:list[str], index:int, roster
         return
 
     course_key = course_keys[index]
-    for section in course_info[course_key]:
-        overlaps_with_unavail = False
-        for day, new_timeslots in section['schedule'].days.items():
-            for new_timeslot in new_timeslots:
-                for unavail_slot in unavail_times.days[day]:
-                    if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
-                        overlaps_with_unavail = True
+    if course_key in course_info:
+        for section in course_info[course_key]:
+            overlaps_with_unavail = False
+            for day, new_timeslots in section['schedule'].days.items():
+                for new_timeslot in new_timeslots:
+                    for unavail_slot in unavail_times.days[day]:
+                        if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
+                            overlaps_with_unavail = True
+                            break
+                    if overlaps_with_unavail:
                         break
                 if overlaps_with_unavail:
                     break
-            if overlaps_with_unavail:
-                break
-        if not overlaps_with_unavail and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
-            dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters, unavail_times)
-            roster.remove_class(section['schedule'], section)
+            if not overlaps_with_unavail and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
+                dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters, unavail_times)
+                roster.remove_class(section['schedule'], section)
 
 def build_all_valid_rosters(course_info:dict, course_list:list[str], unavail_times:Schedule):
     """
@@ -264,6 +265,7 @@ def plot_schedule(schedules):
     btn_next.on_clicked(next_schedule)
 
     # Initial draw
+
     draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
 
     plt.show()
