@@ -265,8 +265,8 @@ def plot_schedule(schedules):
     btn_next.on_clicked(next_schedule)
 
     # Initial draw
-
-    draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
+    if current_schedule and current_schedule[0]<len(schedule_data_list):
+        draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
 
     plt.show()
 
