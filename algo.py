@@ -249,14 +249,16 @@ def plot_schedule(schedules):
 
     # Navigation functions
     def next_schedule(event):
-        current_schedule[0] = (current_schedule[0] + 1) % len(schedules)
-        draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
-        plt.draw()
+        if schedules:
+            current_schedule[0] = (current_schedule[0] + 1) % len(schedules)
+            draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
+            plt.draw()
 
     def prev_schedule(event):
-        current_schedule[0] = (current_schedule[0] - 1) % len(schedules)
-        draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
-        plt.draw()
+        if schedules:
+            current_schedule[0] = (current_schedule[0] - 1) % len(schedules)
+            draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
+            plt.draw()
 
     # Adding buttons for navigation
     ax_prev_button = plt.axes([0.76, 0.025, 0.1, 0.04])
