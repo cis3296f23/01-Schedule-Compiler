@@ -273,11 +273,11 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
                          'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
                          'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
             course = section['subject'] + ' ' + section['courseNumber']
-            if course not in course_info:
-                course_info[course] = [sect_info]
+            if course not in course_info[term]:
+                course_info[term][course] = [sect_info]
             else:
-                course_info[course].append(sect_info)
-        course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
+                course_info[term][course].append(sect_info)
+        course_info[term][subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
         return 'Invalid course or course not available'
     return ''
@@ -288,7 +288,7 @@ for dgpg in degr_progs:
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
 """course_info = dict()
-get_course_sections_info(course_info, "202336","CIS","3207",'',sort_by_prof_rating=True)
-get_course_sections_info(course_info, "202336","CIS","2168",'',sort_by_prof_rating=True)
+get_course_sections_info(course_info,"2023 Fall", "202336","CIS","3207",'')
+get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
 print(course_info)"""
 #print(get_rmp_rating("Sarah Stapleton"))
