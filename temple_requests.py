@@ -184,10 +184,11 @@ def get_weighted_rating(sect_info):
     """
     return sect_info['profRating'],sect_info['numReviews']
 
-def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
+def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
-    @param course_info : dictionary to store the necessary section information in for each course
+    @param course_info : dictionary to store the necessary section information in for each course in the format {"Fall 2023":{"Subj_course_num1":[{},{}], "Subj_course_num2":[{}]} ,"Spring 2024":{"Subj_course_num3":[{},{}], "Subj_course_num4":[{}]}}
+    @param term : semester desired (i.e. Spring 2024)
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
@@ -196,6 +197,11 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
     @return : empty string on success, error message on failure
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
+    #if course info for the desired semester is already course_info, return
+    if term in course_info and (subj + ' ' + course_num in course_info[term] or attr in course_info[term]):
+        return
+    elif term not in course_info:
+        course_info[term]=dict()
     session = requests.Session()
     # term and txt_term need to be the same
     SEARCH_REQ = {
@@ -245,7 +251,7 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             return str(e)
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
-            if len(section['faculty'])>0:
+            if section['faculty']:
                 professor = section['faculty'][0]['displayName']
                 rmp_info = get_rmp_data(professor)
                 if professor in prof_rating_cache:
