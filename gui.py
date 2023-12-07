@@ -277,6 +277,7 @@ class GUI():
         Collects information for the user's desired courses for the selected semester and 
         """
         print("Start schedule compilation process...")
+        term = self.term_combobox.get()
         for course in self.added_courses:
             subj, course_num, attr = '', '', ''
             #can use regex later on to check if valid course was entered (Two letters for attribute or Subj course_num format)
@@ -291,7 +292,6 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            term = self.term_combobox.get()
             temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
         valid_rosters = algo.build_all_valid_rosters(self.course_info,term,self.added_courses, self.unavail_times)
         if valid_rosters:
