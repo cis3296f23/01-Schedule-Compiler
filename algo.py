@@ -119,7 +119,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     if len(valid_rosters) >= 5:
         return
     #if no courses were inputted, return
-    if course_info[term]:
+    if not course_info[term]:
         return
     # If all courses have been considered, add the current roster to valid_rosters
     if index == len(course_keys):
