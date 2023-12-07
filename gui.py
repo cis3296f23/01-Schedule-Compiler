@@ -44,7 +44,7 @@ class GUI():
                                foreground='black')
         self.__style.configure('Red.TButton', font=('Helvetica', 12, 'bold'), background='#e74c3c', foreground='black')
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
-        self.__style.configure('Custom.TLabel', font=('Arial', 12), foreground='#34495e')
+        self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
 
         self.build_general_frame(second_frame)
     
@@ -54,7 +54,7 @@ class GUI():
         @param master : root application
         """
         #degree program selection gui
-        ttk.Label(master,text='Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):').grid(row=0)
+        ttk.Label(master,text='Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):',style='Custom.TLabel').grid(row=0)
         self.degr_prog_to_url = temple_requests.get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
@@ -67,7 +67,7 @@ class GUI():
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
         #course entry gui
         self.curr_curric = []
-        ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3)
+        ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):",style='Custom.TLabel').grid(row=3)
         self.course_entry=ttk.Entry(master,width=50)
         self.course_entry.grid(row=4)
         self.curr_curric_var = Variable()
@@ -90,7 +90,7 @@ class GUI():
         self.added_courses_listbox = Listbox(master, width=15, height=7)
         self.added_courses_listbox.grid(row=8)
         #semester selection
-        ttk.Label(master, text="Select the semester to create a schedule for:").grid(row=9)
+        ttk.Label(master, text="Select the semester to create a schedule for:",style='Custom.TLabel').grid(row=9)
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(master, values=self.terms, state="readonly")
@@ -98,7 +98,7 @@ class GUI():
         self.term_combobox.grid(row=10)
         self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus
-        ttk.Label(master, text="Select a Campus:").grid(row=11)
+        ttk.Label(master, text="Select a Campus:",style='Custom.TLabel').grid(row=11)
         self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
         self.campuses = list(self.campus_to_code.keys())
         self.campus_combobox = ttk.Combobox(master, values=self.campuses, state="readonly")
@@ -106,19 +106,19 @@ class GUI():
         self.campus_combobox.grid(row=12)
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
-        ttk.Label(master, text="Enter the maximum number of credits you would like to take:").grid(row=13)
+        ttk.Label(master, text="Enter the maximum number of credits you would like to take:",style='Custom.TLabel').grid(row=13)
         self.max_cred_entry = ttk.Entry(master, width=3)
         self.max_cred_entry.grid(row=14)
         self.output= Text(master, width = 50, height=10)
         #day and time input
-        ttk.Label(master, text="Add days and times you are NOT available:").grid(row=15)
+        ttk.Label(master, text="Add days and times you are NOT available:",style='Custom.TLabel').grid(row=15)
         # Days of the week selection
-        ttk.Label(master, text="Select Day:").grid(row=16)
+        ttk.Label(master, text="Select Day:",style='Custom.TLabel').grid(row=16)
         self.days_dropdown = ttk.Combobox(master, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
         self.days_dropdown.set('Sunday')
         self.days_dropdown.grid(row=17)
         # Times selection
-        ttk.Label(master, text="Select Time Range:").grid(row=18, column=0, columnspan=2)
+        ttk.Label(master, text="Select Time Range:",style='Custom.TLabel').grid(row=18, column=0, columnspan=2)
         start_time_frame = ttk.Frame(master)
         start_time_frame.grid(row=19, column=0)
         end_time_frame = ttk.Frame(master)
