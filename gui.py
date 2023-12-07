@@ -56,39 +56,93 @@ class GUI():
         @param master : root application
         """
         #degree program selection gui
-        ttk.Label(master,text='Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):').grid(row=0)
+        self.prog_frame = customtkinter.CTkFrame(
+            master=master,
+            border_width=2,
+            corner_radius=10,
+            fg_color = "transparent",
+        )
+        self.prog_frame.grid(row=0, padx = 10, pady=10)
+
+        self_prog_label = customtkinter.CTkLabel(self.prog_frame,
+                                    text='Degree Program',
+                                    bg_color = "transparent")
+        self_prog_label.grid(row=0, padx=5, pady=5)
         self.degr_prog_to_url = temple_requests.get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
-        self.degr_prog_entry = customtkinter.CTkEntry(master,width=250)
+        self.degr_prog_entry = customtkinter.CTkEntry(self.prog_frame,
+                                                      width=250,
+                                                      placeholder_text="Enter Degree Program")
         self.degr_prog_entry.grid(row=1)
-        self.degr_prog_listbox = Listbox(master,listvariable=self.all_degr_progs_var,selectmode='single',width=70,height=10)
-        self.degr_prog_listbox.grid(row=2)
+        self.degr_prog_listbox = Listbox(self.prog_frame,
+                                         listvariable=self.all_degr_progs_var,
+                                         selectmode='single',
+                                         width=70,
+                                         height=10)
+        self.degr_prog_listbox.grid(row=2, pady=15, padx=15)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
-        self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox)) 
+        self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox))
+
+        self.courses_f = customtkinter.CTkFrame(master=master,
+                                                    border_width=0,
+                                                    corner_radius=10,
+                                                    fg_color = "transparent",
+                                                    )
+        self.courses_f.grid(row=1, padx=15,pady=15)
         #course entry gui
+        self.courses_frame = customtkinter.CTkFrame(master=self.courses_f,
+                                                    border_width=2,
+                                                    corner_radius=10,
+                                                    fg_color = "transparent",
+                                                    width = 150,
+                                                    height = 100
+                                                    )
+        self.courses_frame.grid(row=0, column=0, padx=5, pady=5)
         self.curr_curric = []
-        ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3)
-        self.course_entry=customtkinter.CTkEntry(master,width=250)
-        self.course_entry.grid(row=4)
+        self.courses_label = ttk.Label(self.courses_frame,text="Available Courses")
+        self.courses_label.grid(row=0, column=0, padx = 15, pady=15)
+        # Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3)
+        self.course_entry=customtkinter.CTkEntry(self.courses_frame,
+                                                 width=250,
+                                                 placeholder_text= "Enter Course Name"
+                                                 )
+        self.course_entry.grid(row=1, padx=15, pady=5)
         self.curr_curric_var = Variable()
         self.curr_curric_var.set(self.curr_curric)
-        self.course_lstbox = Listbox(master,selectmode='single',listvariable=self.curr_curric_var,width=15,height=10)
-        self.course_lstbox.grid(row=5)
+        self.course_lstbox = Listbox(self.courses_frame,
+                                     selectmode='single',
+                                     listvariable=self.curr_curric_var,
+                                     width=15,
+                                     height=10)
+        self.course_lstbox.grid(row=2, padx=10, pady=10)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
-        #buttons to add and remove courses
-        self.add_course_btn = customtkinter.CTkButton(master, text="Add Course to List", command=lambda: self.add_course_to_list(event=None),)
-        self.add_course_btn.grid(row=6)
-        self.remove_course_btn = customtkinter.CTkButton(
-            master, text="Remove Course from List",
-            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses))
-        self.remove_course_btn.grid(row=7)
+        #buttons to add
+        self.add_course_btn = customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None),)
+        self.add_course_btn.grid(row=3, padx=10,pady=10)
+
+        #Selected Courses
+        self.remove_frame = customtkinter.CTkFrame(master=self.courses_f,
+                                                   border_width=2,
+                                                   corner_radius=10,
+                                                   fg_color = "transparent",
+                                                   width = 100,
+                                                   height=150)
+        self.remove_frame.grid(row=0, column=1, padx=50, pady=5)
         #listbox for displaying added courses
-        self.added_courses_listbox = Listbox(master, width=15, height=7)
-        self.added_courses_listbox.grid(row=8)
+        self.remove_label = customtkinter.CTkLabel(self.remove_frame, text="Selected Courses", fg_color="transparent")
+        self.remove_label.grid(row=0, padx=10, pady=10)
+        self.added_courses_listbox = Listbox(self.remove_frame, width=15, height=10)
+        self.added_courses_listbox.grid(row=1, padx=10)
+        #Remove
+        self.remove_course_btn = customtkinter.CTkButton(
+            self.remove_frame, text="Remove Course",
+            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses))
+        self.remove_course_btn.grid(row=3, padx=10, pady=10)
+
         #semester selection
         ttk.Label(master, text="Select the semester to create a schedule for:").grid(row=9)
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
@@ -118,11 +172,15 @@ class GUI():
         self.days_dropdown.set('Sunday')
         self.days_dropdown.grid(row=17)
         # Times selection
-        ttk.Label(master, text="Select Time Range:").grid(row=18, column=0, columnspan=2)
-        start_time_frame = ttk.Frame(master)
-        start_time_frame.grid(row=19, column=0)
-        end_time_frame = ttk.Frame(master)
-        end_time_frame.grid(row=20, column=0)
+        self.time_frame = customtkinter.CTkFrame(master=master)
+        self.time_frame.grid(row=18, padx=5, pady=5)
+        #self.time_label = ttk.Label(master, text="Select Time Range:").grid(row=18, column=0, columnspan=2)
+        self.time_label = customtkinter.CTkLabel(self.time_frame, text="Select Time Range", fg_color="transparent")
+        self.time_label .grid(row=0, padx=10,pady=10)
+        start_time_frame = ttk.Frame(self.time_frame)
+        start_time_frame.grid(row=1, column=0)
+        end_time_frame = ttk.Frame(self.time_frame)
+        end_time_frame.grid(row=2, column=0)
         master.grid_columnconfigure(0, weight=1)
         # Hour selection
         hours = [str(i).zfill(2) for i in range(0, 24)]
