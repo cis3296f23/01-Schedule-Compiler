@@ -20,7 +20,23 @@ class CanvasPanel(wx.Panel):
         self.Fit()
 
     def draw(self):
-        t = arange(0.0, 3.0, 0.01)
-        s = sin(2 * pi * t)
+        def military_time_to_number(military_time):
+            # Makes sure the time is in a 4-digit format
+            military_time_str = f"{military_time:04d}"  
+            hour = int(military_time_str[:2])
+            minute = int(military_time_str[2:])
+            return hour + minute / 60
+        
+        def decimal_time_to_standard(decimal_time):
+            hours = int(decimal_time)
+            minutes = int(round((decimal_time - hours) * 60 / 5) * 5)  # Round to nearest 5 because converting back resulting in error with exact
+            if minutes == 60:  # Handle the case where rounding leads to 60 minutes
+                hours += 1
+                minutes = 0
+            return f'{hours:02d}:{minutes:02d}'
+    
         for i in range(0,5):
-            self.axes[i].plot(t, s)
+            self.axes[i].clear()
+            self.axes[i].invert_yaxis()
+            labels_added = set()
+            self.axes[i].plot()
