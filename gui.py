@@ -291,8 +291,9 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
-        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
+            term = self.term_combobox.get()
+            temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
+        valid_rosters = algo.build_all_valid_rosters(self.course_info,term,self.added_courses, self.unavail_times)
         if valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
             for i, roster in enumerate(valid_rosters):
