@@ -182,21 +182,26 @@ def get_weighted_rating(sect_info):
     Calculates weighted rating for professor based on data in sect_info to help sort the sections for a course
     @param sect_info : one course section's data
     """
-    return sect_info['profRating']*sect_info['numReviews']
+    return sect_info['profRating'],sect_info['numReviews']
 
-def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}, sort_by_prof_rating = False):
+def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
-    @param course_info : dictionary to store the necessary section information in for each course
+    @param course_info : dictionary to store the necessary section information in for each course in the format {"Fall 2023":{"Subj_course_num1":[{},{}], "Subj_course_num2":[{}]} ,"Spring 2024":{"Subj_course_num3":[{},{}], "Subj_course_num4":[{}]}}
+    @param term : semester desired (i.e. Spring 2024)
     @param term_code : number representing the semester
     @param subject : abbreviation representing the subject of the course
     @param course_num : number of the course
     @param attr : 2 character string attribute of the course (i.e. GU for Gened United States or GY for Intellectual Heritage I)
     @param prof_rating_cache : stores previously retrieved professor ratings for the session to reduce the number of requests made
-    @param sort_by_prof_rating : boolean indicating whether the user wants to prioritize professor rating
     @return : empty string on success, error message on failure
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
+    #if course info for the desired semester is already course_info, return
+    if term in course_info and (subj + ' ' + course_num in course_info[term] or attr in course_info[term]):
+        return
+    elif term not in course_info:
+        course_info[term]=dict()
     session = requests.Session()
     # term and txt_term need to be the same
     SEARCH_REQ = {
@@ -246,13 +251,14 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
             return str(e)
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
-            professor = section['faculty'][0]['displayName']
-            rmp_info = get_rmp_data(professor)
-            if professor in prof_rating_cache:
-                rmp_info = prof_rating_cache[professor]
-            else:
+            if section['faculty']:
+                professor = section['faculty'][0]['displayName']
                 rmp_info = get_rmp_data(professor)
-                prof_rating_cache[professor]=rmp_info
+                if professor in prof_rating_cache:
+                    rmp_info = prof_rating_cache[professor]
+                else:
+                    rmp_info = get_rmp_data(professor)
+                    prof_rating_cache[professor]=rmp_info
             sched = Schedule()
             days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
             for meeting_type in section['meetingsFaculty']:
@@ -262,17 +268,16 @@ def get_course_sections_info(course_info : dict, term_code:str,subj:str,course_n
                         sched.add_timeslot(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']))
             #term included in case we later want to cache info to reduce time used on requests for another schedule generation in the same session
             #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
-            sect_info = {'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
+            sect_info = {'name':section['subject'] + ' ' + section['courseNumber'],'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
                          'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
                          'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
                          'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
             course = section['subject'] + ' ' + section['courseNumber']
-            if course not in course_info:
-                course_info[course] = [sect_info]
+            if course not in course_info[term]:
+                course_info[term][course] = [sect_info]
             else:
-                course_info[course].append(sect_info)
-        if sort_by_prof_rating:
-            course_info[subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
+                course_info[term][course].append(sect_info)
+        course_info[term][subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
         return 'Invalid course or course not available'
     return ''
@@ -283,7 +288,7 @@ for dgpg in degr_progs:
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
 """course_info = dict()
-get_course_sections_info(course_info, "202336","CIS","3207",'',sort_by_prof_rating=True)
-get_course_sections_info(course_info, "202336","CIS","2168",'',sort_by_prof_rating=True)
+get_course_sections_info(course_info,"2023 Fall", "202336","CIS","3207",'')
+get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
 print(course_info)"""
 #print(get_rmp_rating("Sarah Stapleton"))
