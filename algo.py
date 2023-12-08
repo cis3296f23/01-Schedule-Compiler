@@ -1,7 +1,5 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from matplotlib.widgets import Button
+from plotting import CanvasPanel
+import wx
 
 class Schedule:
     def __init__(self):
@@ -104,10 +102,11 @@ class Schedule:
     def __str__(self):
         return str(self.days)
 
-def dfs_build_rosters(course_info:dict, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule):
+def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule):
     """
     Goes through the sections of the course in course_info indicated by index of course_keys via depth-first search for courses that fit the schedule as is and without overlapping with unavail_times
     @param course_info : information about the sections of each course
+    @param term : semester to build roster for
     @param course_keys : list of course names in the format "subject course_number"
     @param index : index of course_keys to use
     @param roster : temporary Schedule variable to store potential roster to add and remove from
@@ -118,7 +117,7 @@ def dfs_build_rosters(course_info:dict, course_keys:list[str], index:int, roster
     if len(valid_rosters) >= 5:
         return
     #if no courses were inputted, return
-    if len(course_info)==0:
+    if term not in course_info or not course_info[term]:
         return
     # If all courses have been considered, add the current roster to valid_rosters
     if index == len(course_keys):
@@ -126,32 +125,34 @@ def dfs_build_rosters(course_info:dict, course_keys:list[str], index:int, roster
         return
 
     course_key = course_keys[index]
-    for section in course_info[course_key]:
-        overlaps_with_unavail = False
-        for day, new_timeslots in section['schedule'].days.items():
-            for new_timeslot in new_timeslots:
-                for unavail_slot in unavail_times.days[day]:
-                    if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
-                        overlaps_with_unavail = True
+    if course_key in course_info[term]:
+        for section in course_info[term][course_key]:
+            overlaps_with_unavail = False
+            for day, new_timeslots in section['schedule'].days.items():
+                for new_timeslot in new_timeslots:
+                    for unavail_slot in unavail_times.days[day]:
+                        if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
+                            overlaps_with_unavail = True
+                            break
+                    if overlaps_with_unavail:
                         break
                 if overlaps_with_unavail:
                     break
-            if overlaps_with_unavail:
-                break
-        if not overlaps_with_unavail and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
-            dfs_build_rosters(course_info, course_keys, index + 1, roster, valid_rosters, unavail_times)
-            roster.remove_class(section['schedule'], section)
+            if not overlaps_with_unavail and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
+                dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times)
+                roster.remove_class(section['schedule'], section)
 
-def build_all_valid_rosters(course_info:dict, course_list:list[str], unavail_times:Schedule):
+def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule):
     """
     Calls the depth_first_search with valid_rosters as a parameter to update and then sorts the schedule by timeslot for each day and adds the section info
     @param course_info : dictionary of course mapped to the info for each section of it
+    @param term : semester to build roster for
     @param course_list : list of str courses in "subject course_number" format
     @param unavail_times : schedule with times that the user is not available
     @return sorted_valid_rosters : a list of at most 5 potential schedules with sorted timeslots and section information
     """
     valid_rosters = []
-    dfs_build_rosters(course_info, course_list, 0, Schedule(), valid_rosters, unavail_times)
+    dfs_build_rosters(course_info, term, course_list, 0, Schedule(), valid_rosters, unavail_times)
     # Sort the times in each schedule before returning
     sorted_valid_rosters = []
 
@@ -167,7 +168,16 @@ def build_all_valid_rosters(course_info:dict, course_list:list[str], unavail_tim
     return sorted_valid_rosters
 
 def plot_schedule(schedules):
-    # Function to convert military time to a number (930 to 9.5)
+    """
+    Creates the window for the wx app which displays the roster graphs and calls functions to draw and show the graphs
+    """
+    app = wx.App()
+    fr = wx.Frame(None, title='Potential Rosters')
+    panel = CanvasPanel(fr)
+    panel.draw(schedules)
+    fr.Show()
+    app.MainLoop()
+    """# Function to convert military time to a number (930 to 9.5)
     def military_time_to_number(military_time):
         military_time_str = f"{military_time:04d}"  # Makes sure the time is in a 4-digit format
         hour = int(military_time_str[:2])
@@ -186,11 +196,9 @@ def plot_schedule(schedules):
         def decimal_time_to_standard(decimal_time):
             hours = int(decimal_time)
             minutes = int(round((decimal_time - hours) * 60 / 5) * 5)  # Round to nearest 5 because converting back resulting in error with exact
-
             if minutes == 60:  # Handle the case where rounding leads to 60 minutes
                 hours += 1
                 minutes = 0
-
             return f'{hours:02d}:{minutes:02d}'
 
         for _, row in schedule_data.iterrows():
@@ -246,14 +254,16 @@ def plot_schedule(schedules):
 
     # Navigation functions
     def next_schedule(event):
-        current_schedule[0] = (current_schedule[0] + 1) % len(schedules)
-        draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
-        plt.draw()
+        if schedules:
+            current_schedule[0] = (current_schedule[0] + 1) % len(schedules)
+            draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
+            plt.draw()
 
     def prev_schedule(event):
-        current_schedule[0] = (current_schedule[0] - 1) % len(schedules)
-        draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
-        plt.draw()
+        if schedules:
+            current_schedule[0] = (current_schedule[0] - 1) % len(schedules)
+            draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
+            plt.draw()
 
     # Adding buttons for navigation
     ax_prev_button = plt.axes([0.76, 0.025, 0.1, 0.04])
@@ -264,24 +274,26 @@ def plot_schedule(schedules):
     btn_next.on_clicked(next_schedule)
 
     # Initial draw
-    draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
+    if current_schedule and current_schedule[0]<len(schedule_data_list):
+        draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
 
-    plt.show()
+    plt.show()"""
 
+#can use this function to print to output textbox
 def display_course_info(schedules):
-        # Create a figure for course information
-        info_fig, info_ax = plt.subplots(figsize=(8, len(schedules) * 2))
-        info_ax.axis('off')  # Turn off axis
+    """# Create a figure for course information
+    info_fig, info_ax = plt.subplots(figsize=(8, len(schedules) * 2))
+    info_ax.axis('off')  # Turn off axis
 
-        course_info_str = ''
-        for i, my_schedule in enumerate(schedules):
-            course_info_str += f'Chart {i + 1}\n'
-            for section in my_schedule.sections:
-                course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
-                course_info_str += course_info
-            course_info_str += '\n'
+    course_info_str = ''
+    for i, my_schedule in enumerate(schedules):
+        course_info_str += f'Chart {i + 1}\n'
+        for section in my_schedule.sections:
+            course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
+            course_info_str += course_info
+        course_info_str += '\n'
 
-        # Displaying Course Info
-        info_ax.text(0, 1, course_info_str, ha="left", va="top", fontsize=9, wrap=True)
+    # Displaying Course Info
+    info_ax.text(0, 1, course_info_str, ha="left", va="top", fontsize=9, wrap=True)
 
-        plt.show()
+    plt.show()"""

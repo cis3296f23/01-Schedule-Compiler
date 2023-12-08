@@ -47,7 +47,7 @@ class GUI():
                                foreground='black')
         self.__style.configure('Red.TButton', font=('Helvetica', 12, 'bold'), background='#e74c3c', foreground='black')
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
-        self.__style.configure('Custom.TLabel', font=('Arial', 12), foreground='#34495e')
+        self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
 
         self.build_general_frame(second_frame)
     
@@ -107,13 +107,7 @@ class GUI():
                                                     )
         self.courses_frame.grid(row=0, column=0, padx=10, pady=10)
         self.curr_curric = []
-        #self.courses_label = ttk.Label(self.courses_frame,text="Available Courses",font=self.custom_font)
-        #self.courses_label.grid(row=0, column=0, padx = 15, pady=15)
-        # Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):").grid(row=3)
-        self.course_entry=customtkinter.CTkEntry(self.courses_frame,
-                                                 width=150,
-                                                 placeholder_text= "Enter Course Number",
-                                                 )
+        self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.curr_curric_var = Variable()
         self.curr_curric_var.set(self.curr_curric)
@@ -266,7 +260,6 @@ class GUI():
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
 
-
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
 
@@ -389,6 +382,7 @@ class GUI():
         Collects information for the user's desired courses for the selected semester and 
         """
         print("Start schedule compilation process...")
+        term = self.term_combobox.get()
         for course in self.added_courses:
             subj, course_num, attr = '', '', ''
             #can use regex later on to check if valid course was entered (Two letters for attribute or Subj course_num format)
@@ -403,9 +397,20 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            temple_requests.get_course_sections_info(self.course_info,self.term_to_code[self.term_combobox.get()],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
-        valid_rosters = algo.build_all_valid_rosters(self.course_info,self.added_courses, self.unavail_times)
-        print("Schedule compilation complete. Building the rosters...")
+            temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
+        valid_rosters = algo.build_all_valid_rosters(self.course_info,term,self.added_courses, self.unavail_times)
+        if valid_rosters:
+            print("Schedule compilation complete. Building the rosters...")
+            for i, roster in enumerate(valid_rosters):
+                print(f"Valid Roster {i + 1}:")
+                print(roster)  # Print the schedule
+                print("\nSections in this Schedule:")
+                for j, section in enumerate(roster.sections):
+                    print(str(j+1) + ". " + self.added_courses[j] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
+                print("\n")
+        else:
+            print("No valid rosters.")
+        print('Done')
         multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,)).start()
         multiprocessing.Process(target=algo.display_course_info, args=(valid_rosters,)).start()
 
