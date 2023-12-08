@@ -1,7 +1,5 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from matplotlib.widgets import Button
+from plotting import CanvasPanel
+import wx
 
 class Schedule:
     def __init__(self):
@@ -119,7 +117,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     if len(valid_rosters) >= 5:
         return
     #if no courses were inputted, return
-    if not course_info[term]:
+    if term not in course_info or not course_info[term]:
         return
     # If all courses have been considered, add the current roster to valid_rosters
     if index == len(course_keys):
@@ -170,7 +168,16 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
     return sorted_valid_rosters
 
 def plot_schedule(schedules):
-    # Function to convert military time to a number (930 to 9.5)
+    """
+    Creates the window for the wx app which displays the roster graphs and calls functions to draw and show the graphs
+    """
+    app = wx.App()
+    fr = wx.Frame(None, title='Potential Rosters')
+    panel = CanvasPanel(fr)
+    panel.draw(schedules)
+    fr.Show()
+    app.MainLoop()
+    """# Function to convert military time to a number (930 to 9.5)
     def military_time_to_number(military_time):
         military_time_str = f"{military_time:04d}"  # Makes sure the time is in a 4-digit format
         hour = int(military_time_str[:2])
@@ -189,11 +196,9 @@ def plot_schedule(schedules):
         def decimal_time_to_standard(decimal_time):
             hours = int(decimal_time)
             minutes = int(round((decimal_time - hours) * 60 / 5) * 5)  # Round to nearest 5 because converting back resulting in error with exact
-
             if minutes == 60:  # Handle the case where rounding leads to 60 minutes
                 hours += 1
                 minutes = 0
-
             return f'{hours:02d}:{minutes:02d}'
 
         for _, row in schedule_data.iterrows():
@@ -272,22 +277,23 @@ def plot_schedule(schedules):
     if current_schedule and current_schedule[0]<len(schedule_data_list):
         draw_schedule(ax, schedule_data_list[current_schedule[0]], current_schedule[0] + 1, schedules[current_schedule[0]])
 
-    plt.show()
+    plt.show()"""
 
+#can use this function to print to output textbox
 def display_course_info(schedules):
-        # Create a figure for course information
-        info_fig, info_ax = plt.subplots(figsize=(8, len(schedules) * 2))
-        info_ax.axis('off')  # Turn off axis
+    """# Create a figure for course information
+    info_fig, info_ax = plt.subplots(figsize=(8, len(schedules) * 2))
+    info_ax.axis('off')  # Turn off axis
 
-        course_info_str = ''
-        for i, my_schedule in enumerate(schedules):
-            course_info_str += f'Chart {i + 1}\n'
-            for section in my_schedule.sections:
-                course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
-                course_info_str += course_info
-            course_info_str += '\n'
+    course_info_str = ''
+    for i, my_schedule in enumerate(schedules):
+        course_info_str += f'Chart {i + 1}\n'
+        for section in my_schedule.sections:
+            course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
+            course_info_str += course_info
+        course_info_str += '\n'
 
-        # Displaying Course Info
-        info_ax.text(0, 1, course_info_str, ha="left", va="top", fontsize=9, wrap=True)
+    # Displaying Course Info
+    info_ax.text(0, 1, course_info_str, ha="left", va="top", fontsize=9, wrap=True)
 
-        plt.show()
+    plt.show()"""
