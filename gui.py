@@ -74,7 +74,6 @@ class GUI():
         self.prog_label.grid(row=0, padx=5, pady=5)
         self.prog_note_label = customtkinter.CTkLabel(self.prog_frame,text='Note: Select a degree program if you would like to see a list of courses in the curriculum \n (can type to narrow down, no worries if your program is not in the list)',font = ("Arial", 12, "italic"))
         self.prog_note_label.grid(row=1, padx=2, pady=2)
-
         self.degr_prog_to_url = temple_requests.get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
         self.all_degr_progs_var = Variable()
@@ -107,10 +106,25 @@ class GUI():
                                                     corner_radius=10,
                                                     #fg_color = "transparent",
                                                     )
-        self.courses_frame.grid(row=0, column=0, padx=10, pady=10)
+        self.courses_frame.grid(row=3, column=0, padx=10, pady=10)
         self.curr_curric = []
-        #ttk.Label(self.courses_frame,text='Note:  ',font = ("Arial", 12, "italic"))
+        self.course_selection_label = customtkinter.CTkLabel(self.courses_f,
+                                                         text='COURSE SELECTION',
+                                                         font = self.custom_font_bold,
+                                                        fg_color="transparent"
+                                                         )
+        self.course_selection_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+
+        self.course_selection_note_label = customtkinter.CTkLabel(self.courses_f,
+                                                                  text= "Enter your course and press Enter key or button below to add \n(Notes: 1. add by top priority to least priority if desired 2. can type to search \n3. can add course even if not in list)",
+                                                                  fg_color="transparent",
+                                                                  font = ("Arial", 12, "italic"))
+        self.course_selection_note_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky = "w")
+
+    #ttk.Label(self.courses_frame,text='Note:  ',font = ("Arial", 12, "italic"))
         #self.prog_note_label.grid(row=1, padx=2, pady=2)
+        #ttk.Label(master,text="Enter your course and press Enter key or button below to add (Notes: 1. add by top priority to least priority if desired 2. can type to search 3. can add course even if not in list):",style='Custom.TLabel').grid(row=3)
+
         self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.curr_curric_var = Variable()
@@ -135,7 +149,7 @@ class GUI():
                                                    fg_color=master.cget("fg_color"),
                                                    width = 200,
                                                    height=300)
-        self.remove_frame.grid(row=0, column=1, padx=10, pady=10)
+        self.remove_frame.grid(row=3, column=1, padx=10, pady=10)
 
         # Configure row weight for equal spacing
         self.courses_f.rowconfigure(0, weight=1)
@@ -157,7 +171,7 @@ class GUI():
                                                             fg_color = "transparent",
                                                             border_width = 2,
                                                             corner_radius=10)
-        self.specifications_frame.grid(row=0, column=3, padx=5, pady=5)
+        self.specifications_frame.grid(row=3, column=3, padx=5, pady=5)
 
         #semester selection
         self.semester_label = customtkinter.CTkLabel(self.specifications_frame, text="Semester:", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,5))
