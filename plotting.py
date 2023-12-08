@@ -7,7 +7,13 @@ import wx
 import pandas as pd
 
 class MainFrame(wx.Frame):
-    def __init__(self,schedules):
+    """
+    Main window for the visualized schedules with notebook tabs for each potential schedule
+    """
+    def __init__(self,schedules:list):
+        """
+        @param schedules : list of potential schedules 
+        """
         wx.Frame.__init__(self,None, title="Potential Rosters")
         main_panel = wx.Panel(self)
         nb = wx.Notebook(main_panel)
@@ -21,8 +27,12 @@ class MainFrame(wx.Frame):
         sizer.Add(nb, 1, wx.EXPAND)
         main_panel.SetSizer(sizer)
     
-    #can use this function to print to output textbox
     def get_course_info(self,schedules,i):
+        """
+        Parses sections chosen for the potential schedule to show section info in text in each tab in a textbox
+        @param schedules : list of potential schedules
+        @param i : current index in schedules
+        """
         # Create a figure for course information
         course_info_str = f'Chart {i + 1}\n'
         for section in schedules[i].sections:
@@ -32,6 +42,9 @@ class MainFrame(wx.Frame):
         return course_info_str
 
 class CanvasPanel(wx.Panel):
+    """
+    Sub-window in which a graph can be drawn
+    """
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.figure = Figure()
@@ -43,11 +56,20 @@ class CanvasPanel(wx.Panel):
         self.Fit()
 
     def draw(self,schedules:list, i:int):
+        """
+        Prepares the data and draws the graph for schedule[i]
+        @param schedules : list of potential schedules
+        @param i : current index in schedules 
+        """
         # Predefined colors for consistency
         colors = list(mcolors.TABLEAU_COLORS.values())
         course_colors = {}
 
         def military_time_to_number(military_time):
+            """
+            Converts military time to an integer 
+            @param military_time : object/data in military time format
+            """
             # Makes sure the time is in a 4-digit format
             military_time_str = f"{military_time:04d}"  
             hour = int(military_time_str[:2])
@@ -55,11 +77,21 @@ class CanvasPanel(wx.Panel):
             return hour + minute / 60
 
         def draw_schedule(ax, schedule_data, schedule_number):
+            """
+            Draws the schedule indicated by schedule_number
+            @param ax : Axes structure for the plot
+            @param schedule_data : information about the schedule such as times for each course
+            @param schedule_number
+            """
             ax.clear()
             ax.invert_yaxis()
             labels_added = set()
             # Decimal time to standard time
             def decimal_time_to_standard(decimal_time):
+                """
+                Converts decimal time string into standard time
+                @param decimal_time
+                """
                 hours = int(decimal_time)
                 minutes = int(round((decimal_time - hours) * 60 / 5) * 5)  # Round to nearest 5 because converting back resulting in error with exact
                 if minutes == 60:  # Handle the case where rounding leads to 60 minutes

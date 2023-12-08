@@ -2,6 +2,9 @@ from plotting import MainFrame
 import wx
 
 class Schedule:
+    """
+    Represents someone's schedule with timeslots for each day and an attribute for class sections
+    """
     def __init__(self):
         self.days = {
             'sunday':[],
@@ -89,6 +92,9 @@ class Schedule:
         return not (end1 <= start2 or end2 <= start1)
     
     def copy(self):
+        """
+        Creates a copy of the object
+        """
         new_schedule = Schedule()
         # Copying over the timeslots
         for day, timeslots in self.days.items():
@@ -100,6 +106,9 @@ class Schedule:
         return new_schedule
         
     def __str__(self):
+        """
+        String version of the object
+        """
         return str(self.days)
 
 def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule):
