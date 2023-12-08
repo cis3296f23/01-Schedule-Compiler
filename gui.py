@@ -307,7 +307,6 @@ class GUI():
             print("No valid rosters.")
         print('Done')
         multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,)).start()
-        multiprocessing.Process(target=algo.display_course_info, args=(valid_rosters,)).start()
 
 
     def schedule_compiler_thread(self):
