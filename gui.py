@@ -72,6 +72,8 @@ class GUI():
                                     font = self.custom_font_bold,
                                     )
         self.prog_label.grid(row=0, padx=5, pady=5)
+        self.prog_note_label = customtkinter.CTkLabel(self.prog_frame,text='Note: Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):',font = ("Arial", 12, "italic"))
+        self.prog_note_label.grid(row=1, padx=2, pady=2)
 
         self.degr_prog_to_url = temple_requests.get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
@@ -80,13 +82,13 @@ class GUI():
         self.degr_prog_entry = customtkinter.CTkEntry(self.prog_frame,
                                                       width=250,
                                                       placeholder_text="Enter Degree Program")
-        self.degr_prog_entry.grid(row=1)
+        self.degr_prog_entry.grid(row=2)
         self.degr_prog_listbox = Listbox(self.prog_frame,
                                          listvariable=self.all_degr_progs_var,
                                          selectmode='single',
                                          width=70,
                                          height=10)
-        self.degr_prog_listbox.grid(row=2, pady=15, padx=15)
+        self.degr_prog_listbox.grid(row=3, pady=15, padx=15)
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox))
 
@@ -107,6 +109,8 @@ class GUI():
                                                     )
         self.courses_frame.grid(row=0, column=0, padx=10, pady=10)
         self.curr_curric = []
+        #ttk.Label(self.courses_frame,text='Note:  ',font = ("Arial", 12, "italic"))
+        #self.prog_note_label.grid(row=1, padx=2, pady=2)
         self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.curr_curric_var = Variable()
