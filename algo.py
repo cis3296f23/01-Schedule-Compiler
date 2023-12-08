@@ -171,6 +171,7 @@ def plot_schedule(schedules):
     """
     Creates the window for the wx app which displays the roster graphs and calls a function to draw and display each graph on each page
     """
-    app = wx.App()
+    app = wx.App(False)
     MainFrame(schedules).Show()
     app.MainLoop()
+    app.ExitMainLoop()
