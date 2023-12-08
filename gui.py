@@ -72,7 +72,7 @@ class GUI():
                                     font = self.custom_font_bold,
                                     )
         self.prog_label.grid(row=0, padx=5, pady=5)
-        self.prog_note_label = customtkinter.CTkLabel(self.prog_frame,text='Note: Select a degree program if you would like to see a list of courses in the curriculum (can type to narrow down, no worries if your program is not in the list):',font = ("Arial", 12, "italic"))
+        self.prog_note_label = customtkinter.CTkLabel(self.prog_frame,text='Note: Select a degree program if you would like to see a list of courses in the curriculum \n (can type to narrow down, no worries if your program is not in the list)',font = ("Arial", 12, "italic"))
         self.prog_note_label.grid(row=1, padx=2, pady=2)
 
         self.degr_prog_to_url = temple_requests.get_degr_progs()
