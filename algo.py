@@ -171,7 +171,7 @@ def plot_schedule(schedules):
     app = wx.App()
     fr = wx.Frame(None, title='Potential Rosters')
     panel = CanvasPanel(fr)
-    panel.draw()
+    panel.draw(schedules)
     fr.Show()
     app.MainLoop()
     """# Function to convert military time to a number (930 to 9.5)
@@ -193,11 +193,9 @@ def plot_schedule(schedules):
         def decimal_time_to_standard(decimal_time):
             hours = int(decimal_time)
             minutes = int(round((decimal_time - hours) * 60 / 5) * 5)  # Round to nearest 5 because converting back resulting in error with exact
-
             if minutes == 60:  # Handle the case where rounding leads to 60 minutes
                 hours += 1
                 minutes = 0
-
             return f'{hours:02d}:{minutes:02d}'
 
         for _, row in schedule_data.iterrows():
