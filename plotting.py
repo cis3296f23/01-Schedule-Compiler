@@ -16,13 +16,23 @@ class MainFrame(wx.Frame):
         panels = [] 
         for s in range(len(schedules)):
             panels.append(CanvasPanel(nb))
+            wx.StaticText(panels[s], -1, self.get_course_info(schedules,s), (800, 500))
             nb.AddPage(panels[s],"Roster " + str(s+1))
             panels[s].draw(schedules,s)
         sizer = wx.BoxSizer()
         sizer.Add(nb, 1, wx.EXPAND)
         main_panel.SetSizer(sizer)
+    
+    #can use this function to print to output textbox
+    def get_course_info(self,schedules,i):
+        # Create a figure for course information
+        course_info_str = f'Chart {i + 1}\n'
+        for section in schedules[i].sections:
+            course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
+            course_info_str += course_info
+        course_info_str += '\n'
+        return course_info_str
 
-#didn't add the different pages yet
 class CanvasPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
