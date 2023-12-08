@@ -1,6 +1,6 @@
 import matplotlib
 import matplotlib.colors as mcolors
-matplotlib.use('WXAgg')
+matplotlib.use('TkAgg')
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.figure import Figure
 import wx
