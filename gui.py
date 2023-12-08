@@ -14,7 +14,7 @@ class GUI():
         """
         self.running = True
         self.__root = root
-        self.__root.title('Schedule Compiler')
+        self.__root.title('SCHEDULE COMPILER')
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         #Can pick out style later
@@ -90,6 +90,7 @@ class GUI():
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox))
 
+        # course selection depending on the degree program
         self.courses_f = customtkinter.CTkFrame(master=master,
                                                     border_width=0,
                                                     corner_radius=10,
@@ -133,7 +134,6 @@ class GUI():
         self.remove_frame = customtkinter.CTkFrame(master=self.courses_f,
                                                    border_width=2,
                                                    corner_radius=10,
-                                                   #fg_color = "#DDDDDD",
                                                    fg_color=master.cget("fg_color"),
                                                    width = 200,
                                                    height=300)
@@ -162,61 +162,58 @@ class GUI():
         self.specifications_frame.grid(row=0, column=3, padx=5, pady=5)
 
         #semester selection
-        self.semester_label = ttk.Label(self.specifications_frame, text="Semester").grid(row=0, column=0, padx=5, pady=5)
+        self.semester_label = customtkinter.CTkLabel(self.specifications_frame, text="Semester:", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,5))
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(self.specifications_frame, values=self.terms, state="readonly")
         self.term_combobox.set(self.terms[1])
-        self.term_combobox.grid(row=1, padx=5, pady=5)
+        self.term_combobox.grid(row=1, padx=15, pady=5)
         self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus
-        self.campus_label = ttk.Label(self.specifications_frame, text="Select Campus:", font = self.custom_font).grid(row=2,column=0, padx=10)
+        self.campus_label = customtkinter.CTkLabel(self.specifications_frame, text="Campus:",fg_color="transparent", font = self.custom_font_bold).grid(row=2,column=0, padx=10)
         self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
         self.campuses = list(self.campus_to_code.keys())
         self.campus_combobox = ttk.Combobox(self.specifications_frame, values=self.campuses, state="readonly")
         self.campus_combobox.set('Main')
-        self.campus_combobox.grid(row=4, column=0, padx=5, pady=5)
+        self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
-        self.credit_label = ttk.Label(self.specifications_frame, text="Number of credits (maximum)").grid(row=5)
-        self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
-        self.max_cred_entry.grid(row=6, padx=5, pady=5)
-        self.output= Text(master, width = 50, height=10)
+        #self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Number of credits (maximum)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
+        #self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
+        #self.max_cred_entry.grid(row=6, padx=5, pady=5)
+        #self.output= Text(master, width = 50, height=10)
 
         #Unavailable date and time specifications
         self.unavailable_frame = customtkinter.CTkFrame(master=master, width=200, height=200,
                                                       border_width = 0,
                                                       corner_radius=10,
-
                                                       fg_color = "#DDDDDD")
         self.unavailable_frame.grid(row=4, padx=5, pady=5, sticky = "nsew")
-        # Configure row weight for equal spacing
-
         # Configure column weights for equal spacing
         self.unavailable_frame.columnconfigure(0, weight=1)
         self.unavailable_frame.columnconfigure(1, weight=1)
-
         # Configure row weights if needed
         self.unavailable_frame.rowconfigure(0, weight=1)
-
         self.date_time_frame = customtkinter.CTkFrame(master=self.unavailable_frame, width=200, height=200,
                                                       border_width = 2,
                                                       corner_radius=10,
                                                       fg_color = "transparent",
                                                     )
-        self.date_time_frame.grid(row=0, padx=(10,0), pady=15)
+        self.date_time_frame.grid(row=0, padx=(50,0), pady=15)
         #day and time input
-        self.date_time_label = ttk.Label(self.date_time_frame, text="Enter days and times NOT available:").grid(row=0, padx=5, pady=5)
+        self.unavailable_label = customtkinter.CTkLabel(self.date_time_frame, text="UNAVAILABLE TIMES", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,0))
+
+        self.date_time_label = customtkinter.CTkLabel(self.date_time_frame, text="Enter days and times NOT available:", fg_color="transparent", font = ("Arial", 12)).grid(row=1, padx=5)
         # Days of the week selection
-        ttk.Label(self.date_time_frame, text="Select Day:").grid(row=1, padx=5, pady=5)
+        customtkinter.CTkLabel(self.date_time_frame, text="Select Day:", bg_color="transparent", font = ("Arial", 15, "bold")).grid(row=2, padx=5, pady=5)
         self.days_dropdown = ttk.Combobox(self.date_time_frame, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
         self.days_dropdown.set('Sunday')
-        self.days_dropdown.grid(row=2, padx=5, pady=5)
+        self.days_dropdown.grid(row=3, padx=5)
         # Times selection
         self.time_frame = customtkinter.CTkFrame(master=self.date_time_frame)
         self.time_frame.grid(row=18, padx=5, pady=5)
         #self.time_label = ttk.Label(master, text="Select Time Range:").grid(row=18, column=0, columnspan=2)
-        self.time_label = customtkinter.CTkLabel(self.time_frame, text="Select Time Range", fg_color="transparent")
+        self.time_label = customtkinter.CTkLabel(self.time_frame, text="Select Time Range:", fg_color="transparent", font = ("Arial", 15, "bold"))
         self.time_label .grid(row=0, padx=10,pady=10)
         start_time_frame = ttk.Frame(self.time_frame)
         start_time_frame.grid(row=1, column=0)
@@ -237,36 +234,38 @@ class GUI():
         self.end_minute_dropdown.pack(side='left', anchor='w')
         # Add button to list of unavailable times
         self.add_time_btn = customtkinter.CTkButton(self.date_time_frame, text="Add Time", command=self.add_timeslot, width=15)
-        self.add_time_btn.grid(row=21, padx=5, pady=5)
+        self.add_time_btn.grid(row=21, padx=5, pady=(5,15))
 
         self.selected_times_frame = customtkinter.CTkFrame(master=self.unavailable_frame, width=200, height=200,
                                                       border_width = 2,
                                                       corner_radius=10,
                                                       fg_color = "transparent")
-        self.selected_times_frame.grid(row=0, column=1, padx=(0,20), pady=5)
+        self.selected_times_frame.grid(row=0, column=1, padx=(0,50), pady=5)
         #List of exluded times
-        ttk.Label(self.selected_times_frame, text="Excluded date and time").grid(row=0, padx=5, pady=5)
+        customtkinter.CTkLabel(self.selected_times_frame, text="Excluded date and time", font = ("Arial", 15, "bold"), fg_color="transparent").grid(row=0, padx=5, pady=5)
         self.day_and_time_slots = []
         self.day_and_time_slots_var = Variable()
         self.day_and_time_slots_var.set(self.day_and_time_slots)
-        self.times_unavail_lstbox = Listbox(self.selected_times_frame,listvariable=self.day_and_time_slots_var,selectmode='single',width=15,height=5)
+        self.times_unavail_lstbox = Listbox(self.selected_times_frame,listvariable=self.day_and_time_slots_var,selectmode='single',width=20,height=5)
         self.times_unavail_lstbox.grid(row=21, padx=5, pady=5)
         # Remove time and date entry button
-        self.remove_time_btn = customtkinter.CTkButton(self.selected_times_frame, text="Remove Time", command=self.remove_timeslot, width=15)
-        self.remove_time_btn.grid(row=22, padx=5, pady=5)
+        self.remove_time_btn = customtkinter.CTkButton(self.selected_times_frame, text="Remove Time", command=self.remove_timeslot, width=25)
+        self.remove_time_btn.grid(row=22, padx=5, pady=(5,15))
 
+        #compilation of schedules
         self.compilation_frame = customtkinter.CTkFrame(master=master,
                                                         border_width = 2,
                                                         corner_radius=10,
                                                         fg_color = "transparent")
         self.compilation_frame.grid(row=5, padx=5, pady=5)
-        #compilation of schedules
+
         self.compile_button =customtkinter.CTkButton(
-            self.compilation_frame, width=28, text="Compile Possible Schedules", command=self.schedule_compiler_thread)
-        self.compile_button.grid(row=0, padx=10, pady=10)
+            self.compilation_frame, width=28, text="COMPILE POSSIBLE SCHEDULES", font=("Fixedsys", 25, "bold"), command=self.schedule_compiler_thread)
+        self.compile_button.grid(row=0, padx=10, pady=(15,0))
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
-        self.output.grid(row=27,column=0, padx=10, pady=10)
+        self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
+
 
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
