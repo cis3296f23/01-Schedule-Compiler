@@ -8,12 +8,15 @@ from matplotlib.figure import Figure
 import wx
 import pandas as pd
 
+#didn't add the different pages yet
 class CanvasPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)
         self.figure = Figure()
-        
         self.axes = []
+        """subplot takes three numbers either in int or tuple form
+            first number is num_rows, second is num_cols, and third is index into that
+            might be better to get rid of this loop and just do 111 for the parameter and draw the plots on different screens"""
         for i in range(511,516):
             self.axes.append(self.figure.add_subplot(i))
         self.canvas = FigureCanvas(self, -1, self.figure)

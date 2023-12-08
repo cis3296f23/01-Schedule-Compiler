@@ -168,6 +168,9 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
     return sorted_valid_rosters
 
 def plot_schedule(schedules):
+    """
+    Creates the window for the wx app which displays the roster graphs and calls functions to draw and show the graphs
+    """
     app = wx.App()
     fr = wx.Frame(None, title='Potential Rosters')
     panel = CanvasPanel(fr)
