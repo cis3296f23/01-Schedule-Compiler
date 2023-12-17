@@ -139,9 +139,7 @@ class GUI():
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
         #buttons to add
-        self.add_course_btn = customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None),)
-        self.add_course_btn.grid(row=3, padx=10,pady=10)
-
+        customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None),).grid(row=3, padx=10,pady=10)
         #Selected Courses
         self.remove_frame = customtkinter.CTkFrame(master=self.courses_f,
                                                    border_width=2,
@@ -161,10 +159,9 @@ class GUI():
         self.added_courses_listbox = Listbox(self.remove_frame, width=15, height=10)
         self.added_courses_listbox.grid(row=1, padx=10, pady=5)
         #Remove courses from the list
-        self.remove_course_btn = customtkinter.CTkButton(
+        customtkinter.CTkButton(
             self.remove_frame, text="Remove Course",
-            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses))
-        self.remove_course_btn.grid(row=3, padx=10, pady=15)
+            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=3, padx=10, pady=15)
 
         self.specifications_frame = customtkinter.CTkFrame(master=self.courses_f,
                                                             width=200, height=200,
@@ -193,7 +190,6 @@ class GUI():
         #self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Number of credits (maximum)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
         #self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
         #self.max_cred_entry.grid(row=6, padx=5, pady=5)
-        #self.output= Text(master, width = 50, height=10)
 
         #Unavailable date and time specifications
         self.unavailable_frame = customtkinter.CTkFrame(master=master, width=200, height=200,
@@ -245,8 +241,7 @@ class GUI():
         self.end_minute_dropdown = ttk.Combobox(end_time_frame, values=minutes, state="readonly", width=3)
         self.end_minute_dropdown.pack(side='left', anchor='w')
         # Add button to list of unavailable times
-        self.add_time_btn = customtkinter.CTkButton(self.date_time_frame, text="Add Time", command=self.add_timeslot, width=15)
-        self.add_time_btn.grid(row=21, padx=5, pady=(5,15))
+        customtkinter.CTkButton(self.date_time_frame, text="Add Time", command=self.add_timeslot, width=15).grid(row=21, padx=5, pady=(5,15))
 
         self.selected_times_frame = customtkinter.CTkFrame(master=self.unavailable_frame, width=200, height=200,
                                                       border_width = 2,
@@ -261,8 +256,7 @@ class GUI():
         self.times_unavail_lstbox = Listbox(self.selected_times_frame,listvariable=self.day_and_time_slots_var,selectmode='single',width=20,height=5)
         self.times_unavail_lstbox.grid(row=21, padx=5, pady=5)
         # Remove time and date entry button
-        self.remove_time_btn = customtkinter.CTkButton(self.selected_times_frame, text="Remove Time", command=self.remove_timeslot, width=25)
-        self.remove_time_btn.grid(row=22, padx=5, pady=(5,15))
+        customtkinter.CTkButton(self.selected_times_frame, text="Remove Time", command=self.remove_timeslot, width=25).grid(row=22, padx=5, pady=(5,15))
 
         #compilation of schedules
         self.compilation_frame = customtkinter.CTkFrame(master=master,
@@ -271,9 +265,7 @@ class GUI():
                                                         fg_color = "transparent")
         self.compilation_frame.grid(row=5, padx=5, pady=5)
 
-        self.compile_button =customtkinter.CTkButton(
-            self.compilation_frame, width=28, text="COMPILE POSSIBLE SCHEDULES", font=("Fixedsys", 25, "bold"), command=self.schedule_compiler_thread)
-        self.compile_button.grid(row=0, padx=10, pady=(15,0))
+        customtkinter.CTkButton(self.compilation_frame, width=28, text="COMPILE POSSIBLE SCHEDULES", font=("Fixedsys", 25, "bold"), command=self.schedule_compiler_thread).grid(row=0, padx=10, pady=(15,0))
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
