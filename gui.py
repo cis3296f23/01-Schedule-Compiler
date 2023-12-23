@@ -322,21 +322,28 @@ class GUI():
 
     def pick_degr_prog(self,event:Event):
         """
-        Updates degree program entry box with selected degree program and updates course listbox with the curriculum of the selected degree program
+        Updates degree program entry box with selected degree program and starts a thread that updates the course listbox with the curriculum of the selected degree program
         @param event : implicit parameter entered when a function is called as part of an event bind
         """
         #updates degree program entry box
         selec_ind, selection = self.insert_selection(None,self.degr_prog_entry,self.degr_prog_listbox)
         #updates course selection listbox if a degree program was selected
         if selec_ind:
-            curric = Variable()
-            self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
-            num_courses = len(self.curr_curric)
-            for c in range(num_courses):
-                self.curr_curric[c][0]=self.curr_curric[c][0].replace('\xa0',' ')
-                self.curr_curric[c]=' '.join(self.curr_curric[c])
-            curric.set(self.curr_curric)
-            self.course_lstbox.config(listvariable=curric) 
+            threading.Thread(target=self.update_course_lstbox,args=[selection]).start()
+            
+    def update_course_lstbox(self,selection):
+        """
+        Updates the course listbox with curriculum corresponding to the value of selection
+        @selection : str of selected degree program
+        """
+        curric = Variable()
+        self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
+        num_courses = len(self.curr_curric)
+        for c in range(num_courses):
+            self.curr_curric[c][0]=self.curr_curric[c][0].replace('\xa0',' ')
+            self.curr_curric[c]=' '.join(self.curr_curric[c])
+        curric.set(self.curr_curric)
+        self.course_lstbox.config(listvariable=curric) 
 
     def add_course_to_list(self,event:Event):
         """
