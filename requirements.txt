@@ -5,3 +5,4 @@ pyinstaller
 pandas 
 matplotlib
 wxpython
+customtkinter
