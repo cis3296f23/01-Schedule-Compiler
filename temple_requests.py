@@ -94,7 +94,7 @@ def get_curric(degr_prog_url:str)->list[str]:
     """
     Retrieves the curriculum for the specified degree program
     @param degr_prog_url : the portion of the url for the specific degree program
-    @return : list of courses in the curriculum in the requirements section of the degree program link specified by degr_prog_url, otherwise empty array on failure or if Temple is not accepting applications
+    @return : list of tuples with format (SUBJ ####, Course_Name) for courses in the curriculum in the requirements section of the degree program link specified by degr_prog_url, otherwise empty array on failure or if Temple is not accepting applications for the curriculum
     """
     try:
         req = requests.get("https://bulletin.temple.edu/" + degr_prog_url + "#requirementstext")
@@ -104,12 +104,17 @@ def get_curric(degr_prog_url:str)->list[str]:
             requirements_html = soup.find('div', id='programrequirementstextcontainer')
             if requirements_html == None:
                 return []
-        courses_html = requirements_html.find_all('a',class_='bubblelink code')
+        courses_html = requirements_html.find_all('tr',class_=re.compile('(^.*even*$|^.*odd.*$)'))
         curric = []
         for c in courses_html:
-            course = c.text
-            if course not in curric:
-                curric.append(course)
+            subj_and_num_html = c.find('a',class_='bubblelink code')
+            #checks to make sure the html has course info, and if it does, it looks for the course subject, number and name
+            if subj_and_num_html:
+                subj_and_num = subj_and_num_html.text
+                td_htmls = c.find_all('td')
+                course_name = td_htmls[1].text
+                if (subj_and_num,course_name) not in curric:
+                    curric.append([subj_and_num,course_name])
         return curric
     except Exception as e:
         print(e)
