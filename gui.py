@@ -316,6 +316,13 @@ class GUI():
         #if an item has been selected,
         if selec_ind:
             selection = lstbox.get(selec_ind)
+            if lstbox==self.course_lstbox:
+                first_space_ind = selection.find(' ')
+                second_space_ind = -1
+                if first_space_ind!=-1:
+                    second_space_ind = selection.find(' ',first_space_ind+1)
+                if second_space_ind:
+                    selection = selection[:second_space_ind]
             entry.insert(0,selection)
             return selec_ind, selection
         return None,None
