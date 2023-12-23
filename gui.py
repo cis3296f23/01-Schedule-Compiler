@@ -132,7 +132,7 @@ class GUI():
         self.course_lstbox = Listbox(self.courses_frame,
                                      selectmode='single',
                                      listvariable=self.curr_curric_var,
-                                     width=15,
+                                     width=70,
                                      height=10)
         self.course_lstbox.grid(row=2, padx=10, pady=10)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
@@ -333,7 +333,8 @@ class GUI():
             self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
             num_courses = len(self.curr_curric)
             for c in range(num_courses):
-                self.curr_curric[c]=self.curr_curric[c].replace('\xa0',' ')
+                self.curr_curric[c][0]=self.curr_curric[c][0].replace('\xa0',' ')
+                self.curr_curric[c]=' '.join(self.curr_curric[c])
             curric.set(self.curr_curric)
             self.course_lstbox.config(listvariable=curric) 
 
