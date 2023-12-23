@@ -316,6 +316,7 @@ class GUI():
         #if an item has been selected,
         if selec_ind:
             selection = lstbox.get(selec_ind)
+            #if the lstbox is the course listbox, then the selection is parsed to be 'SUBJ ####' format
             if lstbox==self.course_lstbox:
                 first_space_ind = selection.find(' ')
                 second_space_ind = -1
