@@ -30,18 +30,18 @@ class GUI():
         main_frame=customtkinter.CTkFrame(self.__root, fg_color = 'transparent')
         main_frame.pack(fill=BOTH, expand=1, anchor=CENTER)
         #Scrollbar implementation
-        canv = Canvas(main_frame)
-        canv.pack(side=LEFT,fill=BOTH,expand=1,anchor=CENTER)
+        self.canv = Canvas(main_frame)
+        self.canv.pack(side=LEFT,fill=BOTH,expand=1,anchor=CENTER)
         #creating a scroll bar and binding it to the entrire screen that the user uses
-        main_scroll_bar = ttk.Scrollbar(main_frame,orient=VERTICAL,command=canv.yview)
+        main_scroll_bar = ttk.Scrollbar(main_frame,orient=VERTICAL,command=self.canv.yview)
         main_scroll_bar.pack(side='right',fill=Y)
-        canv.configure(yscrollcommand=main_scroll_bar.set,)
-        canv.bind('<Configure>', lambda e: canv.configure(scrollregion=canv.bbox("all")))
+        self.canv.configure(yscrollcommand=main_scroll_bar.set,)
+        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
         #separate frame for all the widgets
-        second_frame = customtkinter.CTkFrame(canv,  fg_color = 'transparent')
-        second_frame.pack(fill=BOTH,expand=1)
-        second_frame.place(relx=0.5, rely=0.5, anchor="center")
-        canv.create_window((int(main_frame.winfo_screenwidth()/2),0), window=second_frame, anchor = "center")
+        self.second_frame = customtkinter.CTkFrame(self.canv,  fg_color = 'transparent')
+        self.second_frame.pack(fill=BOTH,expand=1)
+        self.second_frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.canv.create_window((int(main_frame.winfo_screenwidth()/2),0), window=self.second_frame, anchor = "center")
         self.added_courses = []
         self.course_info = dict()
         self.prof_rating_cache = dict()
@@ -53,8 +53,7 @@ class GUI():
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
 
-        self.build_general_frame(second_frame)
-        self.build_sched_frame(canv,second_frame)
+        self.build_general_frame(self.second_frame)
     
     def build_general_frame(self,master):
         """
@@ -274,13 +273,7 @@ class GUI():
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
-    
-    def build_sched_frame(self,master,second_frame):
-        self.sched_frame=customtkinter.CTkFrame(master, fg_color='transparent')
         
-
-
-
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
 
@@ -448,10 +441,18 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
-        self.sched_frame.tkraise()
-        p= multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,))
+        sched_frame=customtkinter.CTkFrame(self.canv, fg_color='transparent')
+        f = Figure()
+        axes = f.add_subplot(121)
+        for s in range(len(valid_rosters)):
+            algo.plot_schedule(axes,valid_rosters,s)
+        canv = FigureCanvasTkAgg(f,self.canv)
+        canv.draw()
+        canv.get_tk_widget().pack(side='top',fill='both',expand=True)
+        sched_frame.tkraise()
+        """p= multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,))
         p.start()
-        p.join()
+        p.join()"""
 
     def schedule_compiler_thread(self):
         """

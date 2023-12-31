@@ -1,4 +1,5 @@
 from plotting import MainFrame
+import plotting
 import wx
 
 class Schedule:
@@ -176,11 +177,12 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
 
     return sorted_valid_rosters
 
-def plot_schedule(schedules):
+def plot_schedule(axes,schedules,i):
     """
     Creates the window for the wx app which displays the roster graphs and calls a function to draw and display each graph on each page
     """
-    app = wx.App(False)
+    plotting.draw(axes,schedules,i)
+    """app = wx.App(False)
     MainFrame(schedules).Show()
     app.MainLoop()
-    app.ExitMainLoop()
+    app.ExitMainLoop()"""
