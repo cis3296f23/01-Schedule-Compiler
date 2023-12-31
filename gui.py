@@ -1,3 +1,7 @@
+import matplotlib
+matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
 from tkinter import *
 from tkinter import ttk
 import temple_requests
@@ -50,6 +54,7 @@ class GUI():
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
 
         self.build_general_frame(second_frame)
+        self.build_sched_frame(canv,second_frame)
     
     def build_general_frame(self,master):
         """
@@ -269,6 +274,12 @@ class GUI():
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
+    
+    def build_sched_frame(self,master,second_frame):
+        self.sched_frame=customtkinter.CTkFrame(master, fg_color='transparent')
+        
+
+
 
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
@@ -437,6 +448,7 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
+        self.sched_frame.tkraise()
         p= multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,))
         p.start()
         p.join()
