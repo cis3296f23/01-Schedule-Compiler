@@ -269,7 +269,7 @@ class GUI():
                                                         fg_color = "transparent")
         self.compilation_frame.grid(row=5, padx=5, pady=5)
 
-        customtkinter.CTkButton(self.compilation_frame, width=28, text="COMPILE POSSIBLE SCHEDULES", font=("Fixedsys", 25, "bold"), command=self.schedule_compiler_thread).grid(row=0, padx=10, pady=(15,0))
+        customtkinter.CTkButton(self.compilation_frame, width=28, text="COMPILE POSSIBLE SCHEDULES", font=("Fixedsys", 25, "bold"), command=self.compile_schedules).grid(row=0, padx=10, pady=(15,0))
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
@@ -407,7 +407,7 @@ class GUI():
             dash_ind = timeslot.find('-',space_ind+1)
             self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
 
-    def compile_schedules(self):
+    def compile_schedules_thread(self):
         """
         Collects information for the user's desired courses for the selected semester and 
         """
@@ -452,11 +452,11 @@ class GUI():
         self.roster_page_num+=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
 
-    def schedule_compiler_thread(self):
+    def compile_schedules(self):
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
-        threading.Thread(target=self.compile_schedules).start()
+        threading.Thread(target=self.compile_schedules_thread).start()
 
 class Sched_Frame(customtkinter.CTkFrame):
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
