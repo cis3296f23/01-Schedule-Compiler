@@ -28,7 +28,7 @@ class GUI():
         self.__style.configure('TFrame', background='#ecf0f1')
 
         main_frame=customtkinter.CTkFrame(self.__root, fg_color = 'transparent')
-        main_frame.pack(fill=BOTH, expand=1, anchor=CENTER)
+        main_frame.pack(side=TOP,fill=BOTH, expand=1, anchor=CENTER)
         #Scrollbar implementation
         self.canv = Canvas(main_frame)
         self.canv.pack(side=LEFT,fill=BOTH,expand=1,anchor=CENTER)
@@ -441,21 +441,39 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
-        sched_frame=customtkinter.CTkFrame(self.canv, fg_color='transparent')
-        f = Figure()
-        axes = f.add_subplot(121)
-        for s in range(len(valid_rosters)):
-            algo.plot_schedule(axes,valid_rosters,s)
-        canv = FigureCanvasTkAgg(f,self.canv)
-        canv.draw()
-        canv.get_tk_widget().pack(side='top',fill='both',expand=True)
-        sched_frame.tkraise()
-        """p= multiprocessing.Process(target=algo.plot_schedule, args=(valid_rosters,))
-        p.start()
-        p.join()"""
+        num_valid_rosters = len(valid_rosters)
+        
+
+    def display_previous_sched(self):
+        self.roster_page_num-=1
+        self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
+
+    def display_next_sched(self):
+        self.roster_page_num+=1
+        self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
 
     def schedule_compiler_thread(self):
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
         threading.Thread(target=self.compile_schedules).start()
+
+class Sched_Frame(customtkinter.CTkFrame):
+    def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
+        customtkinter.CTkFrame.__init__(self,parent)
+        if page_num>1:
+            customtkinter.CTkButton(self, text="Previous", command=controller.display_previous_sched).pack()
+        if page_num<num_valid_rosters:
+            customtkinter.CTkButton(self, text="Next", command=controller.display_next_sched).pack()
+    
+    def draw_schedules(self,valid_rosters,i):
+        f = Figure(figsize=(5,5), dpi=100)
+        axes = f.add_subplot(111)
+        algo.plot_schedule(axes,valid_rosters,i)
+        canv = FigureCanvasTkAgg(f,self)
+        canv.draw()
+        canv.get_tk_widget().pack(side=BOTTOM,fill='both',expand=True)
+        toolbar = NavigationToolbar2Tk(canv, self)
+        toolbar.update()
+        canv._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
+        
