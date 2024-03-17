@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from tkinter import *
 from tkinter import ttk
@@ -9,7 +10,7 @@ import algo
 from algo import Schedule
 from text_redirection import TextRedirector
 import sys
-from threading import Thread, Event as Thread_Event
+from threading import Thread
 import customtkinter
 
 class GUI():
@@ -429,10 +430,10 @@ class GUI():
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
             temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
-        valid_rosters = algo.build_all_valid_rosters(self.course_info,term,self.added_courses, self.unavail_times)
-        if valid_rosters:
+        self.valid_rosters = algo.build_all_valid_rosters(self.course_info,term,self.added_courses, self.unavail_times)
+        if self.valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
-            for i, roster in enumerate(valid_rosters):
+            for i, roster in enumerate(self.valid_rosters):
                 print(f"Valid Roster {i + 1}:")
                 print(roster)  # Print the schedule
                 print("\nSections in this Schedule:")
@@ -442,7 +443,7 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
-        num_valid_rosters[0]=len(valid_rosters)
+        num_valid_rosters[0]=len(self.valid_rosters)
         
     def check_compile_thread_completion(self,thread):
         if not thread.finished.is_set():
@@ -466,7 +467,20 @@ class GUI():
         thread.start()
     
     def draw_schedules(self,num_valid_rosters):
-        print(num_valid_rosters)
+        num_valid_rosters=num_valid_rosters[0]
+        self.sched_frames = []
+        self.roster_page_num=1
+        figure = Figure(figsize=(30,30))
+        for i in range(num_valid_rosters):
+            print(i)
+            frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
+            self.sched_frames.append(frame)
+            frame.pack(fill=BOTH,expand=True)
+            frame.draw_schedule(figure,self.valid_rosters,i)
+        with PdfPages('graphs.pdf') as pdf:
+            pdf.savefig(figure,bbox_inches='tight')
+        if self.sched_frames:
+            self.sched_frames[0].tkraise()
 
 class Sched_Frame(customtkinter.CTkFrame):
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
@@ -476,17 +490,16 @@ class Sched_Frame(customtkinter.CTkFrame):
         if page_num<num_valid_rosters:
             customtkinter.CTkButton(self, text="Next", command=controller.display_next_sched).pack()
     
-    def draw_schedules(self,valid_rosters,i):
-        f = Figure(figsize=(5,5), dpi=100)
-        axes = f.add_subplot(111)
+    def draw_schedule(self, figure:Figure, valid_rosters,i):
+        axes = figure.add_subplot(320+i+1)
         algo.plot_schedule(axes,valid_rosters,i)
-        canv = FigureCanvasTkAgg(f,self)
+        canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
         canv.get_tk_widget().pack(side=BOTTOM,fill='both',expand=True)
         toolbar = NavigationToolbar2Tk(canv, self)
         toolbar.update()
         canv._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
-        
+  
 class Custom_Thread(Thread):
     def __init__(self,callback1,arg1,callback2,arg2):
         Thread.__init__(self)
