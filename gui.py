@@ -8,7 +8,8 @@ import temple_requests
 import algo
 from algo import Schedule
 from text_redirection import TextRedirector
-import sys,threading, multiprocessing
+import sys
+from threading import Thread, Event as Thread_Event
 import customtkinter
 
 class GUI():
@@ -341,7 +342,7 @@ class GUI():
         selec_ind, selection = self.insert_selection(None,self.degr_prog_entry,self.degr_prog_listbox)
         #updates course selection listbox if a degree program was selected
         if selec_ind:
-            threading.Thread(target=self.update_course_lstbox,args=[selection]).start()
+            Thread(target=self.update_course_lstbox,args=[selection]).start()
             
     def update_course_lstbox(self,selection):
         """
@@ -407,9 +408,9 @@ class GUI():
             dash_ind = timeslot.find('-',space_ind+1)
             self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
 
-    def compile_schedules_thread(self):
+    def compile_schedules_thread(self,num_valid_rosters:list[int]):
         """
-        Collects information for the user's desired courses for the selected semester and 
+        Collects information for the user's desired courses for the selected semester and times they are not available and compiles a schedule
         """
         print("Start schedule compilation process...")
         term = self.term_combobox.get()
@@ -441,8 +442,11 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
-        num_valid_rosters = len(valid_rosters)
+        num_valid_rosters[0]=len(valid_rosters)
         
+    def check_compile_thread_completion(self,thread):
+        if not thread.finished.is_set():
+            self.__root.after(2000,self.check_compile_thread_completion,thread)
 
     def display_previous_sched(self):
         self.roster_page_num-=1
@@ -456,7 +460,13 @@ class GUI():
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
-        threading.Thread(target=self.compile_schedules_thread).start()
+        num_valid_rosters = None
+        check_val = [num_valid_rosters]
+        thread = Custom_Thread(callback1=self.compile_schedules_thread,arg1=check_val,callback2=self.draw_schedules,arg2=check_val)
+        thread.start()
+    
+    def draw_schedules(self,num_valid_rosters):
+        print(num_valid_rosters)
 
 class Sched_Frame(customtkinter.CTkFrame):
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
@@ -477,3 +487,15 @@ class Sched_Frame(customtkinter.CTkFrame):
         toolbar.update()
         canv._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
         
+class Custom_Thread(Thread):
+    def __init__(self,callback1,arg1,callback2,arg2):
+        Thread.__init__(self)
+        self.callback1=callback1
+        self.callback2=callback2
+        self.arg1=arg1
+        self.arg2=arg2
+    
+    def run(self):
+        self.callback1(self.arg1)
+        self.callback2(self.arg2)
+        #create a function within gui that is called here to do the rest of what compile_schedule should do
