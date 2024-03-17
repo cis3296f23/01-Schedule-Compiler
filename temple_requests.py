@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from algo import Schedule
+#TO DO: Don't allow terms with "Orientation" to be in the output list
 
 def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)->str:
     """

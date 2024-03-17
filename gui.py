@@ -12,6 +12,9 @@ from text_redirection import TextRedirector
 import sys
 from threading import Thread
 import customtkinter
+#TO DO: comment out code that creates new frame and displays schedule
+#TO DO: figure out how to show textbox with course info
+#TO DO: figure out how to display schedules neatly
 
 class GUI():
     def __init__(self,root:Tk):
