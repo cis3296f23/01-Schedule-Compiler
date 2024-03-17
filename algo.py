@@ -1,6 +1,4 @@
-from plotting import MainFrame
 import plotting
-import wx
 
 class Schedule:
     """
@@ -182,7 +180,3 @@ def plot_schedule(axes,schedules,i):
     Creates the window for the wx app which displays the roster graphs and calls a function to draw and display each graph on each page
     """
     plotting.draw(axes,schedules,i)
-    """app = wx.App(False)
-    MainFrame(schedules).Show()
-    app.MainLoop()
-    app.ExitMainLoop()"""
