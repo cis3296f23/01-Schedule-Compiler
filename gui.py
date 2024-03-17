@@ -13,8 +13,10 @@ import sys
 from threading import Thread
 import customtkinter
 #TO DO: comment out code that creates new frame and displays schedule
-#TO DO: figure out how to show textbox with course info
-#TO DO: figure out how to display schedules neatly
+#TO DO: Figure out why only 1st pdf is neatly organized
+#TO DO: delete previously created pdfs when running the draw function
+#TO DO: figure out how to display schedules neatly in GUI
+#TO DO: Move classes and functions to more appropriate places
 
 class GUI():
     def __init__(self,root:Tk):
@@ -274,7 +276,7 @@ class GUI():
                                                         fg_color = "transparent")
         self.compilation_frame.grid(row=5, padx=5, pady=5)
 
-        customtkinter.CTkButton(self.compilation_frame, width=28, text="COMPILE POSSIBLE SCHEDULES", font=("Fixedsys", 25, "bold"), command=self.compile_schedules).grid(row=0, padx=10, pady=(15,0))
+        customtkinter.CTkButton(self.compilation_frame, width=28, text="Compile Possible Schedules", font=("Fixedsys", 25, "bold"), command=self.compile_schedules).grid(row=0, padx=10, pady=(15,0))
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
@@ -497,7 +499,7 @@ class Sched_Frame(customtkinter.CTkFrame):
         algo.plot_schedule(axes,valid_rosters,i)
         #TO DO: Figure out how to show course info as textbox
         #This call does not work:
-        #figure.text(1,1,s=self.get_course_info(valid_rosters,i))
+        figure.text(0.5,0.5,s=self.get_course_info(valid_rosters,i))
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
         canv.get_tk_widget().pack(side=BOTTOM,fill='both',expand=True)
