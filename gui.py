@@ -470,15 +470,14 @@ class GUI():
         num_valid_rosters=num_valid_rosters[0]
         self.sched_frames = []
         self.roster_page_num=1
-        figure = Figure(figsize=(30,30))
         for i in range(num_valid_rosters):
-            print(i)
+            figure = Figure(figsize=(10,30))
             frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
             self.sched_frames.append(frame)
             frame.pack(fill=BOTH,expand=True)
             frame.draw_schedule(figure,self.valid_rosters,i)
-        with PdfPages('graphs.pdf') as pdf:
-            pdf.savefig(figure,bbox_inches='tight')
+            with PdfPages(f'schedule{i+1}.pdf') as pdf:
+                pdf.savefig(figure)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
 
