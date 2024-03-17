@@ -95,17 +95,3 @@ def draw(axes,schedules:list, i:int):
     if i<len(schedule_data_list):
         draw_schedule(axes, schedule_data_list[i], i+1)
     axes.plot()
-
-    def get_course_info(schedules,i):
-        """
-        Parses sections chosen for the potential schedule to show section info in text in each tab in a textbox
-        @param schedules : list of potential schedules
-        @param i : current index in schedules
-        """
-        # Create a figure for course information
-        course_info_str = f'Chart {i + 1}\n'
-        for section in schedules[i].sections:
-            course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
-            course_info_str += course_info
-        course_info_str += '\n'
-        return course_info_str
