@@ -471,7 +471,7 @@ class GUI():
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(num_valid_rosters):
-            figure = Figure(figsize=(10,30))
+            figure = Figure(figsize=(7,5))
             frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
             self.sched_frames.append(frame)
             frame.pack(fill=BOTH,expand=True)
@@ -490,14 +490,31 @@ class Sched_Frame(customtkinter.CTkFrame):
             customtkinter.CTkButton(self, text="Next", command=controller.display_next_sched).pack()
     
     def draw_schedule(self, figure:Figure, valid_rosters,i):
-        axes = figure.add_subplot(320+i+1)
+        axes = figure.add_subplot(121)
         algo.plot_schedule(axes,valid_rosters,i)
+        #TO DO: Figure out how to show course info as textbox
+        #This call does not work:
+        #figure.text(1,1,s=self.get_course_info(valid_rosters,i))
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
         canv.get_tk_widget().pack(side=BOTTOM,fill='both',expand=True)
         toolbar = NavigationToolbar2Tk(canv, self)
         toolbar.update()
         canv._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
+    
+    def get_course_info(self,schedules,i):
+        """
+        Parses sections chosen for the potential schedule to show section info in text in each tab in a textbox
+        @param schedules : list of potential schedules
+        @param i : current index in schedules
+        """
+        # Create a figure for course information
+        course_info_str = f'Chart {i + 1}\n'
+        for section in schedules[i].sections:
+            course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
+            course_info_str += course_info
+        course_info_str += '\n'
+        return course_info_str
   
 class Custom_Thread(Thread):
     def __init__(self,callback1,arg1,callback2,arg2):
