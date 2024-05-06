@@ -487,9 +487,7 @@ class GUI():
 class Sched_Frame(customtkinter.CTkFrame):
     #TODO fig
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
-        self.page_num=page_num
         self.controller = controller
-        self.num_valid_rosters = num_valid_rosters
         customtkinter.CTkFrame.__init__(self,parent)
         if page_num>1:
             customtkinter.CTkButton(self, text="Previous", command=controller.display_prev_sched).pack()
@@ -506,10 +504,8 @@ class Sched_Frame(customtkinter.CTkFrame):
         toolbar = NavigationToolbar2Tk(canv, self)
         toolbar.update()
         canv._tkcanvas.pack(side="top", fill="both", expand=True)
-        if self.page_num>1:
-            canv.get_tk_widget().bind("<Left>",self.controller.display_prev_sched)
-        if self.page_num<self.num_valid_rosters:
-            canv.get_tk_widget().bind("<Right>",self.controller.display_next_sched)
+        canv.get_tk_widget().bind("<Left>",self.controller.display_prev_sched)
+        canv.get_tk_widget().bind("<Right>",self.controller.display_next_sched)
     
     def get_course_info(self,schedules,i):
         """
