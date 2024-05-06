@@ -459,6 +459,10 @@ class GUI():
     def display_next_sched(self,event=None):
         self.roster_page_num+=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
+    
+    def exit_sched_display(self):
+        for frame in self.sched_frames:
+            frame.destroy()
 
     def compile_schedules(self,event=None):
         """
@@ -485,7 +489,6 @@ class GUI():
             self.sched_frames[0].tkraise()
 
 class Sched_Frame(customtkinter.CTkFrame):
-    #TODO fig
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
         self.controller = controller
         customtkinter.CTkFrame.__init__(self,parent)
@@ -493,6 +496,7 @@ class Sched_Frame(customtkinter.CTkFrame):
             customtkinter.CTkButton(self, text="Previous", command=controller.display_prev_sched).pack()
         if page_num<num_valid_rosters:
             customtkinter.CTkButton(self, text="Next", command=controller.display_next_sched).pack()
+        customtkinter.CTkButton(self,text="Exit",command = controller.exit_sched_display).pack()
     
     def draw_schedule(self, figure:Figure, valid_rosters,i):
         axes = figure.add_subplot(121)
