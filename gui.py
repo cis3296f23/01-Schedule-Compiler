@@ -222,7 +222,7 @@ class GUI():
         #day and time input
         self.unavailable_label = customtkinter.CTkLabel(self.date_time_frame, text="UNAVAILABLE TIMES", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,0))
 
-        self.date_time_label = customtkinter.CTkLabel(self.date_time_frame, text="Enter days and times NOT available:", fg_color="transparent", font = ("Arial", 12)).grid(row=1, padx=5)
+        self.date_time_label = customtkinter.CTkLabel(self.date_time_frame, text="Enter days and times NOT available:", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, padx=5)
         # Days of the week selection
         customtkinter.CTkLabel(self.date_time_frame, text="Select Day:", bg_color="transparent", font = ("Arial", 15, "bold")).grid(row=2, padx=5, pady=5)
         self.days_dropdown = ttk.Combobox(self.date_time_frame, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
@@ -476,10 +476,10 @@ class GUI():
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(num_valid_rosters):
-            figure = Figure(figsize=(7,5))
+            figure = Figure(figsize=(15,7))
             frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
             self.sched_frames.append(frame)
-            frame.pack(fill=BOTH,expand=True)
+            frame.grid(row=0,column=0,sticky=NSEW)
             frame.draw_schedule(figure,self.valid_rosters,i)
             with PdfPages(f'schedule{i+1}.pdf') as pdf:
                 pdf.savefig(figure)
@@ -497,8 +497,6 @@ class Sched_Frame(customtkinter.CTkFrame):
     def draw_schedule(self, figure:Figure, valid_rosters,i):
         axes = figure.add_subplot(121)
         algo.plot_schedule(axes,valid_rosters,i)
-        #TO DO: Figure out how to show course info as textbox
-        #This call does not work:
         figure.text(0.5,0.5,s=self.get_course_info(valid_rosters,i))
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
@@ -513,7 +511,6 @@ class Sched_Frame(customtkinter.CTkFrame):
         @param schedules : list of potential schedules
         @param i : current index in schedules
         """
-        # Create a figure for course information
         course_info_str = f'Chart {i + 1}\n'
         for section in schedules[i].sections:
             course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
@@ -532,4 +529,3 @@ class Custom_Thread(Thread):
     def run(self):
         self.callback1(self.arg1)
         self.callback2(self.arg2)
-        #create a function within gui that is called here to do the rest of what compile_schedule should do
