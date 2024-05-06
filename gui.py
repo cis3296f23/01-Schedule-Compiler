@@ -13,8 +13,6 @@ import sys
 from threading import Thread
 import customtkinter
 #TO DO: comment out code that creates new frame and displays schedule
-#TO DO: Figure out why only 1st pdf is neatly organized
-#TO DO: delete previously created pdfs when running the draw function
 #TO DO: figure out how to display schedules neatly in GUI
 #TO DO: Move classes and functions to more appropriate places
 
@@ -29,24 +27,24 @@ class GUI():
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         #Can pick out style later
-        title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify=CENTER, background='#3498db', foreground='white')
+        title_label = ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white')
         title_label.pack(padx=5,pady=5)
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
 
         main_frame=customtkinter.CTkFrame(self.__root, fg_color = 'transparent')
-        main_frame.pack(side=TOP,fill=BOTH, expand=1, anchor=CENTER)
+        main_frame.pack(side="top",fill="both", expand=1, anchor="center")
         #Scrollbar implementation
         self.canv = Canvas(main_frame)
-        self.canv.pack(side=LEFT,fill=BOTH,expand=1,anchor=CENTER)
+        self.canv.pack(side="left",fill="both",expand=1,anchor="center")
         #creating a scroll bar and binding it to the entrire screen that the user uses
-        main_scroll_bar = ttk.Scrollbar(main_frame,orient=VERTICAL,command=self.canv.yview)
+        main_scroll_bar = ttk.Scrollbar(main_frame,orient="vertical",command=self.canv.yview)
         main_scroll_bar.pack(side='right',fill=Y)
         self.canv.configure(yscrollcommand=main_scroll_bar.set,)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
         #separate frame for all the widgets
         self.second_frame = customtkinter.CTkFrame(self.canv,  fg_color = 'transparent')
-        self.second_frame.pack(fill=BOTH,expand=1)
+        self.second_frame.pack(fill="both",expand=1)
         self.second_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.canv.create_window((int(main_frame.winfo_screenwidth()/2),0), window=self.second_frame, anchor = "center")
         self.added_courses = []
@@ -454,15 +452,15 @@ class GUI():
         if not thread.finished.is_set():
             self.__root.after(2000,self.check_compile_thread_completion,thread)
 
-    def display_previous_sched(self):
+    def display_prev_sched(self,event=None):
         self.roster_page_num-=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
 
-    def display_next_sched(self):
+    def display_next_sched(self,event=None):
         self.roster_page_num+=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
 
-    def compile_schedules(self):
+    def compile_schedules(self,event=None):
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
@@ -479,7 +477,7 @@ class GUI():
             figure = Figure(figsize=(15,7))
             frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
             self.sched_frames.append(frame)
-            frame.grid(row=0,column=0,sticky=NSEW)
+            frame.grid(row=0,column=0,sticky="nsew")
             frame.draw_schedule(figure,self.valid_rosters,i)
             with PdfPages(f'schedule{i+1}.pdf') as pdf:
                 pdf.savefig(figure)
@@ -487,10 +485,14 @@ class GUI():
             self.sched_frames[0].tkraise()
 
 class Sched_Frame(customtkinter.CTkFrame):
+    #TODO fig
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
+        self.page_num=page_num
+        self.controller = controller
+        self.num_valid_rosters = num_valid_rosters
         customtkinter.CTkFrame.__init__(self,parent)
         if page_num>1:
-            customtkinter.CTkButton(self, text="Previous", command=controller.display_previous_sched).pack()
+            customtkinter.CTkButton(self, text="Previous", command=controller.display_prev_sched).pack()
         if page_num<num_valid_rosters:
             customtkinter.CTkButton(self, text="Next", command=controller.display_next_sched).pack()
     
@@ -500,10 +502,14 @@ class Sched_Frame(customtkinter.CTkFrame):
         figure.text(0.5,0.5,s=self.get_course_info(valid_rosters,i))
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
-        canv.get_tk_widget().pack(side=BOTTOM,fill='both',expand=True)
+        canv.get_tk_widget().pack(side="bottom",fill='both',expand=True)
         toolbar = NavigationToolbar2Tk(canv, self)
         toolbar.update()
-        canv._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
+        canv._tkcanvas.pack(side="top", fill="both", expand=True)
+        if self.page_num>1:
+            canv.get_tk_widget().bind("<Left>",self.controller.display_prev_sched)
+        if self.page_num<self.num_valid_rosters:
+            canv.get_tk_widget().bind("<Right>",self.controller.display_next_sched)
     
     def get_course_info(self,schedules,i):
         """
