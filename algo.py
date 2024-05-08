@@ -174,9 +174,3 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
         sorted_valid_rosters.append(sorted_roster)
 
     return sorted_valid_rosters
-
-def plot_schedule(axes,schedules,i):
-    """
-    Creates the window for the wx app which displays the roster graphs and calls a function to draw and display each graph on each page
-    """
-    plotting.draw(axes,schedules,i)
