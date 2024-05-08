@@ -8,6 +8,7 @@ from tkinter import ttk
 import temple_requests
 import algo
 from algo import Schedule
+from plotting import draw
 from text_redirection import TextRedirector
 import sys
 from threading import Thread
@@ -504,7 +505,7 @@ class Sched_Frame(customtkinter.CTkFrame):
     
     def draw_schedule(self, figure:Figure, valid_rosters,i):
         axes = figure.add_subplot(121)
-        algo.plot_schedule(axes,valid_rosters,i)
+        draw(axes,valid_rosters,i)
         figure.text(0.5,0.5,s=self.get_course_info(valid_rosters,i))
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
