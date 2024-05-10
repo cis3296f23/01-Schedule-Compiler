@@ -57,12 +57,15 @@ class GUI():
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
 
-        self.build_general_frame(self.second_frame)
+        self.build_degr_prog_frame(self.second_frame)
+        self.build_courses_frame(self.second_frame)
+        self.build_unavail_time_frame(self.second_frame)
+        self.build_compile_schedule_frame(self.second_frame)
     
-    def build_general_frame(self,master):
+    def build_degr_prog_frame(self, master):
         """
-        Builds the GUI
-        @param master : root application
+        Builds the degree program selection and entry frame
+        @param master : parent frame
         """
         self.custom_font_bold = ("Arial", 15, "bold")
         self.custom_font = ("Arial", 15)
@@ -83,7 +86,11 @@ class GUI():
         self.degr_prog_listbox.bind('<<ListboxSelect>>',self.pick_degr_prog)
         self.degr_prog_entry.bind('<KeyRelease>', lambda filler : self.narrow_search(filler,entry=self.degr_prog_entry, lst=self.all_degr_progs, lstbox=self.degr_prog_listbox))
 
-        # course selection depending on the degree program
+    def build_courses_frame(self, master):
+        """
+        Builds the frame that allows input, selection, and modifying of courses
+        @param master : parent frame
+        """
         self.courses_f = customtkinter.CTkFrame(master=master, border_width=0, corner_radius=10, fg_color = "#DDDDDD", height = 500, width = 500)
         self.courses_f.grid(row=1, padx=15,pady=15, sticky="nsew")
         #course entry gui
@@ -92,7 +99,6 @@ class GUI():
         self.curr_curric = []
         customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=0, padx=10, pady=10)
         customtkinter.CTkLabel(self.courses_f,text= "Enter your course and press Enter key or button below to add \n(Notes: 1. add by top priority to least priority if desired 2. can type to search \n3. can add course even if not in list)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky = "w")
-
         self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.curr_curric_var = Variable()
@@ -107,7 +113,6 @@ class GUI():
         #Selected Courses
         self.remove_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2, corner_radius=10, fg_color=master.cget("fg_color"), width = 200, height=300)
         self.remove_frame.grid(row=3, column=1, padx=10, pady=10)
-
         # Configure row weight for equal spacing
         self.courses_f.rowconfigure(0, weight=1)
         #listbox for displaying added courses
@@ -118,13 +123,11 @@ class GUI():
         customtkinter.CTkButton(
             self.remove_frame, text="Remove Course",
             command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=3, padx=10, pady=15)
-        
         customtkinter.CTkButton(
             self.remove_frame, text="Clear Courses",
             command=lambda: self.clear_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=4, padx=10, pady=5)
         self.specifications_frame = customtkinter.CTkFrame(master=self.courses_f, width=200, height=200, fg_color = "transparent", border_width = 2, corner_radius=10)
         self.specifications_frame.grid(row=3, column=3, padx=5, pady=5)
-
         #semester selection
         customtkinter.CTkLabel(self.specifications_frame, text="Semester:", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,5))
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
@@ -149,19 +152,22 @@ class GUI():
         #self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
         #self.max_cred_entry.grid(row=6, padx=5, pady=5)
 
-        #Unavailable date and time specifications
+    def build_unavail_time_frame(self, master):
+        """
+        Builds the frame that allows for adding and removing of unavailable times
+        @param master : parent frame
+        """
         self.unavailable_frame = customtkinter.CTkFrame(master=master, width=200, height=200, border_width = 0, corner_radius=10, fg_color = "#DDDDDD")
         self.unavailable_frame.grid(row=4, padx=5, pady=5, sticky = "nsew")
         # Configure column weights for equal spacing
         self.unavailable_frame.columnconfigure(0, weight=1)
         self.unavailable_frame.columnconfigure(1, weight=1)
-        # Configure row weights if needed
+        # Configure row weights
         self.unavailable_frame.rowconfigure(0, weight=1)
         self.date_time_frame = customtkinter.CTkFrame(master=self.unavailable_frame, width=200, height=200, border_width = 2, corner_radius=10, fg_color = "transparent")
         self.date_time_frame.grid(row=0, padx=(50,0), pady=15)
         #day and time input
         customtkinter.CTkLabel(self.date_time_frame, text="Unavailable Times", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,0))
-
         customtkinter.CTkLabel(self.date_time_frame, text="Enter days and times NOT available:", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, padx=5)
         # Days of the week selection
         customtkinter.CTkLabel(self.date_time_frame, text="Select Day:", bg_color="transparent", font = ("Arial", 15, "bold")).grid(row=2, padx=5, pady=5)
@@ -193,7 +199,6 @@ class GUI():
         self.end_minute_dropdown.pack(side='left', anchor='w')
         # Add button to list of unavailable times
         customtkinter.CTkButton(self.date_time_frame, text="Add Time", command=self.add_timeslot, width=15).grid(row=21, padx=5, pady=(5,15))
-
         self.selected_times_frame = customtkinter.CTkFrame(master=self.unavailable_frame, width=200, height=200, border_width = 2, corner_radius=10, fg_color = "transparent")
         self.selected_times_frame.grid(row=0, column=1, padx=(0,50), pady=5)
         #List of exluded times
@@ -206,6 +211,11 @@ class GUI():
         # Remove time and date entry button
         customtkinter.CTkButton(self.selected_times_frame, text="Remove Time", command=self.remove_timeslot, width=25).grid(row=22, padx=5, pady=(5,15))
 
+    def build_compile_schedule_frame(self, master):
+        """
+        Builds the frame for schedule compilation and output of progress
+        @param master : parent frame
+        """
         #compilation of schedules
         self.compilation_frame = customtkinter.CTkFrame(master=master, border_width = 2, corner_radius=10, fg_color = "transparent")
         self.compilation_frame.grid(row=5, padx=5, pady=5)
