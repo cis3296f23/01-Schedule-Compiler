@@ -1,7 +1,6 @@
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
 from tkinter import *
 from tkinter import ttk
@@ -467,6 +466,7 @@ class GUI():
     def exit_sched_display(self):
         for frame in self.sched_frames:
             frame.destroy()
+        self.sched_frames=[]
 
     def compile_schedules(self,event=None):
         """
@@ -482,13 +482,11 @@ class GUI():
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(num_valid_rosters):
-            figure = Figure(figsize=(15,7))
+            figure = Figure(figsize=(15,6.3))
             frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
             self.sched_frames.append(frame)
             frame.grid(row=0,column=0,sticky="nsew")
             frame.draw_schedule(figure,self.valid_rosters,i)
-            with PdfPages(f'schedule{i+1}.pdf') as pdf:
-                pdf.savefig(figure)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
 
@@ -509,7 +507,7 @@ class Sched_Frame(customtkinter.CTkFrame):
     def draw_schedule(self, figure:Figure, valid_rosters,i):
         axes = figure.add_subplot(121)
         draw(axes,valid_rosters,i)
-        figure.text(0.5,0.5,s=self.get_course_info(valid_rosters,i))
+        figure.text(0.5,0.3,s=self.get_course_info(valid_rosters,i))
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
         canv.get_tk_widget().pack(side="bottom",fill='both',expand=True)
