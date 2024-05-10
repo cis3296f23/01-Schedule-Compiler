@@ -119,11 +119,11 @@ class GUI():
         self.courses_frame.grid(row=3, column=0, padx=10, pady=10)
         self.curr_curric = []
         self.course_selection_label = customtkinter.CTkLabel(self.courses_f,
-                                                         text='COURSE SELECTION',
+                                                         text='Course Selection',
                                                          font = self.custom_font_bold,
                                                         fg_color="transparent"
                                                          )
-        self.course_selection_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
+        self.course_selection_label.grid(row=0, column=0, padx=10, pady=10)
 
         self.course_selection_note_label = customtkinter.CTkLabel(self.courses_f,
                                                                   text= "Enter your course and press Enter key or button below to add \n(Notes: 1. add by top priority to least priority if desired 2. can type to search \n3. can add course even if not in list)",
