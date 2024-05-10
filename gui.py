@@ -171,7 +171,10 @@ class GUI():
         customtkinter.CTkButton(
             self.remove_frame, text="Remove Course",
             command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=3, padx=10, pady=15)
-
+        
+        customtkinter.CTkButton(
+            self.remove_frame, text="Clear Courses",
+            command=lambda: self.clear_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=4, padx=10, pady=5)
         self.specifications_frame = customtkinter.CTkFrame(master=self.courses_f,
                                                             width=200, height=200,
                                                             fg_color = "transparent",
@@ -385,6 +388,11 @@ class GUI():
             lstbox.delete(selected_index)
             lst.pop(selected_index[0])
             return item
+    
+    def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
+        for i in range(len(lst)-1,-1,-1):
+            lstbox.delete(i)
+            lst.pop(i)
 
     def add_timeslot(self):
         """
