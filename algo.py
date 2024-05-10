@@ -146,7 +146,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                         break
                 if overlaps_with_unavail:
                     break
-            if not overlaps_with_unavail and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
+            if not overlaps_with_unavail and section['seatsAvailable'] and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
                 dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times)
                 roster.remove_class(section['schedule'], section)
 
