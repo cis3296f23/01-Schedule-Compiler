@@ -11,6 +11,7 @@ from plotting import draw
 from text_redirection import TextRedirector
 import sys
 from threading import Thread
+from custom_thread import Custom_Thread
 import customtkinter
 #TO DO: comment out code that creates new frame and displays schedule
 #TO DO: figure out how to display schedules neatly in GUI
@@ -458,10 +459,6 @@ class GUI():
             print("No valid rosters.")
         print('Done')
         num_valid_rosters[0]=len(self.valid_rosters)
-        
-    def check_compile_thread_completion(self,thread):
-        if not thread.finished.is_set():
-            self.__root.after(2000,self.check_compile_thread_completion,thread)
 
     def display_prev_sched(self,event=None):
         self.roster_page_num-=1
@@ -537,15 +534,3 @@ class Sched_Frame(customtkinter.CTkFrame):
             course_info_str += course_info
         course_info_str += '\n'
         return course_info_str
-  
-class Custom_Thread(Thread):
-    def __init__(self,callback1,arg1,callback2,arg2):
-        Thread.__init__(self)
-        self.callback1=callback1
-        self.callback2=callback2
-        self.arg1=arg1
-        self.arg2=arg2
-    
-    def run(self):
-        self.callback1(self.arg1)
-        self.callback2(self.arg2)
