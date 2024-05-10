@@ -438,14 +438,15 @@ class Sched_Frame(customtkinter.CTkFrame):
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
         self.controller = controller
         customtkinter.CTkFrame.__init__(self,parent)
-        nav_frame = customtkinter.CTkFrame(self)
-        nav_frame.pack(side="top",anchor="center",pady=5)
+        if num_valid_rosters>1:
+            nav_frame = customtkinter.CTkFrame(self)
+            nav_frame.pack(side="top",anchor="center",pady=5)
+            if page_num>1:
+                customtkinter.CTkButton(nav_frame, text="Previous", command=controller.display_prev_sched).pack(side="left",anchor="center",padx=5)
+            if page_num<num_valid_rosters:
+                customtkinter.CTkButton(nav_frame, text="Next", command=controller.display_next_sched).pack(side="left",anchor="center",padx=5)
         exit_frame = customtkinter.CTkFrame(self)
         exit_frame.pack(side="top",anchor="center")
-        if page_num>1:
-            customtkinter.CTkButton(nav_frame, text="Previous", command=controller.display_prev_sched).pack(side="left",anchor="center",padx=5)
-        if page_num<num_valid_rosters:
-            customtkinter.CTkButton(nav_frame, text="Next", command=controller.display_next_sched).pack(side="left",anchor="center",padx=5)
         customtkinter.CTkButton(exit_frame,text="Exit",command = controller.exit_sched_display).pack(side="bottom",anchor="center")
     
     def draw_schedule(self, figure:Figure, valid_rosters,i):
