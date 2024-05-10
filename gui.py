@@ -225,7 +225,7 @@ class GUI():
                                                     )
         self.date_time_frame.grid(row=0, padx=(50,0), pady=15)
         #day and time input
-        self.unavailable_label = customtkinter.CTkLabel(self.date_time_frame, text="UNAVAILABLE TIMES", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,0))
+        self.unavailable_label = customtkinter.CTkLabel(self.date_time_frame, text="Unavailable Times", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,0))
 
         self.date_time_label = customtkinter.CTkLabel(self.date_time_frame, text="Enter days and times NOT available:", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, padx=5)
         # Days of the week selection
@@ -468,7 +468,7 @@ class GUI():
         self.roster_page_num+=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
     
-    def exit_sched_display(self):
+    def exit_sched_display(self,event=None):
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
@@ -521,6 +521,7 @@ class Sched_Frame(customtkinter.CTkFrame):
         canv._tkcanvas.pack(side="top", fill="both", expand=True)
         canv.get_tk_widget().bind("<Left>",self.controller.display_prev_sched)
         canv.get_tk_widget().bind("<Right>",self.controller.display_next_sched)
+        canv.get_tk_widget().bind("<Escape>",self.controller.exit_sched_display)
     
     def get_course_info(self,schedules,i):
         """
