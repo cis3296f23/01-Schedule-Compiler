@@ -1,5 +1,3 @@
-import plotting
-
 class Schedule:
     """
     Represents someone's schedule with timeslots for each day and an attribute for class sections
