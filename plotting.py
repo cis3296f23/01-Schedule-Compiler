@@ -72,7 +72,8 @@ def draw(axes,schedules:list, i:int):
         ax.set_ylim(22, 6)
 
         # Handle legend
-        ax.legend(title='Courses', bbox_to_anchor=(1.1, 1), loc='upper left')
+        if not schedule_data.empty:
+            ax.legend(title='Courses', bbox_to_anchor=(1.1, 1), loc='upper left')
 
     # A dictionary to map days to numbers
     day_to_num = {'Sunday': 1, 'Monday': 2, 'Tuesday': 3, 'Wednesday': 4, 'Thursday': 5, 'Friday': 6, 'Saturday': 7}
