@@ -108,7 +108,7 @@ class Schedule:
         """
         return str(self.days)
 
-def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule):
+def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule, credits:int, max_credits:int):
     """
     Goes through the sections of the course in course_info indicated by index of course_keys via depth-first search for courses that fit the schedule as is and without overlapping with unavail_times
     @param course_info : information about the sections of each course
@@ -118,21 +118,19 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     @param roster : temporary Schedule variable to store potential roster to add and remove from
     @param valid_rosters : list of schedules that have sections for every course the user wants to take
     @param unavail_times : Schedule variable representing times the user is not available
+    @param credits : number of credits for the built roster so far
+    @param max_credits : maximum desired amount of credits for schedules
     """
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
         return
-    #if no courses were inputted, return
-    if term not in course_info or not course_info[term]:
-        return
+    course_sections = course_info[term].get(course_keys[index]) if index<len(course_keys) else None
     # If all courses have been considered, add the current roster to valid_rosters
-    if index == len(course_keys):
+    if index == len(course_keys) or  (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
         valid_rosters.append(roster.copy())
         return
-
-    course_key = course_keys[index]
-    if course_key in course_info[term]:
-        for section in course_info[term][course_key]:
+    if course_sections:
+        for section in course_sections:
             overlaps_with_unavail = False
             for day, new_timeslots in section['schedule'].days.items():
                 for new_timeslot in new_timeslots:
@@ -144,11 +142,13 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                         break
                 if overlaps_with_unavail:
                     break
-            if not overlaps_with_unavail and section['seatsAvailable'] and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
-                dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times)
+            #dfs_build_rosters only gets called when a class can be added
+            #so do it so that it can be called when the appropriate conditionals are true for roster building 
+            if not overlaps_with_unavail and section['seatsAvailable'] and credits+section['creditHours']<=max_credits and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
+                dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'],max_credits)
                 roster.remove_class(section['schedule'], section)
 
-def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule):
+def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule, max_credits:int):
     """
     Calls the depth_first_search with valid_rosters as a parameter to update and then sorts the schedule by timeslot for each day and adds the section info
     @param course_info : dictionary of course mapped to the info for each section of it
@@ -156,12 +156,15 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
     @param course_list : list of str courses in "subject course_number" format
     @param unavail_times : schedule with times that the user is not available
     @return sorted_valid_rosters : a list of at most 5 potential schedules with sorted timeslots and section information
+    @param max_credits : maximum desired amount of credits for schedules
     """
+    #if no courses were inputted, return
+    if not course_info.get(term):
+        return []
     valid_rosters = []
-    dfs_build_rosters(course_info, term, course_list, 0, Schedule(), valid_rosters, unavail_times)
+    dfs_build_rosters(course_info, term, course_list, 0, Schedule(), valid_rosters, unavail_times,0, max_credits)
     # Sort the times in each schedule before returning
     sorted_valid_rosters = []
-
     for roster in valid_rosters:
         sorted_roster = Schedule()
         for day, timeslots in roster.days.items():
@@ -170,5 +173,4 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
                 sorted_roster.add_timeslot(day, timeslot[0], timeslot[1])
         sorted_roster.sections = roster.sections
         sorted_valid_rosters.append(sorted_roster)
-
     return sorted_valid_rosters
