@@ -138,6 +138,22 @@ def is_subset_of_roster_in_lst(sections:dict,lst:list[Schedule]):
             return True
     return False
 
+#fix empty schedule being added
+def replace_subset(schedule:Schedule,lst:list[Schedule]):
+    """
+    Removes a subset of sections within lst if it exists
+    @param schedule : schedule to check if any schedule within the list is a subset of 
+    @param lst : list of valid rosters
+    """
+    sched_to_replace = None
+    for sched in lst:
+        subset_tracker = [section in schedule.sections for section in sched.sections]
+        if subset_tracker and all(subset_tracker):
+            sched_to_replace=sched
+            break
+    if sched_to_replace:
+        lst.remove(sched_to_replace)
+
 def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule, credits:int, max_credits:int):
     """
     Goes through the sections of the course in course_info indicated by index of course_keys via depth-first search for courses that fit the schedule as is and without overlapping with unavail_times
@@ -159,6 +175,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     if index == len(course_keys) or (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
         #also check if roster is subset (then don't add) or if any of the rosters there are a subset of roster (then replace)
         if roster and not is_subset_of_roster_in_lst(roster.sections,valid_rosters):
+            replace_subset(roster,valid_rosters)
             valid_rosters.append(roster.copy())
         return
     if course_sections:
