@@ -150,23 +150,21 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
         return
     if course_sections:
         for section in course_sections:
-            overlaps_with_unavail = False
-            for day, new_timeslots in section['schedule'].days.items():
-                for new_timeslot in new_timeslots:
-                    for unavail_slot in unavail_times.days[day]:
-                        if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
-                            overlaps_with_unavail = True
+            course_added = False
+            if section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
+                overlaps_with_unavail = False
+                for day, new_timeslots in section['schedule'].days.items():
+                    for new_timeslot in new_timeslots:
+                        for unavail_slot in unavail_times.days[day]:
+                            if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
+                                overlaps_with_unavail = True
+                                break
+                        if overlaps_with_unavail:
                             break
                     if overlaps_with_unavail:
                         break
-                if overlaps_with_unavail:
-                    break
-            #dfs_build_rosters only gets called when a class can be added
-            #so do it so that it can be called when the appropriate conditionals are true for roster building 
-            course_added = False
-            #can move seatsAvailable and credit conditions before checking for if timeslots fit
-            if not overlaps_with_unavail and section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
-                course_added = roster.add_class(section['schedule'], section)
+                if not overlaps_with_unavail:
+                    course_added = roster.add_class(section['schedule'], section)
             dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] if course_added else credits,max_credits)
             if course_added:
                 roster.remove_class(section['schedule'], section)
