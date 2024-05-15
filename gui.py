@@ -148,9 +148,9 @@ class GUI():
         self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
-        #self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Number of credits (maximum)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
-        #self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
-        #self.max_cred_entry.grid(row=6, padx=5, pady=5)
+        self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Enter max # of credits (leave blank for 18)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
+        self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
+        self.max_cred_entry.grid(row=6, padx=5, pady=5)
 
     def build_unavail_time_frame(self, master):
         """
