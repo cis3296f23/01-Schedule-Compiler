@@ -108,6 +108,17 @@ class Schedule:
         """
         return str(self.days)
 
+    def __eq__(self, value: object) -> bool:
+        """
+        Overrides the default equals method to check if the Schedule object value has the same roster
+        """
+        if type(value)!=type(self):
+            return False
+        return self.sections==value.sections
+    
+    def __bool__(self):
+        return bool(self.sections)
+
 def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule, credits:int, max_credits:int):
     """
     Goes through the sections of the course in course_info indicated by index of course_keys via depth-first search for courses that fit the schedule as is and without overlapping with unavail_times
@@ -125,9 +136,11 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     if len(valid_rosters) >= 5:
         return
     course_sections = course_info[term].get(course_keys[index]) if index<len(course_keys) else None
-    # If all courses have been considered, add the current roster to valid_rosters
-    if index == len(course_keys) or  (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
-        valid_rosters.append(roster.copy())
+    # If all courses have been considered or the last course is being considered but would pass the credit limit if added, add the current roster to valid_rosters
+    if index == len(course_keys) or (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
+        #also check if roster is subset (then don't add) or if any of the rosters there are a subset of roster (then replace)
+        if roster and roster not in valid_rosters:
+            valid_rosters.append(roster.copy())
         return
     if course_sections:
         for section in course_sections:
