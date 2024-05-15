@@ -125,9 +125,15 @@ class Schedule:
         """
         return bool(self.sections)
 
-def is_subset_of_roster_in_lst(roster:dict,lst:list[Schedule]):
+def is_subset_of_roster_in_lst(sections:dict,lst:list[Schedule]):
+    """
+    Checks if the given roster is a subset of any of the rosters within the given list
+    @param sections : dictionary of course section info
+    @param lst : list of valid rosters
+    @return True if roster is a subset of any of the rosters in list, False otherwise
+    """
     for sched in lst:
-        subset_tracker = [section in sched.sections for section in roster]
+        subset_tracker = [section in sched.sections for section in sections]
         if all(subset_tracker):
             return True
     return False
