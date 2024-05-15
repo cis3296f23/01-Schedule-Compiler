@@ -144,8 +144,12 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                     break
             #dfs_build_rosters only gets called when a class can be added
             #so do it so that it can be called when the appropriate conditionals are true for roster building 
-            if not overlaps_with_unavail and section['seatsAvailable'] and credits+section['creditHours']<=max_credits and roster.add_class(section['schedule'], section):  # Check for overlap with unavailable times
-                dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'],max_credits)
+            course_added = False
+            #can move seatsAvailable and credit conditions before checking for if timeslots fit
+            if not overlaps_with_unavail and section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
+                course_added = roster.add_class(section['schedule'], section)
+            dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] if course_added else credits,max_credits)
+            if course_added:
                 roster.remove_class(section['schedule'], section)
 
 def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule, max_credits:int):
