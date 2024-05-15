@@ -139,7 +139,7 @@ def is_subset_of_roster_in_lst(sections:dict,lst:list[Schedule]):
     return False
 
 #fix empty schedule being added
-def replace_subset(schedule:Schedule,lst:list[Schedule]):
+def remove_subset(schedule:Schedule,lst:list[Schedule]):
     """
     Removes a subset of sections within lst if it exists
     @param schedule : schedule to check if any schedule within the list is a subset of 
@@ -175,7 +175,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     if index == len(course_keys) or (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
         #also check if roster is subset (then don't add) or if any of the rosters there are a subset of roster (then replace)
         if roster and not is_subset_of_roster_in_lst(roster.sections,valid_rosters):
-            replace_subset(roster,valid_rosters)
+            remove_subset(roster,valid_rosters)
             valid_rosters.append(roster.copy())
         return
     if course_sections:
