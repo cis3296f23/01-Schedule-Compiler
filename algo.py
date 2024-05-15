@@ -110,13 +110,19 @@ class Schedule:
 
     def __eq__(self, value: object) -> bool:
         """
-        Overrides the default equals method to check if the Schedule object value has the same roster
+        Overrides the default equals method to check if the Schedule object value has the same sections array
+        @param value : object that the current Schedule object self is being compared to
+        @return True if the sections of the Schedule objects are equal, False if value is not a Schedule object or if the sections are not equal
         """
         if type(value)!=type(self):
             return False
         return self.sections==value.sections
     
-    def __bool__(self):
+    def __bool__(self) -> bool:
+        """
+        Overrides the boolean method to check if the sections array is empty
+        @return True if self.sections is not empty, False otherwise
+        """
         return bool(self.sections)
 
 def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule, credits:int, max_credits:int):
