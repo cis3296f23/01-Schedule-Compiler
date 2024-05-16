@@ -198,6 +198,8 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                     section_added = roster.add_class(section['schedule'], section)
                 if not section_added:
                     incompatible_section=True
+            else:
+                incompatible_section=True
             #try to separate this from the loop
             if section_added:
                 dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] ,max_credits)
