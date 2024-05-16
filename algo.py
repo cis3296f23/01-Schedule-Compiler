@@ -169,7 +169,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     """
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
-        return
+        return 0
     course_sections = course_info[term].get(course_keys[index]) if index<len(course_keys) else None
     # If all courses have been considered or the last course is being considered but would pass the credit limit if added, add the current roster to valid_rosters
     if index == len(course_keys) or (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
@@ -177,10 +177,11 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
         if roster and not is_subset_of_roster_in_lst(roster.sections,valid_rosters):
             remove_subset(roster,valid_rosters)
             valid_rosters.append(roster.copy())
-        return
+        return 0
     if course_sections:
+        incompatible_section=False
         for section in course_sections:
-            course_added = False
+            section_added = False
             if section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
                 overlaps_with_unavail = False
                 for day, new_timeslots in section['schedule'].days.items():
@@ -194,10 +195,15 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                     if overlaps_with_unavail:
                         break
                 if not overlaps_with_unavail:
-                    course_added = roster.add_class(section['schedule'], section)
-            dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] if course_added else credits,max_credits)
-            if course_added:
+                    section_added = roster.add_class(section['schedule'], section)
+                if not section_added:
+                    incompatible_section=True
+            #try to separate this from the loop
+            if section_added:
+                dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] ,max_credits)
                 roster.remove_class(section['schedule'], section)
+        if incompatible_section:
+            dfs_build_rosters(course_info, term, course_keys, index+1, roster, valid_rosters, unavail_times, credits, max_credits)
 
 def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule, max_credits:int):
     """
