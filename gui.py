@@ -75,8 +75,11 @@ class GUI():
 
         ttk.Label(self.prog_frame,text='Degree Program',font = self.custom_font_bold,).grid(row=0, padx=5, pady=5)
         customtkinter.CTkLabel(self.prog_frame,text='Note: Select a degree program if you would like to see a list of courses in the curriculum \n (can type to narrow down, no worries if your program is not in the list)',font = ("Arial", 12, "italic")).grid(row=1, padx=2, pady=2)
+        self.error_otpt = ""
         self.degr_prog_to_url = temple_requests.get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
+        if self.all_degr_progs and "Try connecting" in self.all_degr_progs[0]:
+            self.error_otpt+=self.all_degr_progs[0]
         self.all_degr_progs_var = Variable()
         self.all_degr_progs_var.set(self.all_degr_progs)
         self.degr_prog_entry = customtkinter.CTkEntry(self.prog_frame, width=250, placeholder_text="Enter Degree Program")
@@ -134,10 +137,11 @@ class GUI():
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(self.specifications_frame, values=self.terms, state="readonly")
         i = 0
-        if self.terms:
-            while "Orientation" in self.terms[i]:
-                i+=1
-            self.term_combobox.set(self.terms[i])
+        while "Orientation" in self.terms[i]:
+            i+=1
+        self.term_combobox.set(self.terms[i])
+        if "Try connecting" in self.terms[i]:
+            self.error_otpt+=self.terms[i]
         self.term_combobox.grid(row=1, padx=15, pady=5)
         self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus
@@ -149,6 +153,8 @@ class GUI():
             self.campus_combobox.set('Main')
         else:
             self.campus_combobox.set(self.campuses[0])
+            if "Try connecting" in self.campuses[0]:
+                self.error_otpt+=self.campuses[0]
         self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
@@ -228,6 +234,7 @@ class GUI():
         self.output = Text(self.compilation_frame, width=50, height=10, background='#ecf0f1', wrap=WORD, state='disabled')
         self.output.grid(row=27,column=0, padx=15, pady=(15,50), sticky = "s")
         sys.stdout = TextRedirector(self.output,'stdout')
+        print(self.error_otpt)
         
     def on_term_or_campus_selected(self, event):
          self.__root.focus_set()
