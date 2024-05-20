@@ -134,9 +134,10 @@ class GUI():
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(self.specifications_frame, values=self.terms, state="readonly")
         i = 0
-        while "Orientation" in self.terms[i]:
-            i+=1
-        self.term_combobox.set(self.terms[i])
+        if self.terms:
+            while "Orientation" in self.terms[i]:
+                i+=1
+            self.term_combobox.set(self.terms[i])
         self.term_combobox.grid(row=1, padx=15, pady=5)
         self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus
@@ -144,7 +145,10 @@ class GUI():
         self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
         self.campuses = list(self.campus_to_code.keys())
         self.campus_combobox = ttk.Combobox(self.specifications_frame, values=self.campuses, state="readonly")
-        self.campus_combobox.set('Main')
+        if 'Main' in self.campuses:
+            self.campus_combobox.set('Main')
+        else:
+            self.campus_combobox.set(self.campuses[0])
         self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
         self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
@@ -302,9 +306,10 @@ class GUI():
         curric = Variable()
         self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
         num_courses = len(self.curr_curric)
-        for c in range(num_courses):
-            self.curr_curric[c][0]=self.curr_curric[c][0].replace('\xa0',' ')
-            self.curr_curric[c]=' '.join(self.curr_curric[c])
+        if "Try connecting" not in self.curr_curric[0]:
+            for c in range(num_courses):
+                self.curr_curric[c][0]=self.curr_curric[c][0].replace('\xa0',' ')
+                self.curr_curric[c]=' '.join(self.curr_curric[c])
         curric.set(self.curr_curric)
         self.course_lstbox.config(listvariable=curric) 
 
