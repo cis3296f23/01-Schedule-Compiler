@@ -59,7 +59,7 @@ def draw(axes,schedules:list, i:int):
             start_time = decimal_time_to_standard(row['Start Time'])
             end_time = decimal_time_to_standard(row['End Time'])
             ax.text(row['Day'], row['Start Time'] + (row['End Time'] - row['Start Time']) / 2, 
-                    f'{start_time}-{end_time}', color='white', ha='center', va='center')
+                    f'{start_time}-{end_time}\n{row['Meeting Type']}', color='white', ha='center', va='center')
         
         # Setting labels and title
         ax.set_ylabel('Time (hours)')
@@ -86,11 +86,12 @@ def draw(axes,schedules:list, i:int):
             if course_name not in course_colors:
                 course_colors[course_name] = colors[len(course_colors) % len(colors)]
             for day, timeslots in section['schedule'].days.items():
-                for timeslot in timeslots:
+                for timeslot, meeting_type in timeslots:
                     start_time, end_time = timeslot
                     data.append({'Course Name': course_name, 'Day': day_to_num[day.capitalize()], 
                                 'Start Time': military_time_to_number(start_time), 
-                                'End Time': military_time_to_number(end_time)})
+                                'End Time': military_time_to_number(end_time),
+                                'Meeting Type':meeting_type})
         schedule_data_list.append(pd.DataFrame(data))
     # Initial draw
     if i<len(schedule_data_list):
