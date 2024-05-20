@@ -15,7 +15,7 @@ class Schedule:
         
         self.sections = []
 
-    def add_timeslot(self, day:str, start_time:int, end_time:int)->bool:
+    def add_timeslot(self, day:str, start_time:int, end_time:int,meeting_type:str)->bool:
         """
         Adds the given timeslot of (start_time,end_time) if valid
         @param day : str day of the week
@@ -30,7 +30,7 @@ class Schedule:
             print("Invalid Range: Start time must be before end time")
             return False
 
-        time_slot = (start_time, end_time)
+        time_slot = ((start_time, end_time),meeting_type)
         
         self.days[day].append(time_slot)
         return True
@@ -42,7 +42,13 @@ class Schedule:
         @param start_time
         @param end_time
         """
-        self.days[day].remove((start_time,end_time))
+        #test this
+        time_to_remove = None
+        for timeslot in self.days[day]:
+            if timeslot[0]==(start_time,end_time):
+                time_to_remove = timeslot
+                break
+        self.days[day].remove(time_to_remove)
         
     def add_class(self, class_meeting_times, sect_info:dict):
         """
@@ -54,12 +60,12 @@ class Schedule:
         for day, new_timeslots in class_meeting_times.days.items():
             for new_timeslot in new_timeslots:
                 for existing_timeslot in self.days[day]:
-                    if self.timeslots_overlap(existing_timeslot, new_timeslot):
+                    if self.timeslots_overlap(existing_timeslot[0], new_timeslot[0]):
                         return False
 
         for day, new_timeslots in class_meeting_times.days.items():
-            for new_timeslot in new_timeslots:
-                self.days[day].append(new_timeslot)
+            for new_timeslot, meeting_type in new_timeslots:
+                self.days[day].append((new_timeslot,meeting_type))
 
         self.sections.append(sect_info)  # Store the section info
         return True
@@ -95,8 +101,8 @@ class Schedule:
         new_schedule = Schedule()
         # Copying over the timeslots
         for day, timeslots in self.days.items():
-            for timeslot in timeslots:
-                new_schedule.add_timeslot(day, timeslot[0], timeslot[1])
+            for timeslot, meeting_type in timeslots:
+                new_schedule.add_timeslot(day, timeslot[0], timeslot[1],meeting_type)
         # Copying over the sections
         for section in self.sections:
             new_schedule.sections.append(section)
@@ -187,7 +193,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                 for day, new_timeslots in section['schedule'].days.items():
                     for new_timeslot in new_timeslots:
                         for unavail_slot in unavail_times.days[day]:
-                            if Schedule.timeslots_overlap(unavail_slot, new_timeslot):
+                            if Schedule.timeslots_overlap(unavail_slot[0], new_timeslot[0]):
                                 overlaps_with_unavail = True
                                 break
                         if overlaps_with_unavail:
@@ -227,9 +233,9 @@ def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], u
     for roster in valid_rosters:
         sorted_roster = Schedule()
         for day, timeslots in roster.days.items():
-            sorted_timeslots = sorted(timeslots)
-            for timeslot in sorted_timeslots:
-                sorted_roster.add_timeslot(day, timeslot[0], timeslot[1])
+            sorted_timeslots = sorted(timeslots, key = lambda x : x[0])
+            for timeslot, meeting_type in sorted_timeslots:
+                sorted_roster.add_timeslot(day, timeslot[0], timeslot[1], meeting_type)
         sorted_roster.sections = roster.sections
         sorted_valid_rosters.append(sorted_roster)
     return sorted_valid_rosters

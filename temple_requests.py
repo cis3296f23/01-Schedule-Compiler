@@ -271,7 +271,7 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
                 meet_time_info = meeting_type['meetingTime']
                 for day in days_of_the_week:
                     if meet_time_info[day]:
-                        sched.add_timeslot(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']))
+                        sched.add_timeslot(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']),meet_time_info['meetingTypeDescription'])
             #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
             sect_info = {'name':section['subject'] + ' ' + section['courseNumber'],'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
                          'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
