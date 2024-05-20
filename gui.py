@@ -13,9 +13,6 @@ import sys
 from threading import Thread
 from custom_thread import Custom_Thread
 import customtkinter
-#TO DO: comment out code that creates new frame and displays schedule
-#TO DO: figure out how to display schedules neatly in GUI
-#TO DO: Move classes and functions to more appropriate places
 
 class GUI():
     def __init__(self,root:Tk):
