@@ -427,7 +427,7 @@ class GUI():
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(num_valid_rosters):
-            figure = Figure(figsize=(15,6.3))
+            figure = Figure(figsize=(18,7))
             frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
             self.sched_frames.append(frame)
             frame.grid(row=0,column=0,sticky="nsew")

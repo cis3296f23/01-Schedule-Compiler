@@ -52,7 +52,7 @@ def draw(axes,schedules:list, i:int):
             color = course_colors[row['Course Name']]
             label = row['Course Name'] if row['Course Name'] not in labels_added else None
             labels_added.add(row['Course Name'])
-            bar = ax.bar(row['Day'], row['End Time'] - row['Start Time'], bottom=row['Start Time'], 
+            bar = ax.bar(row['Day'], row['End Time'] - row['Start Time'], .9, bottom=row['Start Time'], 
                         color=color, edgecolor='black', label=label, align='center')
 
             # Adding time annotation to each bar in standard time format
