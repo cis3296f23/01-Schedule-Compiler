@@ -88,8 +88,7 @@ def get_degr_progs()->dict:
                             degr_program_to_url[subj+' '+abbrv]=url_and_abbrv[0]
         return degr_program_to_url
     except Exception as e:
-        print(e)
-        return None
+        return {f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}":""}
 
 def get_curric(degr_prog_url:str)->list[str]:
     """
@@ -118,8 +117,7 @@ def get_curric(degr_prog_url:str)->list[str]:
                     curric.append([subj_and_num,course_name])
         return curric
     except Exception as e:
-        print(e)
-        return []
+        return [f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"]
 
 def get_param_data_codes(endpoint:str)->dict:
     """
@@ -140,8 +138,7 @@ def get_param_data_codes(endpoint:str)->dict:
             param_data_to_code[descrip_and_code['description']]=descrip_and_code['code']
         return param_data_to_code
     except Exception as e:
-        print(e)
-        return None
+        return {f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}":""}
 
 #can retrieve other info such as "Would take again" and difficulty later on if it helps
 def get_rmp_data(prof:str):
@@ -233,10 +230,13 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
     results_args.update(results_opts)
     moreResults=True
     course_sect_info = dict()
-    # Establish session
-    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
-    # Select a term
-    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
+    try:
+        # Establish session
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
+        # Select a term
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
+    except Exception as e:
+        return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"
     while moreResults:
         try:
             # Start subject search for the chosen term and current page offset
@@ -254,7 +254,7 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
                 moreResults=False
             course_sect_info|=data
         except Exception as e:
-            return str(e)
+            return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"
     if course_sect_info['totalCount']:
         for section in course_sect_info['data']:
             if section['faculty']:
