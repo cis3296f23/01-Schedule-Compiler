@@ -176,7 +176,9 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
         return 0
-    course_sections = course_info[term].get(course_keys[index]) if index<len(course_keys) else None
+    course_sections = []
+    if index<len(course_keys) and course_info[term].get(course_keys[index]):
+        course_sections = course_info[term].get(course_keys[index])
     # If all courses have been considered or the last course is being considered but would pass the credit limit if added, add the current roster to valid_rosters
     if index == len(course_keys) or (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
         #also check if roster is subset (then don't add) or if any of the rosters there are a subset of roster (then replace)
@@ -184,34 +186,28 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
             remove_subset(roster,valid_rosters)
             valid_rosters.append(roster.copy())
         return 0
-    if course_sections:
-        incompatible_section=False
-        for section in course_sections:
-            section_added = False
-            if section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
-                overlaps_with_unavail = False
-                for day, new_timeslots in section['schedule'].days.items():
-                    for new_timeslot in new_timeslots:
-                        for unavail_slot in unavail_times.days[day]:
-                            if Schedule.timeslots_overlap(unavail_slot[0], new_timeslot[0]):
-                                overlaps_with_unavail = True
-                                break
-                        if overlaps_with_unavail:
+    compat_sections = []
+    for section in course_sections:
+        if section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
+            overlaps_with_unavail = False
+            for day, new_timeslots in section['schedule'].days.items():
+                for new_timeslot in new_timeslots:
+                    for unavail_slot in unavail_times.days[day]:
+                        if Schedule.timeslots_overlap(unavail_slot[0], new_timeslot[0]):
+                            overlaps_with_unavail = True
                             break
                     if overlaps_with_unavail:
                         break
-                if not overlaps_with_unavail:
-                    section_added = roster.add_class(section['schedule'], section)
-                if not section_added:
-                    incompatible_section=True
-            else:
-                incompatible_section=True
-            #try to separate this from the loop
-            if section_added:
-                dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] ,max_credits)
-                roster.remove_class(section['schedule'], section)
-        if incompatible_section:
-            dfs_build_rosters(course_info, term, course_keys, index+1, roster, valid_rosters, unavail_times, credits, max_credits)
+                if overlaps_with_unavail:
+                    break
+            if not overlaps_with_unavail:
+                compat_sections.append(section)
+    for section in compat_sections:
+        if roster.add_class(section['schedule'], section):
+            dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] ,max_credits)
+            roster.remove_class(section['schedule'], section)
+    if len(compat_sections)!=len(course_sections) or not course_sections: #if at least one section was not able to be added, then try without the course
+        dfs_build_rosters(course_info, term, course_keys, index+1, roster, valid_rosters, unavail_times, credits, max_credits)
 
 def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule, max_credits:int):
     """
