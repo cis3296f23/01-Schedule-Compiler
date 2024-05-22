@@ -23,7 +23,7 @@ class Schedule:
         @param end_time
         @return True on success, False on failure (invalid parameters)
         """
-        if day not in self.days:
+        if self.days.get(day)==None:
             print(f"Invalid day: {day}")
             return False
         if start_time>end_time:
