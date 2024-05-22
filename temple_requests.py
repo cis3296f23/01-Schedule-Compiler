@@ -254,9 +254,9 @@ def get_courses_from_keyword_search(term_code:str,keywords:str)->set:
                 for section in data['data']:
                     courses.add((section['subject'] + ' ' + section['courseNumber'],section['courseTitle']))
             else:
-                return ["There are no courses that have the keyword(s) you entered."]
+                return [("There are no courses that have the keyword(s) you entered.","")]
         except Exception as e:
-            return [f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"]
+            return [(f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}","")]
     return courses
 
 def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str="",course_num:str="",attr="", campus_code = "MN", prof_rating_cache = {}):
