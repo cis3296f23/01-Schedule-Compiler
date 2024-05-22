@@ -215,7 +215,7 @@ def get_authenticated_session(search_args:dict):
         return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}", None
     return session, results_args
 
-def request_course_data(session, search_args, results_args)->dict:
+def fetch_course_data(session, search_args, results_args)->dict:
     """
     Retrieves course data from TUPortal scheduling service
     @param session : reference to authenticated session
@@ -273,7 +273,7 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
     moreResults=True
     while moreResults:
         try:
-            data = request_course_data(session,SEARCH_REQ,results_args)
+            data = fetch_course_data(session,SEARCH_REQ,results_args)
             if data['totalCount']>results_args['pageOffset']+PAGE_MAX_SIZE:
                 results_args['pageOffset']+=PAGE_MAX_SIZE
             else:
