@@ -335,7 +335,19 @@ class GUI():
             lstbox.delete(selected_index)
             lst.pop(selected_index[0])
             return item
-
+    
+    def search_for_keyword_thread(self,term,keywords):
+        """
+        Callback for thread to fetch courses from a keyword search in TUPortal's schedule service
+        @param term : semester selected to schedule for
+        @param keywords
+        """
+        courses_var = Variable()
+        courses_var.set(["Searching..."])
+        self.course_lstbox.config(listvariable=courses_var)
+        results = temple_requests.get_courses_from_keyword_search(self.term_to_code[term],keywords)
+        courses_var.set([f"{subj_code} {title}" for subj_code, title in results])
+        self.course_lstbox.config(listvariable=courses_var)
 
     def search_for_keywords(self,entry:Entry):
         """
@@ -350,11 +362,7 @@ class GUI():
             return
         keywords = entry.get()
         if keywords:
-            courses_var.set(["Searching..."])
-            self.course_lstbox.config(listvariable=courses_var)
-            results = temple_requests.get_courses_from_keyword_search(self.term_to_code[term],keywords)
-            courses_var.set([f"{subj_code} {title}" for subj_code, title in results])
-            self.course_lstbox.config(listvariable=courses_var)
+            Thread(target=self.search_for_keyword_thread,args=[term,keywords]).start()
 
     def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
         for i in range(len(lst)-1,-1,-1):
