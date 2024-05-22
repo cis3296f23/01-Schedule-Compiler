@@ -222,7 +222,6 @@ def get_courses_from_keyword_search(term,keywords)->set:
     """
     courses = set()
     SEARCH_REQ = {"txt_keywordall":keywords}
-    
 
 def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str="",course_num:str="",attr="", campus_code = "MN", prof_rating_cache = {}):
     """
@@ -254,7 +253,6 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
     session, results_args = get_authenticated_session(SEARCH_REQ)
     pageOffset = 0
     moreResults=True
-    course_sect_info = dict()
     while moreResults:
         try:
             # Start class search for the chosen term and current page offset
@@ -270,46 +268,41 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
                 results_args['pageOffset']=pageOffset
             else:
                 moreResults=False
-            if not course_sect_info:
-                course_sect_info=data
+            if data['totalCount']:
+                for section in data['data']:
+                    if section['faculty']:
+                        professor = section['faculty'][0]['displayName']
+                        rmp_info = get_rmp_data(professor)
+                        if professor in prof_rating_cache:
+                            rmp_info = prof_rating_cache[professor]
+                        else:
+                            rmp_info = get_rmp_data(professor)
+                            prof_rating_cache[professor]=rmp_info
+                    sched = Schedule()
+                    days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
+                    for meeting_type in section['meetingsFaculty']:
+                        meet_time_info = meeting_type['meetingTime']
+                        for day in days_of_the_week:
+                            if meet_time_info[day]:
+                                sched.add_timeslot(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']),meet_time_info['meetingTypeDescription'])
+                    #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
+                    sect_info = {'name':section['subject'] + ' ' + section['courseNumber'],'term':section['term'],'CRN':section['courseReferenceNumber'],
+                                'partOfTerm':section['partOfTerm'],'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
+                                'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
+                                'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
+                    course = section['subject'] + ' ' + section['courseNumber'] if not attr else attr
+                    if course not in course_info[term]:
+                        course_info[term][course] = [sect_info]
+                    else:
+                        course_info[term][course].append(sect_info)
             else:
-                for section in data["data"]:
-                    course_sect_info["data"].append(section)
+                return 'Invalid course or course not available'
         except Exception as e:
             return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"
-    if course_sect_info['totalCount']:
-        for section in course_sect_info['data']:
-            if section['faculty']:
-                professor = section['faculty'][0]['displayName']
-                rmp_info = get_rmp_data(professor)
-                if professor in prof_rating_cache:
-                    rmp_info = prof_rating_cache[professor]
-                else:
-                    rmp_info = get_rmp_data(professor)
-                    prof_rating_cache[professor]=rmp_info
-            sched = Schedule()
-            days_of_the_week = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
-            for meeting_type in section['meetingsFaculty']:
-                meet_time_info = meeting_type['meetingTime']
-                for day in days_of_the_week:
-                    if meet_time_info[day]:
-                        sched.add_timeslot(day,int(meet_time_info['beginTime']),int(meet_time_info['endTime']),meet_time_info['meetingTypeDescription'])
-            #partOfTerm included in case can schedule two courses with the same meeting times but in different parts of the semester
-            sect_info = {'name':section['subject'] + ' ' + section['courseNumber'],'term':section['term'],'CRN':section['courseReferenceNumber'],'partOfTerm':section['partOfTerm'],
-                         'seatsAvailable':section['seatsAvailable'],'maxEnrollment':section['maximumEnrollment'],
-                         'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
-                         'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
-            course = section['subject'] + ' ' + section['courseNumber'] if not attr else attr
-            if course not in course_info[term]:
-                course_info[term][course] = [sect_info]
-            else:
-                course_info[term][course].append(sect_info)
-        if subj: #if subj and course_num given
-            course_info[term][subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
-        else:
-            course_info[term][attr].sort(reverse=True,key=get_weighted_rating)
+    if subj: #if subj and course_num given
+        course_info[term][subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
-        return 'Invalid course or course not available'
+        course_info[term][attr].sort(reverse=True,key=get_weighted_rating)
     return ''
         
 """degr_progs= get_degr_progs()
@@ -317,8 +310,9 @@ for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-"""course_info = dict()
-get_course_sections_info(course_info,"2023 Fall", "202336","CIS","3207",'')
+course_info = dict()
+get_course_sections_info(course_info,"2023 Fall", "202336",attr="GA")
+print(len(course_info["2023 Fall"]["GA"]))
 get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
-print(course_info)"""
+print(course_info)
 #print(get_rmp_rating("Sarah Stapleton"))
