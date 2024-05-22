@@ -2,7 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from algo import Schedule
-#TO DO: Don't allow terms with "Orientation" to be in the output list
+#TODO: Don't allow terms with "Orientation" to be in the output list
+#TODO: Store professors that have already been searched for
 PAGE_MAX_SIZE = 50
 def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)->str:
     """
@@ -212,6 +213,17 @@ def get_authenticated_session(search_args:dict):
         return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}", None
     return session, results_args
 
+
+def get_courses_from_keyword_search(term,keywords)->set:
+    """
+    Returns a set of courses (in the format: SUBJ #### Title) available during the specified term that are returned from the keywords search
+    @param term : semester desired (i.e. Spring 2024)
+    @param keywords : string to search for
+    """
+    courses = set()
+    SEARCH_REQ = {"txt_keywordall":keywords}
+    
+
 def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str="",course_num:str="",attr="", campus_code = "MN", prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
@@ -258,7 +270,11 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
                 results_args['pageOffset']=pageOffset
             else:
                 moreResults=False
-            course_sect_info|=data
+            if not course_sect_info:
+                course_sect_info=data
+            else:
+                for section in data["data"]:
+                    course_sect_info["data"].append(section)
         except Exception as e:
             return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"
     if course_sect_info['totalCount']:
