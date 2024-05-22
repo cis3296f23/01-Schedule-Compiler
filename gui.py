@@ -133,12 +133,9 @@ class GUI():
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(self.specifications_frame, values=self.terms, state="readonly")
-        i = 0
-        while "Orientation" in self.terms[i]:
-            i+=1
-        self.term_combobox.set(self.terms[i])
-        if "Try connecting" in self.terms[i]:
-            self.error_otpt+=self.terms[i]
+        #self.term_combobox.set(self.terms[i])
+        if "Try connecting" in self.terms[0]:
+            self.error_otpt+=self.terms[0]
         self.term_combobox.grid(row=1, padx=15, pady=5)
         self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus

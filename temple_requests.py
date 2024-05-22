@@ -136,6 +136,8 @@ def get_param_data_codes(endpoint:str)->dict:
         param_data_to_code = dict()
         data=response.json()
         for descrip_and_code in data:
+            if endpoint=="getTerms" and "Orientation" in descrip_and_code['description']:
+                continue
             param_data_to_code[descrip_and_code['description']]=descrip_and_code['code']
         return param_data_to_code
     except Exception as e:
