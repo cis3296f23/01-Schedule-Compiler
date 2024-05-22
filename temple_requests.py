@@ -215,6 +215,23 @@ def get_authenticated_session(search_args:dict):
         return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}", None
     return session, results_args
 
+def request_course_data(session, search_args, results_args)->dict:
+    """
+    Retrieves course data from TUPortal scheduling service
+    @param session : reference to authenticated session
+    @param search_args
+    @param results_args : 
+    @return data for retrieved sections of courses
+    """
+    # Start class search for the chosen term and current page offset
+    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=" + str(int(results_args["pageOffset"]/PAGE_MAX_SIZE)+1) + "&max="+str(PAGE_MAX_SIZE), search_args)
+    # Clear old results, if any
+    session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
+    # Execute search
+    response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", results_args)
+    data = response.json()
+    data["ztcEncodedImage"] = ""
+    return data
 
 def get_courses_from_keyword_search(term,keywords)->set:
     """
@@ -253,21 +270,12 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
         "txt_campus": campus_code
     }
     session, results_args = get_authenticated_session(SEARCH_REQ)
-    pageOffset = 0
     moreResults=True
     while moreResults:
         try:
-            # Start class search for the chosen term and current page offset
-            session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=" + str(int(pageOffset/PAGE_MAX_SIZE)+1) + "&max="+str(PAGE_MAX_SIZE), SEARCH_REQ)
-            # Clear old results, if any
-            session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
-            # Execute search
-            response = session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?startDatepicker=&endDatepicker=", results_args)
-            data = response.json()
-            data["ztcEncodedImage"] = ""
-            if data['totalCount']>pageOffset+PAGE_MAX_SIZE:
-                pageOffset+=PAGE_MAX_SIZE
-                results_args['pageOffset']=pageOffset
+            data = request_course_data(session,SEARCH_REQ,results_args)
+            if data['totalCount']>results_args['pageOffset']+PAGE_MAX_SIZE:
+                results_args['pageOffset']+=PAGE_MAX_SIZE
             else:
                 moreResults=False
             if data['totalCount']:
@@ -311,9 +319,9 @@ for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-"""course_info = dict()
+course_info = dict()
 get_course_sections_info(course_info,"2023 Fall", "202336",attr="GA")
 print(len(course_info["2023 Fall"]["GA"]))
-get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
-print(course_info)"""
+#get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
+print(course_info)
 #print(get_rmp_data("Sarah Stapleton"))
