@@ -137,8 +137,9 @@ class GUI():
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
         self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
+        customtkinter.CTkButton(self.courses_frame, text="Search for Course", command=lambda:self.search_for_keywords(entry=self.course_entry)).grid(row=3)
         #buttons to add
-        customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None),).grid(row=3, padx=10,pady=10)
+        customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None)).grid(row=4,padx=10,pady=10)
         #Selected Courses
         self.remove_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2, corner_radius=10, fg_color=master.cget("fg_color"), width = 200, height=300)
         self.remove_frame.grid(row=3, column=3, padx=10, pady=10)
@@ -334,7 +335,27 @@ class GUI():
             lstbox.delete(selected_index)
             lst.pop(selected_index[0])
             return item
-    
+
+
+    def search_for_keywords(self,entry:Entry):
+        """
+        Searches the TUPortal scheduling service for the keywords entered in the specified entry widget
+        @param entry : the entry widget to get the keywords from
+        """
+        courses_var = Variable()
+        term = self.term_combobox.get()
+        if not term:
+            courses_var.set(["You must select the semester you want to schedule classes for."])
+            self.course_lstbox.config(listvariable=courses_var)
+            return
+        keywords = entry.get()
+        if keywords:
+            courses_var.set(["Searching..."])
+            self.course_lstbox.config(listvariable=courses_var)
+            results = temple_requests.get_courses_from_keyword_search(self.term_to_code[term],keywords)
+            courses_var.set([f"{subj_code} {title}" for subj_code, title in results])
+            self.course_lstbox.config(listvariable=courses_var)
+
     def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
         for i in range(len(lst)-1,-1,-1):
             lstbox.delete(i)
