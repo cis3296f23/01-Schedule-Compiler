@@ -93,41 +93,8 @@ class GUI():
         """
         self.courses_f = customtkinter.CTkFrame(master=master, border_width=0, corner_radius=10, fg_color = "#DDDDDD", height = 500, width = 500)
         self.courses_f.grid(row=1, padx=15,pady=15, sticky="nsew")
-        #course entry gui
-        self.courses_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2,corner_radius=10)
-        self.courses_frame.grid(row=3, column=0, padx=10, pady=10)
-        self.curr_curric = []
-        customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=0, padx=10, pady=10)
-        customtkinter.CTkLabel(self.courses_f,text= "Enter your course and press Enter key or button below to add \n(Notes: 1. add by top priority to least priority if desired 2. can type to search \n3. can add course even if not in list)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky = "w")
-        self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
-        self.course_entry.grid(row=1, padx=15, pady=15)
-        self.curr_curric_var = Variable()
-        self.curr_curric_var.set(self.curr_curric)
-        self.course_lstbox = Listbox(self.courses_frame, selectmode='single', listvariable=self.curr_curric_var, width=70, height=10)
-        self.course_lstbox.grid(row=2, padx=10, pady=10)
-        self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
-        self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
-        self.course_entry.bind('<Return>',self.add_course_to_list)
-        #buttons to add
-        customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None),).grid(row=3, padx=10,pady=10)
-        #Selected Courses
-        self.remove_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2, corner_radius=10, fg_color=master.cget("fg_color"), width = 200, height=300)
-        self.remove_frame.grid(row=3, column=1, padx=10, pady=10)
-        # Configure row weight for equal spacing
-        self.courses_f.rowconfigure(0, weight=1)
-        #listbox for displaying added courses
-        customtkinter.CTkLabel(self.remove_frame, text="Selected Courses", fg_color="transparent", font = self.custom_font_bold).grid(row=0, padx=10, pady=15)
-        self.added_courses_listbox = Listbox(self.remove_frame, width=15, height=10)
-        self.added_courses_listbox.grid(row=1, padx=10, pady=5)
-        #Remove courses from the list
-        customtkinter.CTkButton(
-            self.remove_frame, text="Remove Course",
-            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=3, padx=10, pady=15)
-        customtkinter.CTkButton(
-            self.remove_frame, text="Clear Courses",
-            command=lambda: self.clear_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=4, padx=10, pady=5)
         self.specifications_frame = customtkinter.CTkFrame(master=self.courses_f, width=200, height=200, fg_color = "transparent", border_width = 2, corner_radius=10)
-        self.specifications_frame.grid(row=3, column=3, padx=5, pady=5)
+        self.specifications_frame.grid(row=3, column=0, padx=5, pady=5)
         #semester selection
         customtkinter.CTkLabel(self.specifications_frame, text="Semester:", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,5))
         self.term_to_code = temple_requests.get_param_data_codes('getTerms')
@@ -155,6 +122,39 @@ class GUI():
         self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Enter max # of credits (leave blank for 18)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
         self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
         self.max_cred_entry.grid(row=6, padx=5, pady=5)
+        #course entry gui
+        self.courses_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2,corner_radius=10)
+        self.courses_frame.grid(row=3, column=1, padx=10, pady=10)
+        self.curr_curric = []
+        customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=1, padx=10, pady=10)
+        customtkinter.CTkLabel(self.courses_f,text= "Enter your course and press Enter key or button below to add \n(Notes: 1. add by top priority to least priority if desired 2. can type to search \n3. can add course even if not in list)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky = "w")
+        self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
+        self.course_entry.grid(row=1, padx=15, pady=15)
+        self.curr_curric_var = Variable()
+        self.curr_curric_var.set(self.curr_curric)
+        self.course_lstbox = Listbox(self.courses_frame, selectmode='single', listvariable=self.curr_curric_var, width=70, height=10)
+        self.course_lstbox.grid(row=2, padx=10, pady=10)
+        self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
+        self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
+        self.course_entry.bind('<Return>',self.add_course_to_list)
+        #buttons to add
+        customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None),).grid(row=3, padx=10,pady=10)
+        #Selected Courses
+        self.remove_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2, corner_radius=10, fg_color=master.cget("fg_color"), width = 200, height=300)
+        self.remove_frame.grid(row=3, column=3, padx=10, pady=10)
+        # Configure row weight for equal spacing
+        self.courses_f.rowconfigure(0, weight=1)
+        #listbox for displaying added courses
+        customtkinter.CTkLabel(self.remove_frame, text="Selected Courses", fg_color="transparent", font = self.custom_font_bold).grid(row=0, padx=10, pady=15)
+        self.added_courses_listbox = Listbox(self.remove_frame, width=15, height=10)
+        self.added_courses_listbox.grid(row=1, padx=10, pady=5)
+        #Remove courses from the list
+        customtkinter.CTkButton(
+            self.remove_frame, text="Remove Course",
+            command=lambda: self.remove_item_from_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=3, padx=10, pady=15)
+        customtkinter.CTkButton(
+            self.remove_frame, text="Clear Courses",
+            command=lambda: self.clear_lstbox(lstbox=self.added_courses_listbox, lst=self.added_courses)).grid(row=4, padx=10, pady=5)
 
     def build_unavail_time_frame(self, master):
         """
