@@ -233,14 +233,31 @@ def fetch_course_data(session, search_args, results_args)->dict:
     data["ztcEncodedImage"] = ""
     return data
 
-def get_courses_from_keyword_search(term,keywords)->set:
+def get_courses_from_keyword_search(term_code:str,keywords:str)->set:
     """
     Returns a set of courses (in the format: SUBJ #### Title) available during the specified term that are returned from the keywords search
-    @param term : semester desired (i.e. Spring 2024)
+    @param term_code : code for semester desired (i.e. Spring 2024)
     @param keywords : string to search for
     """
     courses = set()
-    SEARCH_REQ = {"txt_keywordall":keywords}
+    SEARCH_REQ = {"txt_keywordall":keywords,"term": term_code, "txt_term": term_code}
+    session, results_args = get_authenticated_session(SEARCH_REQ)
+    moreResults=True
+    while moreResults:
+        try:
+            data = fetch_course_data(session,SEARCH_REQ,results_args)
+            if data['totalCount']>results_args['pageOffset']+PAGE_MAX_SIZE:
+                results_args['pageOffset']+=PAGE_MAX_SIZE
+            else:
+                moreResults=False
+            if data['totalCount']:
+                for section in data['data']:
+                    courses.add((section['subject'] + ' ' + section['courseNumber'],section['courseTitle']))
+            else:
+                return ["There are no courses that have the keyword(s) you entered."]
+        except Exception as e:
+            return [f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"]
+    return courses
 
 def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str="",course_num:str="",attr="", campus_code = "MN", prof_rating_cache = {}):
     """
@@ -319,9 +336,10 @@ for dgpg in degr_progs:
     get_curric(degr_progs[dgpg])"""
 #print(get_param_data_codes('getTerms'))
 #print(get_param_data_codes('get_campus'))
-course_info = dict()
+"""course_info = dict()
 get_course_sections_info(course_info,"2023 Fall", "202336",attr="GA")
 print(len(course_info["2023 Fall"]["GA"]))
-#get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
-print(course_info)
+get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
+print(course_info)"""
 #print(get_rmp_data("Sarah Stapleton"))
+#print(get_courses_from_keyword_search("202436","Data Structures"))
