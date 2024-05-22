@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 from algo import Schedule
 #TO DO: Don't allow terms with "Orientation" to be in the output list
-
+PAGE_MAX_SIZE = 50
 def get_subj(degrs_html_str:str,str_to_search:str,start:int,offset_to_subj:int)->str:
     """
     Retrieves the subject of the degree program from the given html
@@ -187,7 +187,32 @@ def get_weighted_rating(sect_info):
     """
     return sect_info['profRating'],sect_info['numReviews']
 
-def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str,course_num:str,attr='', campus_code = 'MN', prof_rating_cache = {}):
+def get_authenticated_session(search_args:dict):
+    """
+    Returns an authenticated session for searching in TUPortal's class scheduling service and the updated result arguments
+    @param search_args
+    """
+    session = requests.Session()
+    # extra stuff for the results
+    results_opts = {
+        "pageOffset": 0,
+        "pageMaxSize": PAGE_MAX_SIZE,
+        "sortColumn": "subjectDescription",
+        "sortDirection": "asc",
+    }
+    results_args = dict()
+    results_args.update(search_args)
+    results_args.update(results_opts)
+    try:
+        # Establish session
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
+        # Select a term
+        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", search_args)
+    except Exception as e:
+        return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}", None
+    return session, results_args
+
+def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:str="",course_num:str="",attr="", campus_code = "MN", prof_rating_cache = {}):
     """
     Retrieves info on the sections available during the specified term for the specified class
     @param course_info : dictionary to store the necessary section information in for each course in the format {"Fall 2023":{"Subj_course_num1":[{},{}], "Subj_course_num2":[{}]} ,"Spring 2024":{"Subj_course_num3":[{},{}], "Subj_course_num4":[{}]}}
@@ -205,7 +230,6 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
         return
     elif term not in course_info:
         course_info[term]=dict()
-    session = requests.Session()
     # term and txt_term need to be the same
     SEARCH_REQ = {
         "term": term_code,
@@ -215,31 +239,13 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
         "txt_attribute": attr,
         "txt_campus": campus_code
     }
+    session, results_args = get_authenticated_session(SEARCH_REQ)
     pageOffset = 0
-    PAGE_MAX_SIZE = 50
-    # extra stuff for the results
-    results_opts = {
-        "pageOffset": pageOffset,
-        "pageMaxSize": PAGE_MAX_SIZE,
-        "sortColumn": "subjectDescription",
-        "sortDirection": "asc",
-    }
-
-    results_args = dict()
-    results_args.update(SEARCH_REQ)
-    results_args.update(results_opts)
     moreResults=True
     course_sect_info = dict()
-    try:
-        # Establish session
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/")
-        # Select a term
-        session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/term/search?mode=search", SEARCH_REQ)
-    except Exception as e:
-        return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"
     while moreResults:
         try:
-            # Start subject search for the chosen term and current page offset
+            # Start class search for the chosen term and current page offset
             session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?offset=" + str(int(pageOffset/PAGE_MAX_SIZE)+1) + "&max="+str(PAGE_MAX_SIZE), SEARCH_REQ)
             # Clear old results, if any
             session.post("https://prd-xereg.temple.edu/StudentRegistrationSsb/ssb/classSearch/resetDataForm")
