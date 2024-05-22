@@ -372,9 +372,13 @@ class GUI():
     def compile_schedules_thread(self,num_valid_rosters:list[int]):
         """
         Collects information for the user's desired courses for the selected semester and times they are not available and compiles a schedule
+        @return True if exits with error, False otherwise
         """
-        print("Start schedule compilation process...")
         term = self.term_combobox.get()
+        if not term:
+            print("You must select the semester you want to schedule classes for.")
+            return True
+        print("Start schedule compilation process...")
         for course in self.added_courses:
             subj, course_num, attr = '', '', ''
             #can use regex later on to check if valid course was entered (Two letters for attribute or Subj course_num format)
@@ -405,6 +409,7 @@ class GUI():
             print("No valid rosters.")
         print('Done')
         num_valid_rosters[0]=len(self.valid_rosters)
+        return False
 
     def display_prev_sched(self,event=None):
         self.roster_page_num-=1

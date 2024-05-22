@@ -8,5 +8,6 @@ class Custom_Thread(Thread):
         self.arg2=arg2
     
     def run(self):
-        self.callback1(self.arg1)
-        self.callback2(self.arg2)
+        cb1_failed = self.callback1(self.arg1)
+        if not cb1_failed:
+            self.callback2(self.arg2)
