@@ -125,19 +125,19 @@ class GUI():
         #course entry gui
         self.courses_frame = customtkinter.CTkFrame(master=self.courses_f, border_width=2,corner_radius=10)
         self.courses_frame.grid(row=3, column=1, padx=10, pady=10)
-        self.curr_curric = []
+        self.courses_shown = []
         customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=1, padx=10, pady=10)
         customtkinter.CTkLabel(self.courses_f,text= "Enter your course and press Enter key or button below to add \n(Notes: 1. add by top priority to least priority if desired 2. can type to search \n3. can add course even if not in list)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky = "w")
         self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter Course Number")
         self.course_entry.grid(row=1, padx=15, pady=15)
-        self.curr_curric_var = Variable()
-        self.curr_curric_var.set(self.curr_curric)
-        self.course_lstbox = Listbox(self.courses_frame, selectmode='single', listvariable=self.curr_curric_var, width=70, height=10)
+        self.courses_shown_var = Variable()
+        self.courses_shown_var.set(self.courses_shown)
+        self.course_lstbox = Listbox(self.courses_frame, selectmode='single', listvariable=self.courses_shown_var, width=70, height=10)
         self.course_lstbox.grid(row=2, padx=10, pady=10)
         self.course_lstbox.bind('<<ListboxSelect>>',lambda filler : self.insert_selection(filler, entry=self.course_entry,lstbox=self.course_lstbox))
-        self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.curr_curric,lstbox=self.course_lstbox))
+        self.course_entry.bind('<KeyRelease>',lambda filler : self.narrow_search(filler, entry=self.course_entry, lst=self.courses_shown,lstbox=self.course_lstbox))
         self.course_entry.bind('<Return>',self.add_course_to_list)
-        customtkinter.CTkButton(self.courses_frame, text="Search for Course", command=lambda:self.search_for_keywords(entry=self.course_entry)).grid(row=3)
+        customtkinter.CTkButton(self.courses_frame, text="Search for Course", command=lambda:self.search_for_keywords(lst=self.courses_shown,lst_var=self.courses_shown_var,entry=self.course_entry)).grid(row=3)
         #buttons to add
         customtkinter.CTkButton(self.courses_frame, text="Add Course", command=lambda: self.add_course_to_list(event=None)).grid(row=4,padx=10,pady=10)
         #Selected Courses
@@ -305,14 +305,15 @@ class GUI():
         Updates the course listbox with curriculum corresponding to the value of selection
         @selection : str of selected degree program
         """
+        #see why this logic is clearing the courses outputted by the keyword search
         curric = Variable()
-        self.curr_curric = temple_requests.get_curric(self.degr_prog_to_url[selection])
-        num_courses = len(self.curr_curric)
-        if "Try connecting" not in self.curr_curric[0]:
+        self.courses_shown = temple_requests.get_curric(self.degr_prog_to_url[selection])
+        num_courses = len(self.courses_shown)
+        if "Try connecting" not in self.courses_shown[0]:
             for c in range(num_courses):
-                self.curr_curric[c][0]=self.curr_curric[c][0].replace('\xa0',' ')
-                self.curr_curric[c]=' '.join(self.curr_curric[c])
-        curric.set(self.curr_curric)
+                self.courses_shown[c][0]=self.courses_shown[c][0].replace('\xa0',' ')
+                self.courses_shown[c]=' '.join(self.courses_shown[c])
+        curric.set(self.courses_shown)
         self.course_lstbox.config(listvariable=curric) 
 
     def add_course_to_list(self,event:Event):
@@ -336,33 +337,37 @@ class GUI():
             lst.pop(selected_index[0])
             return item
     
-    def search_for_keyword_thread(self,term,keywords):
+    def search_for_keyword_thread(self,lst:list[str],lst_var:Variable,term:str,keywords:str):
         """
         Callback for thread to fetch courses from a keyword search in TUPortal's schedule service
+        @param lst : list that will store the courses 
+        @param lst_var : tkinter list variable
         @param term : semester selected to schedule for
         @param keywords
         """
-        courses_var = Variable()
-        courses_var.set(["Searching..."])
-        self.course_lstbox.config(listvariable=courses_var)
+        lst = ["Searching..."]
+        lst_var.set(lst)
+        self.course_lstbox.config(listvariable=lst_var)
         results = temple_requests.get_courses_from_keyword_search(self.term_to_code[term],keywords)
-        courses_var.set([f"{subj_code} {title}" for subj_code, title in results])
-        self.course_lstbox.config(listvariable=courses_var)
+        lst=[f"{subj_code} {title}" for subj_code, title in results]
+        lst_var.set(lst)
+        self.course_lstbox.config(listvariable=lst_var)
 
-    def search_for_keywords(self,entry:Entry):
+    def search_for_keywords(self,lst:list[str],lst_var:Variable,entry:Entry):
         """
         Searches the TUPortal scheduling service for the keywords entered in the specified entry widget
+        @param lst : list to store results in
+        @param lst_var : Tkinter list variable to change
         @param entry : the entry widget to get the keywords from
         """
-        courses_var = Variable()
         term = self.term_combobox.get()
         if not term:
-            courses_var.set(["You must select the semester you want to schedule classes for."])
-            self.course_lstbox.config(listvariable=courses_var)
+            lst_var.set(["You must select the semester you want to schedule classes for."])
+            self.course_lstbox.config(listvariable=lst_var)
             return
         keywords = entry.get()
         if keywords:
-            Thread(target=self.search_for_keyword_thread,args=[term,keywords]).start()
+            Thread(target=self.search_for_keyword_thread,args=[lst,lst_var,term,keywords]).start()
 
     def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
         for i in range(len(lst)-1,-1,-1):
