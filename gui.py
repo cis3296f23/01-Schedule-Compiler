@@ -345,11 +345,13 @@ class GUI():
         @param term : semester selected to schedule for
         @param keywords
         """
-        lst = ["Searching..."]
+        lst.clear()
+        lst.append("Searching...")
         lst_var.set(lst)
         self.course_lstbox.config(listvariable=lst_var)
         results = temple_requests.get_courses_from_keyword_search(self.term_to_code[term],keywords)
-        lst=[f"{subj_code} {title}" for subj_code, title in results]
+        lst.clear()
+        lst.extend([f"{subj_code} {title}" for subj_code, title in results])
         lst_var.set(lst)
         self.course_lstbox.config(listvariable=lst_var)
 
@@ -367,7 +369,7 @@ class GUI():
             return
         keywords = entry.get()
         if keywords:
-            Thread(target=self.search_for_keyword_thread,args=[lst,lst_var,term,keywords]).start()
+            Thread(target=self.search_for_keyword_thread,args=(lst,lst_var,term,keywords)).start()
 
     def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
         for i in range(len(lst)-1,-1,-1):
