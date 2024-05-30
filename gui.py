@@ -24,6 +24,7 @@ class GUI():
         self.__root.title('SCHEDULE COMPILER')
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
+        self.__root.state('zoomed')
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
