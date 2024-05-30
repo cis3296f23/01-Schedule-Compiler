@@ -144,7 +144,6 @@ def is_subset_of_roster_in_lst(sections:dict,lst:list[Schedule]):
             return True
     return False
 
-#fix empty schedule being added
 def remove_subset(schedule:Schedule,lst:list[Schedule]):
     """
     Removes a subset of sections within lst if it exists
@@ -179,9 +178,9 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     course_sections = []
     if index<len(course_keys) and course_info[term].get(course_keys[index]):
         course_sections = course_info[term].get(course_keys[index])
-    # If all courses have been considered or the last course is being considered but would pass the credit limit if added, add the current roster to valid_rosters
+    # If all courses have been considered or the last course is being considered but would pass the credit limit if added
     if index == len(course_keys) or (index==len(course_keys)-1 and course_sections and credits+course_sections[0]["creditHours"]>max_credits):
-        #also check if roster is subset (then don't add) or if any of the rosters there are a subset of roster (then replace)
+        #if roster is non-empty and is not a subset of a roster currently in the list
         if roster and not is_subset_of_roster_in_lst(roster.sections,valid_rosters):
             remove_subset(roster,valid_rosters)
             valid_rosters.append(roster.copy())
@@ -204,10 +203,10 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
                 compat_sections.append(section)
     for section in compat_sections:
         if roster.add_class(section['schedule'], section):
-            dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'] ,max_credits)
+            dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'], max_credits)
             roster.remove_class(section['schedule'], section)
     if len(compat_sections)!=len(course_sections) or not course_sections: #if at least one section was not able to be added, then try without the course
-        dfs_build_rosters(course_info, term, course_keys, index+1, roster, valid_rosters, unavail_times, credits, max_credits)
+        dfs_build_rosters(course_info, term, course_keys, index + 1, roster, valid_rosters, unavail_times, credits, max_credits)
 
 def build_all_valid_rosters(course_info:dict, term:str, course_list:list[str], unavail_times:Schedule, max_credits:int):
     """
