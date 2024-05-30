@@ -175,7 +175,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
     """
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
-        return 0
+        return
     course_sections = []
     if index<len(course_keys) and course_info[term].get(course_keys[index]):
         course_sections = course_info[term].get(course_keys[index])
@@ -185,7 +185,7 @@ def dfs_build_rosters(course_info:dict, term:str, course_keys:list[str], index:i
         if roster and not is_subset_of_roster_in_lst(roster.sections,valid_rosters):
             remove_subset(roster,valid_rosters)
             valid_rosters.append(roster.copy())
-        return 0
+        return
     compat_sections = []
     for section in course_sections:
         if section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
