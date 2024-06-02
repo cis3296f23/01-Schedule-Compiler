@@ -21,7 +21,7 @@ class GUI():
         """
         self.running = True
         self.__root = root
-        self.__root.title('SCHEDULE COMPILER')
+        self.__root.title('Schedule Compiler')
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         self.__root.state('zoomed')
@@ -35,9 +35,9 @@ class GUI():
         self.canv = Canvas(main_frame)
         self.canv.pack(side="left",fill="both",expand=1,anchor="center")
         #creating a scroll bar and binding it to the entrire screen that the user uses
-        main_scroll_bar = ttk.Scrollbar(main_frame,orient="vertical",command=self.canv.yview)
-        main_scroll_bar.pack(side='right',fill=Y)
-        self.canv.configure(yscrollcommand=main_scroll_bar.set,)
+        self.main_scroll_bar = ttk.Scrollbar(main_frame,orient="vertical",command=self.canv.yview)
+        self.main_scroll_bar.pack(side='right',fill=Y)
+        self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
         #separate frame for all the widgets
         self.second_frame = customtkinter.CTkFrame(self.canv,  fg_color = 'transparent')
@@ -460,6 +460,10 @@ class GUI():
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
+        self.__root.state('zoomed')
+        self.main_scroll_bar.pack(side='right',fill=Y)
+        self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
+        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
 
     def compile_schedules(self,event=None):
         """
