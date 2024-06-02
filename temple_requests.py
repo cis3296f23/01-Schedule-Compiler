@@ -242,6 +242,8 @@ def get_courses_from_keyword_search(term_code:str,keywords:str)->set:
     courses = set()
     SEARCH_REQ = {"txt_keywordall":keywords,"term": term_code, "txt_term": term_code}
     session, results_args = get_authenticated_session(SEARCH_REQ)
+    if type(session)==str:
+        return [(session,"")]
     moreResults=True
     while moreResults:
         try:
