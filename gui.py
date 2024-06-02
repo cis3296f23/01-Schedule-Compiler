@@ -130,8 +130,8 @@ class GUI():
         self.courses_frame.grid(row=3, column=1, padx=10, pady=10)
         self.courses_shown = []
         customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=1, padx=10, pady=10)
-        customtkinter.CTkLabel(self.courses_f,text= "Options: 1. Enter keywords to search and press the Search button to see the subject and code\n2.Enter your desired in SUBJ #### or attribute (e.g. GA) format and press Enter key or Add button below to add\n(Notes: 1. Add by top priority to least priority if desired\n2. Can filter through courses if there any shown below \n3. Can add course even if not in list below)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky = "w")
-        self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter kewords to search or Course Subject and Number if you already know")
+        customtkinter.CTkLabel(self.courses_f,text= "Options: 1. Enter your desired course in SUBJ #### (e.g. CIS 0823) or attribute (e.g. GA) format and press Enter key or Add button below to add\n2. Enter keywords (not in the format specified above) to search and press Enter or the Search button to see the subject and code\n(Notes: 1. Add by top priority to least priority if desired\n2. Can filter through courses if there any shown below \n3. Can add course even if not in list below)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky = "w")
+        self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter keywords to search or the subject code and number combo if you already know", width=500)
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.courses_shown_var = Variable()
         self.courses_shown_var.set(self.courses_shown)
@@ -334,7 +334,7 @@ class GUI():
         elif selected_course_added:
             self.course_entry.configure(placeholder_text="Course already added.")
         else:
-            self.course_entry.configure(placeholder_text="Course must be in SUBJ #### or attribute (e.g. GA) format.")
+            self.search_for_keywords(self.courses_shown,self.courses_shown_var,self.course_entry)
         self.course_entry.delete(0,END)
         self.__root.focus_set()
 
