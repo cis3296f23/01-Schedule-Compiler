@@ -324,9 +324,19 @@ class GUI():
         Adds course entered in course entry to the added courses listbox
         """
         selected_course = self.course_entry.get()
-        if selected_course and selected_course not in self.added_courses_listbox.get(0, END) and bool(re.match(r"(^[A-Z]{2,4} \d{4}$)|(^[A-Z]{2}$)",selected_course)):
+        selected_course_added = selected_course in self.added_courses_listbox.get(0, END)
+        if selected_course and not selected_course_added and bool(re.match(r"(^[A-Z]{2,4} \d{4}$)|(^[A-Z]{2}$)",selected_course)):
             self.added_courses_listbox.insert(END, selected_course)
             self.added_courses.append(selected_course)
+            self.course_entry.configure(placeholder_text="Enter kewords to search or Course Subject and Number if you already know")
+        elif not selected_course:
+            self.course_entry.configure(placeholder_text="Cannot add blank course.")
+        elif selected_course_added:
+            self.course_entry.configure(placeholder_text="Course already added.")
+        else:
+            self.course_entry.configure(placeholder_text="Course must be in SUBJ #### or attribute (e.g. GA) format.")
+        self.course_entry.delete(0,END)
+        self.__root.focus_set()
 
     def remove_item_from_lstbox(self,lstbox:Listbox,lst:list[str]):
         """
