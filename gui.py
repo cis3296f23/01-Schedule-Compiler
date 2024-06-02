@@ -10,7 +10,7 @@ from algo import Schedule
 from plotting import draw
 from text_redirection import TextRedirector
 import sys
-from threading import Thread
+from threading import Thread, Lock
 from custom_thread import Custom_Thread
 import customtkinter
 import re
@@ -55,6 +55,7 @@ class GUI():
         self.__style.configure('Red.TButton', font=('Helvetica', 12, 'bold'), background='#e74c3c', foreground='black')
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
+        self.degr_prog_lock = Lock()
 
         self.build_degr_prog_frame(self.second_frame)
         self.build_courses_frame(self.second_frame)
@@ -309,6 +310,7 @@ class GUI():
         @selection : str of selected degree program
         """
         #see why this logic is clearing the courses outputted by the keyword search
+        self.degr_prog_lock.acquire()
         curric = Variable()
         self.courses_shown = temple_requests.get_curric(self.degr_prog_to_url[selection])
         num_courses = len(self.courses_shown)
@@ -318,6 +320,7 @@ class GUI():
                 self.courses_shown[c]=' '.join(self.courses_shown[c])
         curric.set(self.courses_shown)
         self.course_lstbox.config(listvariable=curric) 
+        self.degr_prog_lock.release()
 
     def add_course_to_list(self,event:Event):
         """
