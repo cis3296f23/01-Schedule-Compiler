@@ -13,6 +13,7 @@ import sys
 from threading import Thread
 from custom_thread import Custom_Thread
 import customtkinter
+import re
 
 class GUI():
     def __init__(self,root:Tk):
@@ -323,7 +324,7 @@ class GUI():
         Adds course entered in course entry to the added courses listbox
         """
         selected_course = self.course_entry.get()
-        if selected_course and selected_course not in self.added_courses_listbox.get(0, END):
+        if selected_course and selected_course not in self.added_courses_listbox.get(0, END) and bool(re.match(r"(^[A-Z]{2,4} \d{4}$)|(^[A-Z]{2}$)",selected_course)):
             self.added_courses_listbox.insert(END, selected_course)
             self.added_courses.append(selected_course)
 
