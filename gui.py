@@ -417,6 +417,7 @@ class GUI():
             print("You must select the semester you want to schedule classes for.")
             return True
         print("Start schedule compilation process...")
+        campus_code = self.campus_to_code[self.campus_combobox.get()]
         for course in self.added_courses:
             subj, course_num, attr = '', '', ''
             #can use regex later on to check if valid course was entered (Two letters for attribute or Subj course_num format)
@@ -431,9 +432,9 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,self.campus_to_code[self.campus_combobox.get()],self.prof_rating_cache)
+            temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,self.prof_rating_cache)
         entered_max_credits = self.max_cred_entry.get()
-        self.valid_rosters = algo.build_all_valid_rosters(self.course_info,term,self.added_courses, self.unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
+        self.valid_rosters = algo.build_all_valid_rosters(self.course_info,term,campus_code,self.added_courses, self.unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
         if self.valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
             for i, roster in enumerate(self.valid_rosters):

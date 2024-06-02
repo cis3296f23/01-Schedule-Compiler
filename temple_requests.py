@@ -273,10 +273,12 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
     Credit: https://github.com/gummyfrog/TempleBulletinBot
     """
     #if course info for the desired semester is already course_info, return
-    if term in course_info and (subj + ' ' + course_num in course_info[term] or attr in course_info[term]):
+    if term in course_info and campus_code in course_info[term] and (subj + ' ' + course_num in course_info[term][campus_code] or attr in course_info[term][campus_code]):
         return
     elif term not in course_info:
         course_info[term]=dict()
+    elif campus_code not in course_info[term]:
+        course_info[term][campus_code]=dict()
     # term and txt_term need to be the same
     SEARCH_REQ = {
         "term": term_code,
@@ -316,9 +318,9 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
                                 'creditHours':section['creditHourLow'] if section['creditHourLow'] else section['creditHourHigh'], 
                                 'professor':professor,'profRating':rmp_info[0],'numReviews':rmp_info[1],'schedule':sched}
                     course = section['subject'] + ' ' + section['courseNumber'] if not attr else attr
-                    course_sections = course_info[term].get(course)
+                    course_sections = course_info[term][campus_code].get(course)
                     if not course_sections:
-                        course_info[term][course] = [sect_info]
+                        course_info[term][campus_code][course] = [sect_info]
                     else:
                         course_sections.append(sect_info)
             else:
@@ -326,9 +328,9 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
         except Exception as e:
             return f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"
     if subj: #if subj and course_num given
-        course_info[term][subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
+        course_info[term][campus_code][subj + ' ' + course_num].sort(reverse=True,key=get_weighted_rating)
     else:
-        course_info[term][attr].sort(reverse=True,key=get_weighted_rating)
+        course_info[term][campus_code][attr].sort(reverse=True,key=get_weighted_rating)
     return ''
         
 """degr_progs= get_degr_progs()
@@ -338,7 +340,7 @@ for dgpg in degr_progs:
 #print(get_param_data_codes('get_campus'))
 """course_info = dict()
 get_course_sections_info(course_info,"2023 Fall", "202336",attr="GA")
-print(len(course_info["2023 Fall"]["GA"]))
+print(len(course_info["2023 Fall"]["MN"]["GA"]))
 get_course_sections_info(course_info,"2024 Spring", "202403","CIS","2168",'')
 print(course_info)"""
 #print(get_rmp_data("Sarah Stapleton"))
