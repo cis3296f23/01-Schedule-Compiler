@@ -59,6 +59,7 @@ class GUI():
         self.build_courses_frame(self.second_frame)
         self.build_unavail_time_frame(self.second_frame)
         self.build_compile_schedule_frame(self.second_frame)
+        self.__root.bind("<Map>",lambda x:self.canv.yview_moveto(0))
     
     def build_degr_prog_frame(self, master):
         """
