@@ -56,6 +56,7 @@ class GUI():
         self.__style.configure('Header.TLabel', font = ('Courier',18,'bold'))
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
         self.degr_prog_lock = Lock()
+        self.keyword_search_lock = Lock()
 
         self.build_degr_prog_frame(self.second_frame)
         self.build_courses_frame(self.second_frame)
@@ -361,6 +362,7 @@ class GUI():
         @param term : semester selected to schedule for
         @param keywords
         """
+        self.keyword_search_lock.acquire()
         lst.clear()
         lst.append("Searching...")
         lst_var.set(lst)
@@ -370,6 +372,7 @@ class GUI():
         lst.extend([f"{subj_code} {title}" for subj_code, title in results])
         lst_var.set(lst)
         self.course_lstbox.config(listvariable=lst_var)
+        self.keyword_search_lock.release()
 
     def search_for_keywords(self,lst:list[str],lst_var:Variable,entry:Entry):
         """
@@ -434,14 +437,12 @@ class GUI():
         campus_code = self.campus_to_code[self.campus_combobox.get()]
         for course in self.added_courses:
             subj, course_num, attr = '', '', ''
-            #can use regex later on to check if valid course was entered (Two letters for attribute or Subj course_num format)
             if course[-1].isnumeric():
                 i = 0
-                strlen_course = len(course)
-                while i<strlen_course and course[i]!=' ':
+                while i<len(course) and course[i]!=' ':
                     subj+=course[i]
                     i+=1
-                if i<strlen_course and course[i]==' ':
+                if i<len(course) and course[i]==' ':
                     course_num+=course[i+1:]
             else:
                 attr = course
