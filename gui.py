@@ -435,7 +435,10 @@ class GUI():
             return True
         print("Start schedule compilation process...")
         campus_code = self.campus_to_code[self.campus_combobox.get()]
-        for course in self.added_courses:
+        course_info = dict(self.course_info)
+        prof_rating_cache = dict(self.prof_rating_cache)
+        added_courses = list(self.added_courses)
+        for course in added_courses:
             subj, course_num, attr = '', '', ''
             if course[-1].isnumeric():
                 i = 0
@@ -447,9 +450,11 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,self.prof_rating_cache)
+            temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)
+        self.course_info = course_info
+        self.prof_rating_cache = prof_rating_cache
         entered_max_credits = self.max_cred_entry.get()
-        self.valid_rosters = algo.build_all_valid_rosters(self.course_info,term,campus_code,self.added_courses, self.unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
+        self.valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, self.unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
         if self.valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
             for i, roster in enumerate(self.valid_rosters):
