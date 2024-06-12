@@ -424,20 +424,22 @@ class GUI():
             dash_ind = timeslot.find('-',space_ind+1)
             self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
 
-    def compile_schedules_thread(self,num_valid_rosters:list[int]):
+    def compile_schedules_thread(self):
         """
         Collects information for the user's desired courses for the selected semester and times they are not available and compiles a schedule
-        @return True if exits with error, False otherwise
+        @return -1 if exits with error, positive number otherwise
         """
         term = self.term_combobox.get()
         if not term:
             print("You must select the semester you want to schedule classes for.")
-            return True
+            return -1
+        #TODO Validate max credit entry here before compilation starts (can be blank or numeric)
         print("Start schedule compilation process...")
         campus_code = self.campus_to_code[self.campus_combobox.get()]
         course_info = dict(self.course_info)
         prof_rating_cache = dict(self.prof_rating_cache)
         added_courses = list(self.added_courses)
+        unavail_times = self.unavail_times.copy()
         for course in added_courses:
             subj, course_num, attr = '', '', ''
             if course[-1].isnumeric():
@@ -454,7 +456,7 @@ class GUI():
         self.course_info = course_info
         self.prof_rating_cache = prof_rating_cache
         entered_max_credits = self.max_cred_entry.get()
-        self.valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, self.unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
+        self.valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
         if self.valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
             for i, roster in enumerate(self.valid_rosters):
@@ -467,8 +469,7 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
-        num_valid_rosters[0]=len(self.valid_rosters)
-        return False
+        return len(self.valid_rosters)
 
     def display_prev_sched(self,event=None):
         self.roster_page_num-=1
@@ -491,13 +492,10 @@ class GUI():
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
-        num_valid_rosters = None
-        check_val = [num_valid_rosters]
-        thread = Custom_Thread(callback1=self.compile_schedules_thread,arg1=check_val,callback2=self.draw_schedules,arg2=check_val)
+        thread = Custom_Thread(callback1=self.compile_schedules_thread,callback2=self.draw_schedules)
         thread.start()
     
     def draw_schedules(self,num_valid_rosters):
-        num_valid_rosters=num_valid_rosters[0]
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(num_valid_rosters):
