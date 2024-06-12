@@ -432,17 +432,17 @@ class GUI():
         term = self.term_combobox.get()
         if not term:
             print("You must select the semester you want to schedule classes for.")
-            return -1
+            return []
         entered_max_credits = self.max_cred_entry.get()
         if entered_max_credits and not entered_max_credits.isnumeric():
             print("You must enter a number for maximum credit limit or leave it blank for 18.")
-            return -1
-        print("Start schedule compilation process...")
+            return []
         campus_code = self.campus_to_code[self.campus_combobox.get()]
         course_info = dict(self.course_info)
         prof_rating_cache = dict(self.prof_rating_cache)
         added_courses = list(self.added_courses)
         unavail_times = self.unavail_times.copy()
+        print("Starting schedule compilation...")
         for course in added_courses:
             subj, course_num, attr = '', '', ''
             if course[-1].isnumeric():
@@ -458,20 +458,20 @@ class GUI():
             temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)
         self.course_info = course_info
         self.prof_rating_cache = prof_rating_cache
-        self.valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
-        if self.valid_rosters:
+        valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
+        if valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
-            for i, roster in enumerate(self.valid_rosters):
+            """for i, roster in enumerate(self.valid_rosters):
                 print(f"Valid Roster {i + 1}:")
                 print(roster)  # Print the schedule
                 print("\nSections in this Schedule:")
                 for j, section in enumerate(roster.sections):
                     print(str(j+1) + ". " + section['name'] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
-                print("\n")
+                print("\n")"""
         else:
             print("No valid rosters.")
         print('Done')
-        return len(self.valid_rosters)
+        return valid_rosters
 
     def display_prev_sched(self,event=None):
         self.roster_page_num-=1
@@ -497,15 +497,15 @@ class GUI():
         thread = Custom_Thread(callback1=self.compile_schedules_thread,callback2=self.draw_schedules)
         thread.start()
     
-    def draw_schedules(self,num_valid_rosters):
+    def draw_schedules(self,valid_rosters):
         self.sched_frames = []
         self.roster_page_num=1
-        for i in range(num_valid_rosters):
+        for i in range(len(valid_rosters)):
             figure = Figure(figsize=(18,7))
-            frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
+            frame=Sched_Frame(self.canv,self,i+1,len(valid_rosters))
             self.sched_frames.append(frame)
             frame.grid(row=0,column=0,sticky="nsew")
-            frame.draw_schedule(figure,self.valid_rosters,i)
+            frame.draw_schedule(figure,valid_rosters,i)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
 
