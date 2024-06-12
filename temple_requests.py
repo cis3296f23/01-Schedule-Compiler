@@ -277,9 +277,9 @@ def get_course_sections_info(course_info : dict, term:str, term_code:str,subj:st
     #if course info for the desired semester is already course_info, return
     if term in course_info and campus_code in course_info[term] and (subj + ' ' + course_num in course_info[term][campus_code] or attr in course_info[term][campus_code]):
         return
-    elif term not in course_info:
+    if term not in course_info:
         course_info[term]=dict()
-    elif campus_code not in course_info[term]:
+    if campus_code not in course_info[term]:
         course_info[term][campus_code]=dict()
     # term and txt_term need to be the same
     SEARCH_REQ = {
