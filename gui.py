@@ -433,7 +433,10 @@ class GUI():
         if not term:
             print("You must select the semester you want to schedule classes for.")
             return -1
-        #TODO Validate max credit entry here before compilation starts (can be blank or numeric)
+        entered_max_credits = self.max_cred_entry.get()
+        if entered_max_credits and not entered_max_credits.isnumeric():
+            print("You must enter a number for maximum credit limit or leave it blank for 18.")
+            return -1
         print("Start schedule compilation process...")
         campus_code = self.campus_to_code[self.campus_combobox.get()]
         course_info = dict(self.course_info)
@@ -455,7 +458,6 @@ class GUI():
             temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)
         self.course_info = course_info
         self.prof_rating_cache = prof_rating_cache
-        entered_max_credits = self.max_cred_entry.get()
         self.valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
         if self.valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
