@@ -57,6 +57,9 @@ class GUI():
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
         self.degr_prog_lock = Lock()
         self.keyword_search_lock = Lock()
+        self.collect_user_input_lock = Lock()
+        self.compile_sched_lock = Lock()
+        self.draw_sched_lock = Lock()
 
         self.build_degr_prog_frame(self.second_frame)
         self.build_courses_frame(self.second_frame)
@@ -429,19 +432,21 @@ class GUI():
         Collects information for the user's desired courses for the selected semester and times they are not available and compiles a schedule
         @return -1 if exits with error, positive number otherwise
         """
-        term = self.term_combobox.get()
-        if not term:
-            print("You must select the semester you want to schedule classes for.")
-            return []
-        entered_max_credits = self.max_cred_entry.get()
-        if entered_max_credits and not entered_max_credits.isnumeric():
-            print("You must enter a number for maximum credit limit or leave it blank for 18.")
-            return []
-        campus_code = self.campus_to_code[self.campus_combobox.get()]
-        course_info = dict(self.course_info)
-        prof_rating_cache = dict(self.prof_rating_cache)
-        added_courses = list(self.added_courses)
-        unavail_times = self.unavail_times.copy()
+        with self.collect_user_input_lock:
+            term = self.term_combobox.get()
+            if not term:
+                print("You must select the semester you want to schedule classes for.")
+                return []
+            entered_max_credits = self.max_cred_entry.get()
+            if entered_max_credits and not entered_max_credits.isnumeric():
+                print("You must enter a number for maximum credit limit or leave it blank for 18.")
+                return []
+            campus_code = self.campus_to_code[self.campus_combobox.get()]
+            course_info = dict(self.course_info)
+            prof_rating_cache = dict(self.prof_rating_cache)
+            added_courses = list(self.added_courses)
+            unavail_times = self.unavail_times.copy()
+        self.compile_sched_lock.acquire()
         print("Starting schedule compilation...")
         for course in added_courses:
             subj, course_num, attr = '', '', ''
@@ -455,9 +460,15 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)
-        self.course_info = course_info
-        self.prof_rating_cache = prof_rating_cache
+            if temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)=="":
+                if term not in self.course_info:
+                    self.course_info[term]=dict()
+                if campus_code not in self.course_info[term]:
+                    self.course_info[term][campus_code]=dict()
+                self.course_info[term][campus_code][course]=course_info[term][campus_code][course]
+        for prof in prof_rating_cache:
+            if prof not in self.prof_rating_cache:
+                self.prof_rating_cache[prof] = prof_rating_cache[prof]
         valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
         if valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
@@ -471,6 +482,7 @@ class GUI():
         else:
             print("No valid rosters.")
         print('Done')
+        self.compile_sched_lock.release()
         return valid_rosters
 
     def display_prev_sched(self,event=None):
@@ -486,6 +498,7 @@ class GUI():
             frame.destroy()
         self.sched_frames=[]
         self.__root.state('zoomed')
+        self.draw_sched_lock.release()
         self.main_scroll_bar.pack(side='right',fill=Y)
         self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
@@ -498,6 +511,7 @@ class GUI():
         thread.start()
     
     def draw_schedules(self,valid_rosters):
+        self.draw_sched_lock.acquire()
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(len(valid_rosters)):
