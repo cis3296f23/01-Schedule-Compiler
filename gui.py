@@ -394,6 +394,11 @@ class GUI():
             Thread(target=self.search_for_keyword_thread,args=(lst,lst_var,term,keywords)).start()
 
     def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
+        """
+        Clears the contents of the given Listbox
+        @param lstbox : Listbox to clear
+        @param lst : lst associated to the Listbox
+        """
         for i in range(len(lst)-1,-1,-1):
             lstbox.delete(i)
             lst.pop(i)
@@ -486,14 +491,26 @@ class GUI():
         return valid_rosters
 
     def display_prev_sched(self,event=None):
+        """
+        Navigates to the next schedule display
+        @param event : filler variable
+        """
         self.roster_page_num-=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
 
     def display_next_sched(self,event=None):
+        """
+        Navigates to the previous schedule display
+        @param event : filler variable
+        """
         self.roster_page_num+=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
     
     def exit_sched_display(self,event=None):
+        """
+        Exits the schedule display and destroys the frames
+        @param event : filler variable
+        """
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
@@ -511,6 +528,10 @@ class GUI():
         thread.start()
     
     def draw_schedules(self,valid_rosters):
+        """
+        Creates frames, calls their draw function to plot the schedule graph on them, and reveals the first graph if there are any
+        @param valid_rosters : generated list of schedules
+        """
         self.draw_sched_lock.acquire()
         self.sched_frames = []
         self.roster_page_num=1
@@ -524,6 +545,9 @@ class GUI():
             self.sched_frames[0].tkraise()
 
 class Sched_Frame(customtkinter.CTkFrame):
+    """
+    Frame for displaying and navigating through schedule graphs
+    """
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
         self.controller = controller
         customtkinter.CTkFrame.__init__(self,parent)
@@ -539,6 +563,12 @@ class Sched_Frame(customtkinter.CTkFrame):
         customtkinter.CTkButton(exit_frame,text="Exit",command = controller.exit_sched_display).pack(side="bottom",anchor="center")
     
     def draw_schedule(self, figure:Figure, valid_rosters,i):
+        """
+        Plots the schedule on itself
+        @param figure
+        @param valid_rosters : list of schedules
+        @param i : index within valid_rosters
+        """
         axes = figure.add_subplot(121)
         draw(axes,valid_rosters,i)
         figure.text(0.5,0.3,s=self.get_course_info(valid_rosters,i))
