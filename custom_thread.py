@@ -7,5 +7,5 @@ class Custom_Thread(Thread):
     
     def run(self):
         cb1_res = self.callback1()
-        if cb1_res!=-1:
+        if cb1_res:
             self.callback2(cb1_res)
