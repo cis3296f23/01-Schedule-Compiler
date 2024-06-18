@@ -57,6 +57,9 @@ class GUI():
         self.__style.configure('Custom.TLabel', font=('Arial', 11), foreground='black')
         self.degr_prog_lock = Lock()
         self.keyword_search_lock = Lock()
+        self.collect_user_input_lock = Lock()
+        self.compile_sched_lock = Lock()
+        self.draw_sched_lock = Lock()
 
         self.build_degr_prog_frame(self.second_frame)
         self.build_courses_frame(self.second_frame)
@@ -391,6 +394,11 @@ class GUI():
             Thread(target=self.search_for_keyword_thread,args=(lst,lst_var,term,keywords)).start()
 
     def clear_lstbox(self, lstbox:Listbox,lst:list[str]):
+        """
+        Clears the contents of the given Listbox
+        @param lstbox : Listbox to clear
+        @param lst : lst associated to the Listbox
+        """
         for i in range(len(lst)-1,-1,-1):
             lstbox.delete(i)
             lst.pop(i)
@@ -424,18 +432,28 @@ class GUI():
             dash_ind = timeslot.find('-',space_ind+1)
             self.unavail_times.remove_timeslot(day,int(timeslot[space_ind+1:dash_ind]),int(timeslot[dash_ind+1:]))
 
-    def compile_schedules_thread(self,num_valid_rosters:list[int]):
+    def compile_schedules_thread(self):
         """
         Collects information for the user's desired courses for the selected semester and times they are not available and compiles a schedule
-        @return True if exits with error, False otherwise
+        @return -1 if exits with error, positive number otherwise
         """
-        term = self.term_combobox.get()
-        if not term:
-            print("You must select the semester you want to schedule classes for.")
-            return True
-        print("Start schedule compilation process...")
-        campus_code = self.campus_to_code[self.campus_combobox.get()]
-        for course in self.added_courses:
+        with self.collect_user_input_lock:
+            term = self.term_combobox.get()
+            if not term:
+                print("You must select the semester you want to schedule classes for.")
+                return []
+            entered_max_credits = self.max_cred_entry.get()
+            if entered_max_credits and not entered_max_credits.isnumeric():
+                print("You must enter a number for maximum credit limit or leave it blank for 18.")
+                return []
+            campus_code = self.campus_to_code[self.campus_combobox.get()]
+            course_info = dict(self.course_info)
+            prof_rating_cache = dict(self.prof_rating_cache)
+            added_courses = list(self.added_courses)
+            unavail_times = self.unavail_times.copy()
+        self.compile_sched_lock.acquire()
+        print("Starting schedule compilation...")
+        for course in added_courses:
             subj, course_num, attr = '', '', ''
             if course[-1].isnumeric():
                 i = 0
@@ -447,37 +465,57 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            temple_requests.get_course_sections_info(self.course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,self.prof_rating_cache)
-        entered_max_credits = self.max_cred_entry.get()
-        self.valid_rosters = algo.build_all_valid_rosters(self.course_info,term,campus_code,self.added_courses, self.unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
-        if self.valid_rosters:
+            if temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)=="":
+                if term not in self.course_info:
+                    self.course_info[term]=dict()
+                if campus_code not in self.course_info[term]:
+                    self.course_info[term][campus_code]=dict()
+                self.course_info[term][campus_code][course]=course_info[term][campus_code][course]
+        for prof in prof_rating_cache:
+            if prof not in self.prof_rating_cache:
+                self.prof_rating_cache[prof] = prof_rating_cache[prof]
+        valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
+        if valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
-            for i, roster in enumerate(self.valid_rosters):
+            """for i, roster in enumerate(self.valid_rosters):
                 print(f"Valid Roster {i + 1}:")
                 print(roster)  # Print the schedule
                 print("\nSections in this Schedule:")
                 for j, section in enumerate(roster.sections):
                     print(str(j+1) + ". " + section['name'] + " CRN: " + section['CRN'] + " Professor: " + section['professor'] + " Rating: " + str(section['profRating']) + " # of ratings: " + str(section['numReviews']))  # Print each section's information
-                print("\n")
+                print("\n")"""
         else:
             print("No valid rosters.")
         print('Done')
-        num_valid_rosters[0]=len(self.valid_rosters)
-        return False
+        self.compile_sched_lock.release()
+        return valid_rosters
 
     def display_prev_sched(self,event=None):
+        """
+        Navigates to the next schedule display
+        @param event : filler variable
+        """
         self.roster_page_num-=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
 
     def display_next_sched(self,event=None):
+        """
+        Navigates to the previous schedule display
+        @param event : filler variable
+        """
         self.roster_page_num+=1
         self.sched_frames[(self.roster_page_num-1)%len(self.sched_frames)].tkraise()
     
     def exit_sched_display(self,event=None):
+        """
+        Exits the schedule display and destroys the frames
+        @param event : filler variable
+        """
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
         self.__root.state('zoomed')
+        self.draw_sched_lock.release()
         self.main_scroll_bar.pack(side='right',fill=Y)
         self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
@@ -486,25 +524,30 @@ class GUI():
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
-        num_valid_rosters = None
-        check_val = [num_valid_rosters]
-        thread = Custom_Thread(callback1=self.compile_schedules_thread,arg1=check_val,callback2=self.draw_schedules,arg2=check_val)
+        thread = Custom_Thread(callback1=self.compile_schedules_thread,callback2=self.draw_schedules)
         thread.start()
     
-    def draw_schedules(self,num_valid_rosters):
-        num_valid_rosters=num_valid_rosters[0]
+    def draw_schedules(self,valid_rosters):
+        """
+        Creates frames, calls their draw function to plot the schedule graph on them, and reveals the first graph if there are any
+        @param valid_rosters : generated list of schedules
+        """
+        self.draw_sched_lock.acquire()
         self.sched_frames = []
         self.roster_page_num=1
-        for i in range(num_valid_rosters):
+        for i in range(len(valid_rosters)):
             figure = Figure(figsize=(18,7))
-            frame=Sched_Frame(self.canv,self,i+1,num_valid_rosters)
+            frame=Sched_Frame(self.canv,self,i+1,len(valid_rosters))
             self.sched_frames.append(frame)
             frame.grid(row=0,column=0,sticky="nsew")
-            frame.draw_schedule(figure,self.valid_rosters,i)
+            frame.draw_schedule(figure,valid_rosters,i)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
 
 class Sched_Frame(customtkinter.CTkFrame):
+    """
+    Frame for displaying and navigating through schedule graphs
+    """
     def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
         self.controller = controller
         customtkinter.CTkFrame.__init__(self,parent)
@@ -520,6 +563,12 @@ class Sched_Frame(customtkinter.CTkFrame):
         customtkinter.CTkButton(exit_frame,text="Exit",command = controller.exit_sched_display).pack(side="bottom",anchor="center")
     
     def draw_schedule(self, figure:Figure, valid_rosters,i):
+        """
+        Plots the schedule on itself
+        @param figure
+        @param valid_rosters : list of schedules
+        @param i : index within valid_rosters
+        """
         axes = figure.add_subplot(121)
         draw(axes,valid_rosters,i)
         figure.text(0.5,0.3,s=self.get_course_info(valid_rosters,i))
