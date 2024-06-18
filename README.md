@@ -27,5 +27,5 @@ Follow this project board to know the latest status of the project in the projec
 - Set up virtual environment once by running "py -3 -m venv .venv"
 - Run virtual environment by typing and entering ".venv/scripts/activate" (Do this every time you enter the project)
 - Run "pip install -r requirements.txt"
-- Run gui.py
+- Run schedule_compiler.py
 - User interface should show up with title "Schedule Compiler" and options for preferences in schedule creation
