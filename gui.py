@@ -25,7 +25,7 @@ class GUI():
         self.__root.title('Schedule Compiler')
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
-        self.__root.state('zoomed')
+        self.__root.state('normal')
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
@@ -516,7 +516,7 @@ class GUI():
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
-        self.__root.state('zoomed')
+        self.__root.state('normal')
         self.draw_sched_lock.release()
         self.main_scroll_bar.pack(side='right',fill=Y)
         self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
