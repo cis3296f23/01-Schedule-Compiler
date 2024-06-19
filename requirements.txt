@@ -1,4 +1,4 @@
-tk
+tkinter
 requests
 beautifulsoup4
 pyinstaller
