@@ -21,11 +21,15 @@ This is a desktop application for Temple students which helps create a schedule 
 Follow this project board to know the latest status of the project in the project board. Submit a PR with working code.
 
 ### How to build
-- Use this github repository
-- Specify what branch to use for a more stable release or for cutting edge development.  
-- Use any IDE that works with Python
-- Set up virtual environment once by running "py -3 -m venv .venv"
-- Run virtual environment by typing and entering ".venv/scripts/activate" (Do this every time you enter the project)
+
+- Clone the repository in your desired IDE that works with Python
+- Set up the virtual environment (done only once):
+    - For Windows, run "py -3 -m venv .venv"
+    - For Linux, run "python3 -m venv .venv"
+-Run the virtual environment (done every time you open up the project):
+    - For Windows, run ".venv/scripts/activate"
+    - For Linux, run "source .venv/bin/activate"
 - Run "pip install -r requirements.txt"
+- In Linux, run "sudo apt-get install python3-tk"
 - Run schedule_compiler.py
 - User interface should show up with title "Schedule Compiler" and options for preferences in schedule creation

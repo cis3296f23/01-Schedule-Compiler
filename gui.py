@@ -35,11 +35,13 @@ class GUI():
         #Scrollbar implementation
         self.canv = Canvas(main_frame)
         self.canv.pack(side="left",fill="both",expand=1,anchor="center")
-        #creating a scroll bar and binding it to the entrire screen that the user uses
+        #creating a scroll bar and binding it to the entire screen that the user uses
         self.main_scroll_bar = ttk.Scrollbar(main_frame,orient="vertical",command=self.canv.yview)
         self.main_scroll_bar.pack(side='right',fill=Y)
         self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
+        self.canv.bind_all("<Up>", lambda e: self.canv.yview_scroll(-1, "units"))
+        self.canv.bind_all("<Down>", lambda e: self.canv.yview_scroll(1, "units"))
         #separate frame for all the widgets
         self.second_frame = customtkinter.CTkFrame(self.canv,  fg_color = 'transparent')
         self.second_frame.pack(fill="both",expand=1)

@@ -4,5 +4,4 @@ beautifulsoup4
 pyinstaller
 pandas 
 matplotlib
-wxpython
 customtkinter
