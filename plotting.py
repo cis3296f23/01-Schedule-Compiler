@@ -59,7 +59,7 @@ def draw(axes,schedules:list, i:int):
             start_time = decimal_time_to_standard(row['Start Time'])
             end_time = decimal_time_to_standard(row['End Time'])
             ax.text(row['Day'], row['Start Time'] + (row['End Time'] - row['Start Time']) / 2, 
-                    f'{start_time}-{end_time}\n{row['Meeting Type']}', color='white', ha='center', va='center')
+                    f'{start_time}-{end_time}\n{row["Meeting Type"]}', color='white', ha='center', va='center')
         
         # Setting labels and title
         ax.set_ylabel('Time (hours)')
