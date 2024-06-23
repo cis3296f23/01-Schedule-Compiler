@@ -518,7 +518,7 @@ class GUI():
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
-        self.__root.state('zoomed')
+        self.__root.state('normal')
         self.draw_sched_lock.release()
         """self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))"""
