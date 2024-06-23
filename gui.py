@@ -14,6 +14,7 @@ from threading import Thread, Lock
 from custom_thread import Custom_Thread
 import customtkinter
 import re
+import platform
 
 class GUI():
     def __init__(self,root:Tk):
@@ -25,7 +26,8 @@ class GUI():
         self.__root.title('Schedule Compiler')
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
-        self.__root.state('zoomed')
+        if platform.system() == 'Windows':
+            self.__root.state('zoomed')
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
@@ -518,9 +520,8 @@ class GUI():
         self.sched_frames=[]
         self.__root.state('zoomed')
         self.draw_sched_lock.release()
-        self.main_scroll_bar.pack(side='right',fill=Y)
-        self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
-        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
+        """self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
+        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))"""
 
     def compile_schedules(self,event=None):
         """
@@ -539,7 +540,7 @@ class GUI():
         self.roster_page_num=1
         for i in range(len(valid_rosters)):
             figure = Figure(figsize=(18,7))
-            frame=Sched_Frame(self.canv,self,i+1,len(valid_rosters))
+            frame=Sched_Frame(self.main_frame,self,i+1,len(valid_rosters))
             self.sched_frames.append(frame)
             frame.grid(row=0,column=0,sticky="nsew")
             frame.draw_schedule(figure,valid_rosters,i)
