@@ -34,6 +34,9 @@ class GUI():
 
         self.main_frame=customtkinter.CTkScrollableFrame(self.__root, fg_color = 'transparent')
         self.main_frame.pack(side="top",fill="both", expand=1, anchor="center")
+        #Credit to Yazan Al Hariri for up and down key bindings (https://stackoverflow.com/questions/78051328/how-to-scroll-down-in-ctkscrollableframe-using-arrow-keys-in-custom-tkinter)
+        self.main_frame.bind_all("<Up>", lambda event: self.main_frame._parent_canvas.yview("scroll", -25, "units"), add="+")
+        self.main_frame.bind_all("<Down>", lambda event: self.main_frame._parent_canvas.yview("scroll", 25, "units"), add="+")
         self.added_courses = []
         self.course_info = dict()
         self.prof_rating_cache = dict()
@@ -54,7 +57,6 @@ class GUI():
         self.build_courses_frame(self.main_frame)
         self.build_unavail_time_frame(self.main_frame)
         self.build_compile_schedule_frame(self.main_frame)
-        #self.__root.bind("<Map>",lambda x:self.canv.yview_moveto(0))
     
     def build_degr_prog_frame(self, master):
         """
@@ -504,8 +506,6 @@ class GUI():
             frame.destroy()
         self.sched_frames=[]
         self.draw_sched_lock.release()
-        """self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
-        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))"""
 
     def compile_schedules(self,event=None):
         """
