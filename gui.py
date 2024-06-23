@@ -32,23 +32,8 @@ class GUI():
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
 
-        main_frame=customtkinter.CTkFrame(self.__root, fg_color = 'transparent')
-        main_frame.pack(side="top",fill="both", expand=1, anchor="center")
-        #Scrollbar implementation
-        self.canv = Canvas(main_frame)
-        self.canv.pack(side="left",fill="both",expand=1,anchor="center")
-        #creating a scroll bar and binding it to the entire screen that the user uses
-        self.main_scroll_bar = ttk.Scrollbar(main_frame,orient="vertical",command=self.canv.yview)
-        self.main_scroll_bar.pack(side='right',fill=Y)
-        self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
-        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
-        self.canv.bind_all("<Up>", lambda e: self.canv.yview_scroll(-1, "units"))
-        self.canv.bind_all("<Down>", lambda e: self.canv.yview_scroll(1, "units"))
-        #separate frame for all the widgets
-        self.second_frame = customtkinter.CTkFrame(self.canv,  fg_color = 'transparent')
-        self.second_frame.pack(fill="both",expand=1)
-        self.second_frame.place(relx=0.5, rely=0.5, anchor="center")
-        self.canv.create_window((int(main_frame.winfo_screenwidth()/2),0), window=self.second_frame, anchor = "center")
+        self.main_frame=customtkinter.CTkScrollableFrame(self.__root, fg_color = 'transparent')
+        self.main_frame.pack(side="top",fill="both", expand=1, anchor="center")
         self.added_courses = []
         self.course_info = dict()
         self.prof_rating_cache = dict()
@@ -65,11 +50,11 @@ class GUI():
         self.compile_sched_lock = Lock()
         self.draw_sched_lock = Lock()
 
-        self.build_degr_prog_frame(self.second_frame)
-        self.build_courses_frame(self.second_frame)
-        self.build_unavail_time_frame(self.second_frame)
-        self.build_compile_schedule_frame(self.second_frame)
-        self.__root.bind("<Map>",lambda x:self.canv.yview_moveto(0))
+        self.build_degr_prog_frame(self.main_frame)
+        self.build_courses_frame(self.main_frame)
+        self.build_unavail_time_frame(self.main_frame)
+        self.build_compile_schedule_frame(self.main_frame)
+        #self.__root.bind("<Map>",lambda x:self.canv.yview_moveto(0))
     
     def build_degr_prog_frame(self, master):
         """
@@ -518,7 +503,6 @@ class GUI():
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
-        self.__root.state('normal')
         self.draw_sched_lock.release()
         """self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
         self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))"""
