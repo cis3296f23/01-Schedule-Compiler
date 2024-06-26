@@ -35,8 +35,8 @@ class GUI():
         self.main_frame=customtkinter.CTkScrollableFrame(self.__root, fg_color = 'transparent')
         self.main_frame.pack(side="top",fill="both", expand=1, anchor="center")
         #Credit to Yazan Al Hariri for up and down key bindings (https://stackoverflow.com/questions/78051328/how-to-scroll-down-in-ctkscrollableframe-using-arrow-keys-in-custom-tkinter)
-        self.main_frame.bind_all("<Up>", lambda event: self.main_frame._parent_canvas.yview("scroll", -25, "units"), add="+")
-        self.main_frame.bind_all("<Down>", lambda event: self.main_frame._parent_canvas.yview("scroll", 25, "units"), add="+")
+        self.main_frame.bind_all("<Up>",  self.on_mouse_wheel)
+        self.main_frame.bind_all("<Down>", self.on_mouse_wheel)
         self.main_frame.bind_all("<MouseWheel>", self.on_mouse_wheel)
         #For linux systems
         self.main_frame.bind_all("<Button-4>", self.on_mouse_wheel)
@@ -75,6 +75,12 @@ class GUI():
                 return
         if self.mouse_over_scrollable:
             return  # Do not scroll the main frame if the mouse is over a scrollable widget
+        if event.keysym=="Up":
+            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+            return
+        if event.keysym=="Down":
+            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+            return
         # Scroll the scrollable frame only if the mouse is not over any scrollable widgets
         if event.num == 4 or event.delta > 0:
             self.main_frame._parent_canvas.yview("scroll", -25, "units")
