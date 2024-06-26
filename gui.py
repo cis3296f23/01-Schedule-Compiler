@@ -73,7 +73,7 @@ class GUI():
         if isinstance(event.widget, str): # String because it does not have an actual reference
             if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the combobox
                 return
-        if self.mouse_over_scrollable:
+        if self.mouse_over_scrollable and event.keysym!="Up" and event.keysym!="Down":
             return  # Do not scroll the main frame if the mouse is over a scrollable widget
         if event.keysym=="Up":
             self.main_frame._parent_canvas.yview("scroll", -25, "units")
