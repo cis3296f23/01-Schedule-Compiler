@@ -32,23 +32,15 @@ class GUI():
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
 
-        main_frame=customtkinter.CTkFrame(self.__root, fg_color = 'transparent')
-        main_frame.pack(side="top",fill="both", expand=1, anchor="center")
-        #Scrollbar implementation
-        self.canv = Canvas(main_frame)
-        self.canv.pack(side="left",fill="both",expand=1,anchor="center")
-        #creating a scroll bar and binding it to the entire screen that the user uses
-        self.main_scroll_bar = ttk.Scrollbar(main_frame,orient="vertical",command=self.canv.yview)
-        self.main_scroll_bar.pack(side='right',fill=Y)
-        self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
-        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))
-        self.canv.bind_all("<Up>", lambda e: self.canv.yview_scroll(-1, "units"))
-        self.canv.bind_all("<Down>", lambda e: self.canv.yview_scroll(1, "units"))
-        #separate frame for all the widgets
-        self.second_frame = customtkinter.CTkFrame(self.canv,  fg_color = 'transparent')
-        self.second_frame.pack(fill="both",expand=1)
-        self.second_frame.place(relx=0.5, rely=0.5, anchor="center")
-        self.canv.create_window((int(main_frame.winfo_screenwidth()/2),0), window=self.second_frame, anchor = "center")
+        self.main_frame=customtkinter.CTkScrollableFrame(self.__root, fg_color = 'transparent')
+        self.main_frame.pack(side="top",fill="both", expand=1, anchor="center")
+        #Credit to Yazan Al Hariri for up and down key bindings (https://stackoverflow.com/questions/78051328/how-to-scroll-down-in-ctkscrollableframe-using-arrow-keys-in-custom-tkinter)
+        self.main_frame.bind_all("<Up>", lambda event: self.main_frame._parent_canvas.yview("scroll", -25, "units"), add="+")
+        self.main_frame.bind_all("<Down>", lambda event: self.main_frame._parent_canvas.yview("scroll", 25, "units"), add="+")
+        self.main_frame.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        #For linux systems
+        self.main_frame.bind_all("<Button-4>", self.on_mouse_wheel)
+        self.main_frame.bind_all("<Button-5>", self.on_mouse_wheel)
         self.added_courses = []
         self.course_info = dict()
         self.prof_rating_cache = dict()
@@ -65,11 +57,68 @@ class GUI():
         self.compile_sched_lock = Lock()
         self.draw_sched_lock = Lock()
 
-        self.build_degr_prog_frame(self.second_frame)
-        self.build_courses_frame(self.second_frame)
-        self.build_unavail_time_frame(self.second_frame)
-        self.build_compile_schedule_frame(self.second_frame)
-        self.__root.bind("<Map>",lambda x:self.canv.yview_moveto(0))
+        self.build_degr_prog_frame(self.main_frame)
+        self.build_courses_frame(self.main_frame)
+        self.build_unavail_time_frame(self.main_frame)
+        self.build_compile_schedule_frame(self.main_frame)
+        self.bind_scrollable_widgets_enter_and_leave(self.main_frame)
+        self.mouse_over_scrollable = False
+
+    def on_mouse_wheel(self, event:Event):
+        """
+        Handles and directs mouse movements
+        @param event : event that trigerred the function
+        """
+        #Credit to Delirius Euphoria for preventing scroll of window when within the drop down combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
+        if isinstance(event.widget, str): # String because it does not have an actual reference
+            if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the combobox
+                return
+        if self.mouse_over_scrollable:
+            return  # Do not scroll the main frame if the mouse is over a scrollable widget
+        # Scroll the scrollable frame only if the mouse is not over any scrollable widgets
+        if event.num == 4 or event.delta > 0:
+            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+        elif event.num == 5 or event.delta < 0:
+            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+
+    def on_mouse_enter_scrollable(self, event):
+        """
+        Sets the variable indicating whether the mouse is on a scrollable widget to True
+        @param event : event that trigerred the function
+        """
+        self.mouse_over_scrollable=True
+
+    def on_mouse_leave_scrollable(self, event):
+        """
+        Sets the variable indicating whether the mouse is on a scrollable widget to False
+        @param event : event that trigerred the function
+        """
+        self.mouse_over_scrollable=False
+    
+    def bind_combobox_leave(self,combobox:ttk.Combobox):
+        """
+        Binds the given Combobox to prevent scrolling when focused on options
+        @param combobox
+        """
+        self.on_mouse_leave_scrollable(None)
+        #Credit to liamhp for preventing scroll of window when focused on combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
+        combobox.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        combobox.event_generate('<Escape>')
+
+    def bind_scrollable_widgets_enter_and_leave(self,parent):
+        """
+        Binds every scrollable widget to enter and leave events to prevent scrolling of the parent frame
+        @param parent : the parent widget or frame
+        """
+        for child in parent.winfo_children():
+            if isinstance(child,(Listbox,Text,ttk.Combobox)):
+                child.bind("<Enter>",self.on_mouse_enter_scrollable)
+                if isinstance(child,ttk.Combobox):
+                    self.bind_combobox_leave(child)
+                else:
+                    child.bind("<Leave>",self.on_mouse_leave_scrollable)
+            elif isinstance(child,(customtkinter.CTkFrame)):
+                self.bind_scrollable_widgets_enter_and_leave(child)
     
     def build_degr_prog_frame(self, master):
         """
@@ -518,10 +567,7 @@ class GUI():
         for frame in self.sched_frames:
             frame.destroy()
         self.sched_frames=[]
-        self.__root.state('normal')
         self.draw_sched_lock.release()
-        """self.canv.configure(yscrollcommand=self.main_scroll_bar.set)
-        self.canv.bind('<Configure>', lambda e: self.canv.configure(scrollregion=self.canv.bbox("all")))"""
 
     def compile_schedules(self,event=None):
         """
@@ -546,6 +592,7 @@ class GUI():
             frame.draw_schedule(figure,valid_rosters,i)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
+            self.main_frame._parent_canvas.yview_moveto(0)
 
 class Sched_Frame(customtkinter.CTkFrame):
     """
