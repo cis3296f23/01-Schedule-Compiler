@@ -37,6 +37,10 @@ class GUI():
         #Credit to Yazan Al Hariri for up and down key bindings (https://stackoverflow.com/questions/78051328/how-to-scroll-down-in-ctkscrollableframe-using-arrow-keys-in-custom-tkinter)
         self.main_frame.bind_all("<Up>", lambda event: self.main_frame._parent_canvas.yview("scroll", -25, "units"), add="+")
         self.main_frame.bind_all("<Down>", lambda event: self.main_frame._parent_canvas.yview("scroll", 25, "units"), add="+")
+        self.main_frame.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        #For linux systems
+        self.main_frame.bind_all("<Button-4>", self.on_mouse_wheel)
+        self.main_frame.bind_all("<Button-5>", self.on_mouse_wheel)
         self.added_courses = []
         self.course_info = dict()
         self.prof_rating_cache = dict()
@@ -57,6 +61,31 @@ class GUI():
         self.build_courses_frame(self.main_frame)
         self.build_unavail_time_frame(self.main_frame)
         self.build_compile_schedule_frame(self.main_frame)
+        self.bind_scrollable_widgets_enter_and_leave(self.main_frame)
+        self.mouse_over_scrollable = False
+
+    def on_mouse_wheel(self, event:Event):
+        if self.mouse_over_scrollable:
+            return  # Do not scroll the main frame if the mouse is over a scrollable widget
+        # Scroll the scrollable frame only if the mouse is not over any scrollable widgets
+        if event.num == 4 or event.delta > 0:
+            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+        elif event.num == 5 or event.delta < 0:
+            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+
+    def on_mouse_enter_scrollable(self, event):
+        self.mouse_over_scrollable=True
+
+    def on_mouse_leave_scrollable(self, event):
+        self.mouse_over_scrollable=False
+
+    def bind_scrollable_widgets_enter_and_leave(self,parent):
+        for child in parent.winfo_children():
+            if isinstance(child,(Listbox,Text,ttk.Combobox)):
+                child.bind("<Enter>",self.on_mouse_enter_scrollable)
+                child.bind("<Leave>",self.on_mouse_leave_scrollable)
+            elif isinstance(child,(customtkinter.CTkFrame)):
+                self.bind_scrollable_widgets_enter_and_leave(child)
     
     def build_degr_prog_frame(self, master):
         """
