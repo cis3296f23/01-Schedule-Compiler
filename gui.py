@@ -65,8 +65,13 @@ class GUI():
         self.mouse_over_scrollable = False
 
     def on_mouse_wheel(self, event:Event):
+        """
+        Handles and directs mouse movements
+        @param event : event that trigerred the function
+        """
+        #Credit to Delirius Euphoria for preventing scroll of window when within the drop down combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         if isinstance(event.widget, str): # String because it does not have an actual reference
-            if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the listbox
+            if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the combobox
                 return
         if self.mouse_over_scrollable:
             return  # Do not scroll the main frame if the mouse is over a scrollable widget
@@ -77,17 +82,34 @@ class GUI():
             self.main_frame._parent_canvas.yview("scroll", 25, "units")
 
     def on_mouse_enter_scrollable(self, event):
+        """
+        Sets the variable indicating whether the mouse is on a scrollable widget to True
+        @param event : event that trigerred the function
+        """
         self.mouse_over_scrollable=True
 
     def on_mouse_leave_scrollable(self, event):
+        """
+        Sets the variable indicating whether the mouse is on a scrollable widget to False
+        @param event : event that trigerred the function
+        """
         self.mouse_over_scrollable=False
     
     def bind_combobox_leave(self,combobox:ttk.Combobox):
+        """
+        Binds the given Combobox to prevent scrolling when focused on options
+        @param combobox
+        """
         self.on_mouse_leave_scrollable(None)
+        #Credit to liamhp for preventing scroll of window when focused on combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         combobox.bind_all("<MouseWheel>", self.on_mouse_wheel)
         combobox.event_generate('<Escape>')
 
     def bind_scrollable_widgets_enter_and_leave(self,parent):
+        """
+        Binds every scrollable widget to enter and leave events to prevent scrolling of the parent frame
+        @param parent : the parent widget or frame
+        """
         for child in parent.winfo_children():
             if isinstance(child,(Listbox,Text,ttk.Combobox)):
                 child.bind("<Enter>",self.on_mouse_enter_scrollable)
