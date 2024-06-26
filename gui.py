@@ -559,6 +559,7 @@ class GUI():
             frame.draw_schedule(figure,valid_rosters,i)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
+            self.main_frame._parent_canvas.yview_moveto(0)
 
 class Sched_Frame(customtkinter.CTkFrame):
     """
