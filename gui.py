@@ -81,12 +81,20 @@ class GUI():
 
     def on_mouse_leave_scrollable(self, event):
         self.mouse_over_scrollable=False
+    
+    def bind_combobox_leave(self,combobox:ttk.Combobox):
+        self.on_mouse_leave_scrollable(None)
+        combobox.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        combobox.event_generate('<Escape>')
 
     def bind_scrollable_widgets_enter_and_leave(self,parent):
         for child in parent.winfo_children():
             if isinstance(child,(Listbox,Text,ttk.Combobox)):
                 child.bind("<Enter>",self.on_mouse_enter_scrollable)
-                child.bind("<Leave>",self.on_mouse_leave_scrollable)
+                if isinstance(child,ttk.Combobox):
+                    self.bind_combobox_leave(child)
+                else:
+                    child.bind("<Leave>",self.on_mouse_leave_scrollable)
             elif isinstance(child,(customtkinter.CTkFrame)):
                 self.bind_scrollable_widgets_enter_and_leave(child)
     
