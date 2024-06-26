@@ -65,6 +65,9 @@ class GUI():
         self.mouse_over_scrollable = False
 
     def on_mouse_wheel(self, event:Event):
+        if isinstance(event.widget, str): # String because it does not have an actual reference
+            if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the listbox
+                return
         if self.mouse_over_scrollable:
             return  # Do not scroll the main frame if the mouse is over a scrollable widget
         # Scroll the scrollable frame only if the mouse is not over any scrollable widgets
