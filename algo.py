@@ -159,7 +159,7 @@ def remove_subset(schedule:Schedule,lst:list[Schedule]):
     if sched_to_replace:
         lst.remove(sched_to_replace)
 
-def dfs_build_rosters(course_info:dict, term:str, campus_code:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule, credits:int, max_credits:int):
+def dfs_build_rosters(course_info:dict, term:str, campus_code:str, course_keys:list[str], index:int, roster:Schedule, valid_rosters:list[Schedule], unavail_times:Schedule, credits:int, max_credits:int, unavail_courses: list[str]):
     """
     Goes through the sections of the course in course_info indicated by index of course_keys via depth-first search for courses that fit the schedule as is and without overlapping with unavail_times
     @param course_info : information about the sections of each course
@@ -172,6 +172,7 @@ def dfs_build_rosters(course_info:dict, term:str, campus_code:str, course_keys:l
     @param unavail_times : Schedule variable representing times the user is not available
     @param credits : number of credits for the built roster so far
     @param max_credits : maximum desired amount of credits for schedules
+    @param unavail_courses : courses with no seats available
     """
     # If 5 schedules have already been created, return
     if len(valid_rosters) >= 5:
@@ -187,6 +188,7 @@ def dfs_build_rosters(course_info:dict, term:str, campus_code:str, course_keys:l
             valid_rosters.append(roster.copy())
         return
     compat_sections = []
+    unavail_sections = 0
     for section in course_sections:
         if section['seatsAvailable'] and credits+section['creditHours']<=max_credits:
             overlaps_with_unavail = False
@@ -202,12 +204,16 @@ def dfs_build_rosters(course_info:dict, term:str, campus_code:str, course_keys:l
                     break
             if not overlaps_with_unavail:
                 compat_sections.append(section)
+        elif not section['seatsAvailable']:
+            unavail_sections+=1
+    if unavail_sections and unavail_sections==len(course_sections):
+        unavail_courses.append(course_keys[index])
     for section in compat_sections:
         if roster.add_class(section['schedule'], section):
-            dfs_build_rosters(course_info, term, campus_code, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'], max_credits)
+            dfs_build_rosters(course_info, term, campus_code, course_keys, index + 1, roster, valid_rosters, unavail_times,credits+section['creditHours'], max_credits, unavail_courses)
             roster.remove_class(section['schedule'], section)
     if len(compat_sections)!=len(course_sections) or not course_sections: #if at least one section was not able to be added, then try without the course
-        dfs_build_rosters(course_info, term, campus_code, course_keys, index + 1, roster, valid_rosters, unavail_times, credits, max_credits)
+        dfs_build_rosters(course_info, term, campus_code, course_keys, index + 1, roster, valid_rosters, unavail_times, credits, max_credits, unavail_courses)
 
 def build_all_valid_rosters(course_info:dict, term:str, campus_code:str, course_list:list[str], unavail_times:Schedule, max_credits:int):
     """
@@ -226,7 +232,11 @@ def build_all_valid_rosters(course_info:dict, term:str, campus_code:str, course_
     if not course_info[term].get(campus_code):
         return []
     valid_rosters = []
-    dfs_build_rosters(course_info, term, campus_code, course_list, 0, Schedule(), valid_rosters, unavail_times,0, max_credits)
+    unavail_courses = []
+    dfs_build_rosters(course_info, term, campus_code, course_list, 0, Schedule(), valid_rosters, unavail_times,0,max_credits,unavail_courses)
+    if unavail_courses:
+        for course in unavail_courses:
+            print(f"{course} has no seats available in any of its sections.")
     # Sort the times in each schedule before returning
     sorted_valid_rosters = []
     for roster in valid_rosters:
