@@ -184,7 +184,7 @@ class GUI():
             if "Try connecting" in self.campuses[0]:
                 self.error_otpt+=self.campuses[0]
         self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
-        self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
+        #self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #Credit entry
         self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Enter max # of credits (leave blank for 18)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
         self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
