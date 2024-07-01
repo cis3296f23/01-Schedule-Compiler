@@ -71,7 +71,7 @@ class GUI():
         """
         #Credit to Delirius Euphoria for preventing scroll of window when within the drop down combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         if isinstance(event.widget, str): # String because it does not have an actual reference
-            if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the combobox
+            if event.widget.endswith('popdown.f.l'): # If it is the combobox
                 return
         if self.mouse_over_scrollable and event.keysym!="Up" and event.keysym!="Down":
             return  # Do not scroll the main frame if the mouse is over a scrollable widget
