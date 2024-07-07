@@ -71,7 +71,7 @@ class GUI():
         """
         #Credit to Delirius Euphoria for preventing scroll of window when within the drop down combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         if isinstance(event.widget, str): # String because it does not have an actual reference
-            if event.widget.endswith('.!combobox.popdown.f.l'): # If it is the combobox
+            if event.widget.endswith('popdown.f.l'): # If it is the combobox
                 return
         if self.mouse_over_scrollable and event.keysym!="Up" and event.keysym!="Down":
             return  # Do not scroll the main frame if the mouse is over a scrollable widget
@@ -110,6 +110,7 @@ class GUI():
         #Credit to liamhp for preventing scroll of window when focused on combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         combobox.bind_all("<MouseWheel>", self.on_mouse_wheel)
         combobox.event_generate('<Escape>')
+        combobox.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
 
     def bind_scrollable_widgets_enter_and_leave(self,parent):
         """
@@ -171,7 +172,6 @@ class GUI():
         if "Try connecting" in self.terms[0]:
             self.error_otpt+=self.terms[0]
         self.term_combobox.grid(row=1, padx=15, pady=5)
-        self.term_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
         #select a campus
         customtkinter.CTkLabel(self.specifications_frame, text="Campus:",fg_color="transparent", font = self.custom_font_bold).grid(row=2,column=0, padx=10)
         self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
@@ -184,7 +184,8 @@ class GUI():
             if "Try connecting" in self.campuses[0]:
                 self.error_otpt+=self.campuses[0]
         self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
-        self.campus_combobox.bind('<<ComboboxSelected>>', self.on_term_or_campus_selected)
+        self.campus_combobox.unbind('<Up>')
+        self.campus_combobox.unbind('<Down>')
         #Credit entry
         self.credit_label = customtkinter.CTkLabel(self.specifications_frame, text="Enter max # of credits (leave blank for 18)", fg_color="transparent", font = self.custom_font_bold).grid(row=5)
         self.max_cred_entry = customtkinter.CTkEntry(self.specifications_frame, width=50)
@@ -298,7 +299,7 @@ class GUI():
         sys.stdout = TextRedirector(self.output,'stdout')
         print(self.error_otpt)
         
-    def on_term_or_campus_selected(self, event):
+    def on_combobox_item_selected(self, event):
          self.__root.focus_set()
 
     def narrow_search(self,event:Event,entry:Entry,lst:list[str],lstbox:Listbox):
