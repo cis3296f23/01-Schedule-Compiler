@@ -110,6 +110,7 @@ class GUI():
         #Credit to liamhp for preventing scroll of window when focused on combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         combobox.bind_all("<MouseWheel>", self.on_mouse_wheel)
         combobox.event_generate('<Escape>')
+        combobox.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
 
     def bind_scrollable_widgets_enter_and_leave(self,parent):
         """
@@ -171,7 +172,6 @@ class GUI():
         if "Try connecting" in self.terms[0]:
             self.error_otpt+=self.terms[0]
         self.term_combobox.grid(row=1, padx=15, pady=5)
-        self.term_combobox.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         #select a campus
         customtkinter.CTkLabel(self.specifications_frame, text="Campus:",fg_color="transparent", font = self.custom_font_bold).grid(row=2,column=0, padx=10)
         self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
@@ -184,7 +184,6 @@ class GUI():
             if "Try connecting" in self.campuses[0]:
                 self.error_otpt+=self.campuses[0]
         self.campus_combobox.grid(row=4, column=0, padx=15, pady=(5,30))
-        self.campus_combobox.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         self.campus_combobox.unbind('<Up>')
         self.campus_combobox.unbind('<Down>')
         #Credit entry
@@ -248,7 +247,6 @@ class GUI():
         self.days_dropdown = ttk.Combobox(self.date_time_frame, values=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] , state='readonly', width=20)
         self.days_dropdown.set('Sunday')
         self.days_dropdown.grid(row=3, padx=5)
-        self.days_dropdown.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         # Times selection
         self.time_frame = customtkinter.CTkFrame(master=self.date_time_frame)
         self.time_frame.grid(row=18, padx=5, pady=5)
@@ -264,18 +262,14 @@ class GUI():
         hours = [str(i).zfill(2) for i in range(0, 24)]
         self.start_hour_dropdown = ttk.Combobox(start_time_frame, values=hours, state="readonly", width=3)
         self.start_hour_dropdown.pack(side='left', anchor='w')
-        self.start_hour_dropdown.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         self.end_hour_dropdown = ttk.Combobox(end_time_frame, values=hours, state="readonly", width=3)
         self.end_hour_dropdown.pack(side='left', anchor='w')
-        self.end_hour_dropdown.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         # Minute selection
         minutes = [str(i).zfill(2) for i in range(0, 60, 5)]
         self.start_minute_dropdown = ttk.Combobox(start_time_frame, values=minutes, state="readonly", width=3)
         self.start_minute_dropdown.pack(side='left', anchor='w')
-        self.start_minute_dropdown.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         self.end_minute_dropdown = ttk.Combobox(end_time_frame, values=minutes, state="readonly", width=3)
         self.end_minute_dropdown.pack(side='left', anchor='w')
-        self.end_minute_dropdown.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
         # Add button to list of unavailable times
         customtkinter.CTkButton(self.date_time_frame, text="Add Time", command=self.add_timeslot, width=15).grid(row=21, padx=5, pady=(5,15))
         self.selected_times_frame = customtkinter.CTkFrame(master=self.unavailable_frame, width=200, height=200, border_width = 2, corner_radius=10, fg_color = "transparent")
