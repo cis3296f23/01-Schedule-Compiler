@@ -24,6 +24,7 @@ class GUI():
         self.running = True
         self.__root = root
         self.__root.title('Schedule Compiler')
+        self.__root.iconphoto(True,PhotoImage(file="./sched_comp_icon.png"))
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         if platform.system() == 'Windows':
