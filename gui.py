@@ -15,7 +15,6 @@ from custom_thread import Custom_Thread
 import customtkinter
 import re
 import platform
-
 class GUI():
     def __init__(self,root:Tk):
         """
@@ -62,7 +61,7 @@ class GUI():
         self.build_courses_frame(self.main_frame)
         self.build_unavail_time_frame(self.main_frame)
         self.build_compile_schedule_frame(self.main_frame)
-        self.bind_scrollable_widgets_enter_and_leave(self.main_frame)
+        self.bind_enter_and_leave(self.main_frame)
         self.mouse_over_scrollable = False
 
     def on_mouse_wheel(self, event:Event):
@@ -113,7 +112,7 @@ class GUI():
         combobox.event_generate('<Escape>')
         combobox.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
 
-    def bind_scrollable_widgets_enter_and_leave(self,parent):
+    def bind_enter_and_leave(self,parent):
         """
         Binds every scrollable widget to enter and leave events to prevent scrolling of the parent frame
         @param parent : the parent widget or frame
@@ -126,7 +125,8 @@ class GUI():
                 else:
                     child.bind("<Leave>",self.on_mouse_leave_scrollable)
             elif isinstance(child,(customtkinter.CTkFrame)):
-                self.bind_scrollable_widgets_enter_and_leave(child)
+                self.bind_enter_and_leave(child)
+                child.bind("<Button-1>",lambda event : self.__root.focus())
     
     def build_degr_prog_frame(self, master):
         """
