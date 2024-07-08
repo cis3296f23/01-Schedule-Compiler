@@ -29,6 +29,7 @@ class GUI():
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         if platform.system() == 'Windows':
             self.__root.state('zoomed')
+        self.__root.bind("<Button-1>", self.rm_focus)
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
@@ -64,6 +65,16 @@ class GUI():
         self.build_compile_schedule_frame(self.main_frame)
         self.bind_enter_and_leave(self.main_frame)
 
+    def rm_focus(self,event):
+        """
+        Removes focus from widgets if a canvas or frame is clicked
+        @param event : the event that caused the call to the function
+        """
+        x,y = self.__root.winfo_pointerxy() 
+        widget = str(self.__root.winfo_containing(x,y))
+        if widget.endswith("canvas") or widget.endswith("frame"):
+            self.__root.focus_set()
+    
     def on_mouse_wheel(self, event:Event):
         """
         Handles and directs mouse movements
