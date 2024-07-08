@@ -15,6 +15,7 @@ from custom_thread import Custom_Thread
 import customtkinter
 import re
 import platform
+#TODO: Remove focus from widgets after clicking outside of them
 class GUI():
     def __init__(self,root:Tk):
         """
@@ -73,8 +74,6 @@ class GUI():
         widg = str(event.widget)
         if widg and (widg.endswith('popdown.f.l') or widg.endswith("text") or widg.endswith("listbox")):
                 return
-        if self.mouse_over_scrollable and event.keysym!="Up" and event.keysym!="Down":
-            return  # Do not scroll the main frame if the mouse is over a scrollable widget
         if event.keysym=="Up":
             self.main_frame._parent_canvas.yview("scroll", -25, "units")
             return
