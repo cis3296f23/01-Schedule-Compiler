@@ -15,7 +15,7 @@ from custom_thread import Custom_Thread
 import customtkinter
 import re
 import platform
-
+#TODO: Remove focus from widgets after clicking outside of them
 class GUI():
     def __init__(self,root:Tk):
         """
@@ -24,10 +24,12 @@ class GUI():
         self.running = True
         self.__root = root
         self.__root.title('Schedule Compiler')
+        self.__root.iconphoto(True,PhotoImage(file="./sched_comp_icon.png"))
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         if platform.system() == 'Windows':
             self.__root.state('zoomed')
+        self.__root.bind("<Button-1>", self.rm_focus)
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
         self.__style.configure('TFrame', background='#ecf0f1')
@@ -61,9 +63,18 @@ class GUI():
         self.build_courses_frame(self.main_frame)
         self.build_unavail_time_frame(self.main_frame)
         self.build_compile_schedule_frame(self.main_frame)
-        self.bind_scrollable_widgets_enter_and_leave(self.main_frame)
-        self.mouse_over_scrollable = False
+        self.bind_enter_and_leave(self.main_frame)
 
+    def rm_focus(self,event):
+        """
+        Removes focus from widgets if a canvas or frame is clicked
+        @param event : the event that caused the call to the function
+        """
+        x,y = self.__root.winfo_pointerxy() 
+        widget = str(self.__root.winfo_containing(x,y))
+        if widget.endswith("canvas") or widget.endswith("frame"):
+            self.__root.focus_set()
+    
     def on_mouse_wheel(self, event:Event):
         """
         Handles and directs mouse movements
@@ -73,8 +84,6 @@ class GUI():
         widg = str(event.widget)
         if widg and (widg.endswith('popdown.f.l') or widg.endswith("text") or widg.endswith("listbox")):
                 return
-        if self.mouse_over_scrollable and event.keysym!="Up" and event.keysym!="Down":
-            return  # Do not scroll the main frame if the mouse is over a scrollable widget
         if event.keysym=="Up":
             self.main_frame._parent_canvas.yview("scroll", -25, "units")
             return
@@ -86,46 +95,28 @@ class GUI():
             self.main_frame._parent_canvas.yview("scroll", -25, "units")
         elif event.num == 5 or event.delta < 0:
             self.main_frame._parent_canvas.yview("scroll", 25, "units")
-
-    def on_mouse_enter_scrollable(self, event):
-        """
-        Sets the variable indicating whether the mouse is on a scrollable widget to True
-        @param event : event that trigerred the function
-        """
-        self.mouse_over_scrollable=True
-
-    def on_mouse_leave_scrollable(self, event):
-        """
-        Sets the variable indicating whether the mouse is on a scrollable widget to False
-        @param event : event that trigerred the function
-        """
-        self.mouse_over_scrollable=False
     
     def bind_combobox_leave(self,combobox:ttk.Combobox):
         """
         Binds the given Combobox to prevent scrolling when focused on options
         @param combobox
         """
-        self.on_mouse_leave_scrollable(None)
         #Credit to liamhp for preventing scroll of window when focused on combobox options: https://stackoverflow.com/questions/73055952/python-tkinter-unbinding-mouse-scroll-wheel-on-combobox
         combobox.bind_all("<MouseWheel>", self.on_mouse_wheel)
         combobox.event_generate('<Escape>')
         combobox.bind('<<ComboboxSelected>>', self.on_combobox_item_selected)
 
-    def bind_scrollable_widgets_enter_and_leave(self,parent):
+    def bind_enter_and_leave(self,parent):
         """
-        Binds every scrollable widget to enter and leave events to prevent scrolling of the parent frame
+        Binds comboboxes' and frame's to enter and leave events to properly control scrolling
         @param parent : the parent widget or frame
         """
         for child in parent.winfo_children():
-            if isinstance(child,(Listbox,Text,ttk.Combobox)):
-                child.bind("<Enter>",self.on_mouse_enter_scrollable)
-                if isinstance(child,ttk.Combobox):
-                    self.bind_combobox_leave(child)
-                else:
-                    child.bind("<Leave>",self.on_mouse_leave_scrollable)
+            if isinstance(child,ttk.Combobox):
+                self.bind_combobox_leave(child)
             elif isinstance(child,(customtkinter.CTkFrame)):
-                self.bind_scrollable_widgets_enter_and_leave(child)
+                self.bind_enter_and_leave(child)
+                child.bind("<Button-1>",lambda event : self.__root.focus())
     
     def build_degr_prog_frame(self, master):
         """
