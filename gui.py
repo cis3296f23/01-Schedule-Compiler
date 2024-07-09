@@ -188,7 +188,7 @@ class GUI():
         self.courses_frame.grid(row=3, column=1, padx=10, pady=10)
         self.courses_shown = []
         customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=1, padx=10, pady=10)
-        customtkinter.CTkLabel(self.courses_f,text= "Options: 1. Enter your desired course in SUBJ #### (e.g. CIS 0823) or attribute (e.g. GA) format and press Enter key or Add button below to add\n2. Enter keywords (not in the format specified above) to search and press Enter or the Search button to see the subject and code\n(Notes: 1. Add by top priority to least priority if desired\n2. Can filter through courses if there any shown below \n3. Can add course even if not in list below)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky = "w")
+        customtkinter.CTkLabel(self.courses_f,text= "1. Enter your desired course in SUBJ #### (e.g. CIS 0823) or attribute (e.g. GA) format and press Enter key or Add button below to add\n2. Enter keywords (not in the format specified above) to search and press Enter or the Search button to see the subject and code\n(Notes: 1. Add by top priority to least priority if desired\n2. Can add course even if not in list below)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky = "w")
         self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter keywords to search or the subject code and number combo if you already know", width=500)
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.courses_shown_var = Variable()
