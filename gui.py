@@ -27,8 +27,10 @@ class GUI():
         self.__root.iconphoto(True,PhotoImage(file="./sched_comp_icon.png"))
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
+        self.scroll_rate = 1
         if platform.system() == 'Windows':
             self.__root.state('zoomed')
+            self.scroll_rate = 25
         self.__root.bind("<Button-1>", self.rm_focus)
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
@@ -85,16 +87,16 @@ class GUI():
         if widg and (widg.endswith('popdown.f.l') or widg.endswith("text") or widg.endswith("listbox")):
                 return
         if event.keysym=="Up":
-            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+            self.main_frame._parent_canvas.yview("scroll", -self.scroll_rate, "units")
             return
         if event.keysym=="Down":
-            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+            self.main_frame._parent_canvas.yview("scroll", self.scroll_rate, "units")
             return
         # Scroll the scrollable frame only if the mouse is not over any scrollable widgets
         if event.num == 4 or event.delta > 0:
-            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+            self.main_frame._parent_canvas.yview("scroll", -self.scroll_rate, "units")
         elif event.num == 5 or event.delta < 0:
-            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+            self.main_frame._parent_canvas.yview("scroll", self.scroll_rate, "units")
     
     def bind_combobox_leave(self,combobox:ttk.Combobox):
         """
