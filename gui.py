@@ -27,8 +27,10 @@ class GUI():
         self.__root.iconphoto(True,PhotoImage(file="./sched_comp_icon.png"))
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
+        self.scroll_rate = 1
         if platform.system() == 'Windows':
             self.__root.state('zoomed')
+            self.scroll_rate = 25
         self.__root.bind("<Button-1>", self.rm_focus)
         ttk.Label(self.__root, text = 'Schedule Compiler', font='Fixedsys 35 bold', justify="center", background='#3498db', foreground='white').pack(padx=5,pady=5)
         self.__style = ttk.Style()
@@ -85,16 +87,16 @@ class GUI():
         if widg and (widg.endswith('popdown.f.l') or widg.endswith("text") or widg.endswith("listbox")):
                 return
         if event.keysym=="Up":
-            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+            self.main_frame._parent_canvas.yview("scroll", -self.scroll_rate, "units")
             return
         if event.keysym=="Down":
-            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+            self.main_frame._parent_canvas.yview("scroll", self.scroll_rate, "units")
             return
         # Scroll the scrollable frame only if the mouse is not over any scrollable widgets
         if event.num == 4 or event.delta > 0:
-            self.main_frame._parent_canvas.yview("scroll", -25, "units")
+            self.main_frame._parent_canvas.yview("scroll", -self.scroll_rate, "units")
         elif event.num == 5 or event.delta < 0:
-            self.main_frame._parent_canvas.yview("scroll", 25, "units")
+            self.main_frame._parent_canvas.yview("scroll", self.scroll_rate, "units")
     
     def bind_combobox_leave(self,combobox:ttk.Combobox):
         """
@@ -186,7 +188,7 @@ class GUI():
         self.courses_frame.grid(row=3, column=1, padx=10, pady=10)
         self.courses_shown = []
         customtkinter.CTkLabel(self.courses_f, text='Course Selection', font = self.custom_font_bold, fg_color="transparent").grid(row=0, column=1, padx=10, pady=10)
-        customtkinter.CTkLabel(self.courses_f,text= "Options: 1. Enter your desired course in SUBJ #### (e.g. CIS 0823) or attribute (e.g. GA) format and press Enter key or Add button below to add\n2. Enter keywords (not in the format specified above) to search and press Enter or the Search button to see the subject and code\n(Notes: 1. Add by top priority to least priority if desired\n2. Can filter through courses if there any shown below \n3. Can add course even if not in list below)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky = "w")
+        customtkinter.CTkLabel(self.courses_f,text= "1. Enter your desired course in SUBJ #### (e.g. CIS 0823) or attribute (e.g. GA) format and press Enter key or Add button below to add\n2. Enter keywords (not in the format specified above) to search and press Enter or the Search button to see the subject and code\n(Notes: 1. Add by top priority to least priority if desired\n2. Can add course even if not in list below)", fg_color="transparent", font = ("Arial", 12, "italic")).grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky = "w")
         self.course_entry=customtkinter.CTkEntry(self.courses_frame,placeholder_text="Enter keywords to search or the subject code and number combo if you already know", width=500)
         self.course_entry.grid(row=1, padx=15, pady=15)
         self.courses_shown_var = Variable()
