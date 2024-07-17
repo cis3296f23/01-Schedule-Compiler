@@ -15,7 +15,7 @@ from custom_thread import Custom_Thread
 import customtkinter
 import re
 import platform
-#TODO: Remove focus from widgets after clicking outside of them
+
 class GUI():
     def __init__(self,root:Tk):
         """
@@ -74,7 +74,7 @@ class GUI():
         """
         x,y = self.__root.winfo_pointerxy() 
         widget = str(self.__root.winfo_containing(x,y))
-        if widget.endswith("canvas") or widget.endswith("frame"):
+        if (widget.endswith("canvas") or widget.endswith("frame")) and "sched_frame" not in widget:
             self.__root.focus_set()
     
     def on_mouse_wheel(self, event:Event):
