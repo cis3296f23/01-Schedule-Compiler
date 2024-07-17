@@ -625,8 +625,6 @@ class Sched_Frame(customtkinter.CTkFrame):
         canv = FigureCanvasTkAgg(figure,self)
         canv.draw()
         canv.get_tk_widget().pack(side="bottom",fill='both',expand=True)
-        toolbar = NavigationToolbar2Tk(canv, self)
-        toolbar.update()
         canv._tkcanvas.pack(side="top", fill="both", expand=True)
         canv.get_tk_widget().bind("<Left>",self.controller.display_prev_sched)
         canv.get_tk_widget().bind("<Right>",self.controller.display_next_sched)
