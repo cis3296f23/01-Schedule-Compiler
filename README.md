@@ -1,21 +1,31 @@
 # Schedule Compiler
-This is a desktop application for Temple students which helps create a schedule for their next semester based on their course of study, classes they have taken and need to take, professor ratings, and user selected prioritization of classes and days they would like to attend class.
+This is a desktop application for Temple students that generates potential schedules for their next semester based on desired courses, professor ratings, and days they cannot attend class.
+
+# Description
+
+The interface takes in the desired classes in the form "SUBJ ####" or gened code such as "GA". If the user does not know the required courses in their degree program, then they can look it up and click on it, and the course codes and the corresponding names will populate. Like in TUPortal, users must select the semester they wish to schedule for while the campus defaults to "Main". In addition, users can add days and times they are not available.
+
+# Challenges faced
+
+The biggest challenges came from the user interface itself and integrating the graphical display of schedules with it. The first issue was making the graphical displays appear itself. This was no issue in the IDE, but when the program was packaged as an executable, it spawned another instance of the interface rather than the desired matplotlib graph. Ultimately, embedding the graph into a tkinter frame instead of spawning a process that showed the graph fixed the issue. On the other hand, the tkinter library inherently does not help make interfaces intuitive without some workarounds and additional functions which led to some minor challenges.
 
 # How to run
 
 ## For Windows
 1. Click on Releases to get the latest release
-2. Click on schedule_compiler.exe to download the executable
-3. Move the file whereever you would like and double click to run
+2. Click on zip file to download it
+3. Go to the folder where you downloaded the zip file
+4. Right-click on the zip file and click "Extract all"
+5. Pick a folder to extract the file(s) to
+6. Double-click on schedule_compiler.exe in the folder you selected to extract the file to to run
 
-## For Mac and Linux
-1. Download the tar.gz file
-2. Unzip the file and navigate to the project directory
-3. Set up virtual environment once by running "py -3 -m venv .venv"
-4. Run virtual environment by typing and entering ".venv/scripts/activate" (Do this every time you enter the project)
-5. Run "pip install -r requirements.txt"
-6. Run "pyinstaller --onefile schedule_compiler.py"
-7. When the command is finished, run "./dist/schedule_compiler.exe"
+## For Linux
+1. Click on Releases to get the latest release
+2. Click on the tar.gz file to download it
+3. In your terminal, navigate to the directory where the file was downloaded
+4. Enter "tar -xvzf " and then the file name in the terminal and click enter
+5. Type "./schedule_compiler" to run
+
 
 # How to contribute
 Follow this project board to know the latest status of the project in the project board. Submit a PR with working code.
@@ -23,13 +33,14 @@ Follow this project board to know the latest status of the project in the projec
 ### How to build
 
 - Clone the repository in your desired IDE that works with Python
+    - git clone "https://github.com/cis3296f23/01-Schedule-Compiler/"
 - Set up the virtual environment (done only once):
     - For Windows, run "py -3 -m venv .venv"
     - For Linux, run "python3 -m venv .venv"
--Run the virtual environment (done every time you open up the project):
+- Run the virtual environment (done every time you open up the project):
     - For Windows, run ".venv/scripts/activate"
     - For Linux, run "source .venv/bin/activate"
 - Run "pip install -r requirements.txt"
 - In Linux, run "sudo apt-get install python3-tk"
-- Run schedule_compiler.py
+- Run "python schedule_compiler.py"
 - User interface should show up with title "Schedule Compiler" and options for preferences in schedule creation
