@@ -13,7 +13,7 @@ The biggest challenges came from the user interface itself and integrating the g
 
 ## For Windows
 1. Click on Releases to get the latest release
-2. Click on zip file to download it
+2. Click on schedule_compiler_windows.zip to download it
 3. Go to the folder where you downloaded the zip file
 4. Right-click on the zip file and click "Extract all"
 5. Pick a folder to extract the file(s) to
@@ -21,7 +21,7 @@ The biggest challenges came from the user interface itself and integrating the g
 
 ## For Linux
 1. Click on Releases to get the latest release
-2. Click on the tar.gz file to download it
+2. Click on the schedule_compiler_linux.tar.gz file to download it
 3. In your terminal, navigate to the directory where the file was downloaded
 4. Enter "tar -xvzf " and then the file name in the terminal and click enter
 5. Type "./schedule_compiler" to run
