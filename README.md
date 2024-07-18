@@ -33,13 +33,14 @@ Follow this project board to know the latest status of the project in the projec
 ### How to build
 
 - Clone the repository in your desired IDE that works with Python
+    - git clone "https://github.com/cis3296f23/01-Schedule-Compiler/"
 - Set up the virtual environment (done only once):
     - For Windows, run "py -3 -m venv .venv"
     - For Linux, run "python3 -m venv .venv"
--Run the virtual environment (done every time you open up the project):
+- Run the virtual environment (done every time you open up the project):
     - For Windows, run ".venv/scripts/activate"
     - For Linux, run "source .venv/bin/activate"
 - Run "pip install -r requirements.txt"
 - In Linux, run "sudo apt-get install python3-tk"
-- Run schedule_compiler.py
+- Run "python schedule_compiler.py"
 - User interface should show up with title "Schedule Compiler" and options for preferences in schedule creation
