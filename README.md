@@ -1,6 +1,14 @@
 # Schedule Compiler
 This is a desktop application for Temple students that generates potential schedules for their next semester based on desired courses, professor ratings, and days they cannot attend class.
 
+# Description
+
+The interface takes in the desired classes in the form "SUBJ ####" or gened code such as "GA". If the user does not know the required courses in their degree program, then they can look it up and click on it, and the course codes and the corresponding names will populate. Like in TUPortal, users must select the semester they wish to schedule for while the campus defaults to "Main". In addition, users can add days and times they are not available.
+
+# Challenges faced
+
+The biggest challenges came from the user interface itself and integrated a graphical display with it. The first issue was making the graphical displays appear itself. This was no issue in the IDE, but when the program was packaged as an executable, it spawned another instance of the interface rather than the desired matplotlib graph. Ultimately, embedding the graph into a tkinter frame instead of spawning a process that showed the graph fixed the issue. On the other hand, the tkinter library inherently does not help make interfaces intuitive without some workarounds and additional functions which led to some minor challenges.
+
 # How to run
 
 ## For Windows
