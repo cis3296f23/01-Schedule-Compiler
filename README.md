@@ -1,21 +1,23 @@
 # Schedule Compiler
-This is a desktop application for Temple students which helps create a schedule for their next semester based on their course of study, classes they have taken and need to take, professor ratings, and user selected prioritization of classes and days they would like to attend class.
+This is a desktop application for Temple students that generates potential schedules for their next semester based on desired courses, professor ratings, and days they cannot attend class.
 
 # How to run
 
 ## For Windows
 1. Click on Releases to get the latest release
-2. Click on schedule_compiler.exe to download the executable
-3. Move the file whereever you would like and double click to run
+2. Click on zip file to download it
+3. Go to the folder where you downloaded the zip file
+4. Right-click on the zip file and click "Extract all"
+5. Pick a folder to extract the file(s) to
+6. Double-click on schedule_compiler.exe in the folder you selected to extract the file to to run
 
-## For Mac and Linux
-1. Download the tar.gz file
-2. Unzip the file and navigate to the project directory
-3. Set up virtual environment once by running "py -3 -m venv .venv"
-4. Run virtual environment by typing and entering ".venv/scripts/activate" (Do this every time you enter the project)
-5. Run "pip install -r requirements.txt"
-6. Run "pyinstaller --onefile schedule_compiler.py"
-7. When the command is finished, run "./dist/schedule_compiler.exe"
+## For Linux
+1. Click on Releases to get the latest release
+2. Click on the tar.gz file to download it
+3. In your terminal, navigate to the directory where the file was downloaded
+4. Enter "tar -xvzf " and then the file name in the terminal and click enter
+5. Type "./schedule_compiler" to run
+
 
 # How to contribute
 Follow this project board to know the latest status of the project in the project board. Submit a PR with working code.
