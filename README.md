@@ -1,6 +1,8 @@
 # Schedule Compiler
 This is a desktop application for Temple students that generates potential schedules for their next semester based on desired courses, professor ratings, and days they cannot attend class.
 
+Demo: https://youtu.be/sdSEkCOxR30?si=SpfxvUE0N8N7fzdo
+
 # Description
 
 The interface takes in the desired classes in the form "SUBJ ####" or gened code such as "GA". If the user does not know the required courses in their degree program, then they can look it up and click on it, and the course codes and the corresponding names will populate. Like in TUPortal, users must select the semester they wish to schedule for while the campus defaults to "Main". In addition, users can add days and times they are not available.
