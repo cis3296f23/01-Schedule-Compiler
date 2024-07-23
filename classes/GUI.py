@@ -1,20 +1,22 @@
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 from tkinter import *
-from tkinter import ttk
-import temple_requests
-import algo
-from algo import Schedule
-from plotting import draw
-from text_redirection import TextRedirector
-import sys
-from threading import Thread, Lock
-from custom_thread import Custom_Thread
+from tkinter import Event, END, ttk
 import customtkinter
-import re
+from threading import Thread, Lock
 import platform
+import sys
+import re
+from tkinter import Event, END
+
+from classes.CustomThread import CustomThread
+from classes.Schedule import Schedule
+from classes.TextRedirector import TextRedirector
+from roster_builder import build_all_valid_rosters
+from course_data import get_course_sections_info
+from temple_api import get_courses_from_keyword_search, get_param_data_codes
+from degree_programs import get_curric, get_degr_progs
 
 class GUI():
     def __init__(self,root:Tk):
@@ -24,7 +26,7 @@ class GUI():
         self.running = True
         self.__root = root
         self.__root.title('Schedule Compiler')
-        self.__root.iconphoto(True,PhotoImage(file="./sched_comp_icon.png"))
+        self.__root.iconphoto(True,PhotoImage(file="./assets/sched_comp_icon.png"))
         customtkinter.set_appearance_mode("light")
         root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(),root.winfo_screenheight()))
         self.scroll_rate = 1
@@ -66,6 +68,25 @@ class GUI():
         self.build_unavail_time_frame(self.main_frame)
         self.build_compile_schedule_frame(self.main_frame)
         self.bind_enter_and_leave(self.main_frame)
+
+    def add_course_to_list(self,event:Event):
+        """
+        Adds course entered in course entry to the added courses listbox
+        """
+        selected_course = self.course_entry.get()
+        selected_course_added = selected_course in self.added_courses_listbox.get(0, END)
+        if selected_course and not selected_course_added and bool(re.match(r"(^[A-Z]{2,4} \d{4}$)|(^[A-Z]{2}$)",selected_course)):
+            self.added_courses_listbox.insert(END, selected_course)
+            self.added_courses.append(selected_course)
+            self.course_entry.configure(placeholder_text="Enter kewords to search or Course Subject and Number if you already know")
+        elif not selected_course:
+            self.course_entry.configure(placeholder_text="Cannot add blank course.")
+        elif selected_course_added:
+            self.course_entry.configure(placeholder_text="Course already added.")
+        else:
+            self.search_for_keywords(self.courses_shown,self.courses_shown_var,self.course_entry)
+        self.course_entry.delete(0,END)
+        self.__root.focus_set()
 
     def rm_focus(self,event):
         """
@@ -134,7 +155,7 @@ class GUI():
         ttk.Label(self.prog_frame,text='Degree Program',font = self.custom_font_bold,).grid(row=0, padx=5, pady=5)
         customtkinter.CTkLabel(self.prog_frame,text='Note: Select a degree program if you would like to see a list of courses in the curriculum \n (can type to narrow down, no worries if your program is not in the list)',font = ("Arial", 12, "italic")).grid(row=1, padx=2, pady=2)
         self.error_otpt = ""
-        self.degr_prog_to_url = temple_requests.get_degr_progs()
+        self.degr_prog_to_url = get_degr_progs()
         self.all_degr_progs = list(self.degr_prog_to_url.keys())
         if self.all_degr_progs and "Try connecting" in self.all_degr_progs[0]:
             self.error_otpt+=self.all_degr_progs[0]
@@ -158,7 +179,7 @@ class GUI():
         self.specifications_frame.grid(row=3, column=0, padx=5, pady=5)
         #semester selection
         customtkinter.CTkLabel(self.specifications_frame, text="Semester:", fg_color="transparent", font = self.custom_font_bold).grid(row=0, column=0, padx=5, pady=(15,5))
-        self.term_to_code = temple_requests.get_param_data_codes('getTerms')
+        self.term_to_code = get_param_data_codes('getTerms')
         self.terms = list(self.term_to_code.keys())
         self.term_combobox = ttk.Combobox(self.specifications_frame, values=self.terms, state="readonly")
         #self.term_combobox.set(self.terms[i])
@@ -167,7 +188,7 @@ class GUI():
         self.term_combobox.grid(row=1, padx=15, pady=5)
         #select a campus
         customtkinter.CTkLabel(self.specifications_frame, text="Campus:",fg_color="transparent", font = self.custom_font_bold).grid(row=2,column=0, padx=10)
-        self.campus_to_code = temple_requests.get_param_data_codes('get_campus')
+        self.campus_to_code = get_param_data_codes('get_campus')
         self.campuses = list(self.campus_to_code.keys())
         self.campus_combobox = ttk.Combobox(self.specifications_frame, values=self.campuses, state="readonly")
         if 'Main' in self.campuses:
@@ -369,7 +390,7 @@ class GUI():
         #see why this logic is clearing the courses outputted by the keyword search
         self.degr_prog_lock.acquire()
         curric = Variable()
-        self.courses_shown = temple_requests.get_curric(self.degr_prog_to_url[selection])
+        self.courses_shown = get_curric(self.degr_prog_to_url[selection])
         num_courses = len(self.courses_shown)
         if "Try connecting" not in self.courses_shown[0]:
             for c in range(num_courses):
@@ -378,25 +399,6 @@ class GUI():
         curric.set(self.courses_shown)
         self.course_lstbox.config(listvariable=curric) 
         self.degr_prog_lock.release()
-
-    def add_course_to_list(self,event:Event):
-        """
-        Adds course entered in course entry to the added courses listbox
-        """
-        selected_course = self.course_entry.get()
-        selected_course_added = selected_course in self.added_courses_listbox.get(0, END)
-        if selected_course and not selected_course_added and bool(re.match(r"(^[A-Z]{2,4} \d{4}$)|(^[A-Z]{2}$)",selected_course)):
-            self.added_courses_listbox.insert(END, selected_course)
-            self.added_courses.append(selected_course)
-            self.course_entry.configure(placeholder_text="Enter kewords to search or Course Subject and Number if you already know")
-        elif not selected_course:
-            self.course_entry.configure(placeholder_text="Cannot add blank course.")
-        elif selected_course_added:
-            self.course_entry.configure(placeholder_text="Course already added.")
-        else:
-            self.search_for_keywords(self.courses_shown,self.courses_shown_var,self.course_entry)
-        self.course_entry.delete(0,END)
-        self.__root.focus_set()
 
     def remove_item_from_lstbox(self,lstbox:Listbox,lst:list[str]):
         """
@@ -423,7 +425,7 @@ class GUI():
         lst.append("Searching...")
         lst_var.set(lst)
         self.course_lstbox.config(listvariable=lst_var)
-        results = temple_requests.get_courses_from_keyword_search(self.term_to_code[term],keywords)
+        results = get_courses_from_keyword_search(self.term_to_code[term],keywords)
         lst.clear()
         lst.extend([f"{subj_code} {title}" for subj_code, title in results])
         lst_var.set(lst)
@@ -518,7 +520,7 @@ class GUI():
             else:
                 attr = course
             print(f"Processing course: {subj} {course_num} {attr}")
-            if temple_requests.get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)=="":
+            if get_course_sections_info(course_info,term,self.term_to_code[term],subj,course_num,attr,campus_code,prof_rating_cache)=="":
                 if term not in self.course_info:
                     self.course_info[term]=dict()
                 if campus_code not in self.course_info[term]:
@@ -527,7 +529,7 @@ class GUI():
         for prof in prof_rating_cache:
             if prof not in self.prof_rating_cache:
                 self.prof_rating_cache[prof] = prof_rating_cache[prof]
-        valid_rosters = algo.build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
+        valid_rosters = build_all_valid_rosters(course_info,term,campus_code,added_courses, unavail_times, 18 if not entered_max_credits else int(entered_max_credits))
         if valid_rosters:
             print("Schedule compilation complete. Building the rosters...")
             """for i, roster in enumerate(self.valid_rosters):
@@ -573,7 +575,7 @@ class GUI():
         """
         Creates thread for schedule compilation to be executed separate from the GUI
         """
-        thread = Custom_Thread(callback1=self.compile_schedules_thread,callback2=self.draw_schedules)
+        thread = CustomThread(callback1=self.compile_schedules_thread,callback2=self.draw_schedules)
         thread.start()
     
     def draw_schedules(self,valid_rosters):
@@ -581,64 +583,16 @@ class GUI():
         Creates frames, calls their draw function to plot the schedule graph on them, and reveals the first graph if there are any
         @param valid_rosters : generated list of schedules
         """
+        from classes.SchedFrame import SchedFrame
         self.draw_sched_lock.acquire()
         self.sched_frames = []
         self.roster_page_num=1
         for i in range(len(valid_rosters)):
             figure = Figure(figsize=(18,7))
-            frame=Sched_Frame(self.main_frame,self,i+1,len(valid_rosters))
+            frame=SchedFrame(self.main_frame,self,i+1,len(valid_rosters))
             self.sched_frames.append(frame)
             frame.grid(row=0,column=0,sticky="nsew")
             frame.draw_schedule(figure,valid_rosters,i)
         if self.sched_frames:
             self.sched_frames[0].tkraise()
             self.main_frame._parent_canvas.yview_moveto(0)
-
-class Sched_Frame(customtkinter.CTkFrame):
-    """
-    Frame for displaying and navigating through schedule graphs
-    """
-    def __init__(self,parent,controller:GUI,page_num:int,num_valid_rosters:int):
-        self.controller = controller
-        customtkinter.CTkFrame.__init__(self,parent)
-        if num_valid_rosters>1:
-            nav_frame = customtkinter.CTkFrame(self)
-            nav_frame.pack(side="top",anchor="center",pady=5)
-            if page_num>1:
-                customtkinter.CTkButton(nav_frame, text="Previous", command=controller.display_prev_sched).pack(side="left",anchor="center",padx=5)
-            if page_num<num_valid_rosters:
-                customtkinter.CTkButton(nav_frame, text="Next", command=controller.display_next_sched).pack(side="left",anchor="center",padx=5)
-        exit_frame = customtkinter.CTkFrame(self)
-        exit_frame.pack(side="top",anchor="center")
-        customtkinter.CTkButton(exit_frame,text="Exit",command = controller.exit_sched_display).pack(side="bottom",anchor="center")
-    
-    def draw_schedule(self, figure:Figure, valid_rosters,i):
-        """
-        Plots the schedule on itself
-        @param figure
-        @param valid_rosters : list of schedules
-        @param i : index within valid_rosters
-        """
-        axes = figure.add_subplot(121)
-        draw(axes,valid_rosters,i)
-        figure.text(0.5,0.3,s=self.get_course_info(valid_rosters,i))
-        canv = FigureCanvasTkAgg(figure,self)
-        canv.draw()
-        canv.get_tk_widget().pack(side="bottom",fill='both',expand=True)
-        canv._tkcanvas.pack(side="top", fill="both", expand=True)
-        canv.get_tk_widget().bind("<Left>",self.controller.display_prev_sched)
-        canv.get_tk_widget().bind("<Right>",self.controller.display_next_sched)
-        canv.get_tk_widget().bind("<Escape>",self.controller.exit_sched_display)
-    
-    def get_course_info(self,schedules,i):
-        """
-        Parses sections chosen for the potential schedule to show section info in text in each tab in a textbox
-        @param schedules : list of potential schedules
-        @param i : current index in schedules
-        """
-        course_info_str = f'Chart {i + 1}\n'
-        for section in schedules[i].sections:
-            course_info = f"{section['name']} CRN: {section['CRN']} Professor: {section['professor']} Rating: {section['profRating']} # of Reviews: {section['numReviews']}\n"
-            course_info_str += course_info
-        course_info_str += '\n'
-        return course_info_str

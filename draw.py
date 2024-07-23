@@ -97,3 +97,4 @@ def draw(axes,schedules:list, i:int):
     if i<len(schedule_data_list):
         draw_schedule(axes, schedule_data_list[i], i+1)
     axes.plot()
+    
