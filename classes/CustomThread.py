@@ -1,5 +1,5 @@
 from threading import Thread
-class Custom_Thread(Thread):
+class CustomThread(Thread):
     def __init__(self,callback1,callback2):
         Thread.__init__(self)
         self.callback1=callback1
