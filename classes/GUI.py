@@ -8,7 +8,6 @@ from threading import Thread, Lock
 import platform
 import sys
 import re
-from tkinter import Event, END
 
 from classes.CustomThread import CustomThread
 from classes.Schedule import Schedule
