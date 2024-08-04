@@ -14,8 +14,7 @@ from classes.CustomThread import CustomThread
 from classes.Schedule import Schedule
 from classes.TextRedirector import TextRedirector
 from roster_builder import build_all_valid_rosters
-from course_data import get_course_sections_info
-from temple_api import get_courses_from_keyword_search, get_param_data_codes
+from temple_api import get_courses_from_keyword_search, get_param_data_codes, get_course_sections_info
 from degree_programs import get_curric, get_degr_progs
 
 class GUI():
