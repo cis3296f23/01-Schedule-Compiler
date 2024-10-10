@@ -1,3 +1,3 @@
-_pycache_/
-classes/_pycache_/
+__pycache__/
+classes/__pycache__/
 .venv/
