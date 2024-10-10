@@ -96,23 +96,26 @@ def get_curric(degr_prog_url:str)->list[str]:
     """
     try:
         req = requests.get("https://bulletin.temple.edu/" + degr_prog_url + "#requirementstext")
-        soup=BeautifulSoup(req.content,'html.parser')
-        requirements_html = soup.find('div',id='requirementstextcontainer')
-        if requirements_html==None:
-            requirements_html = soup.find('div', id='programrequirementstextcontainer')
-            if requirements_html == None:
-                return []
-        courses_html = requirements_html.find_all('tr',class_=re.compile('(^.*even*$|^.*odd.*$)'))
-        curric = []
-        for c in courses_html:
-            subj_and_num_html = c.find('a',class_='bubblelink code')
-            #checks to make sure the html has course info, and if it does, it looks for the course subject, number and name
-            if subj_and_num_html:
-                subj_and_num = subj_and_num_html.text
-                td_htmls = c.find_all('td')
-                course_name = td_htmls[1].text
-                if (subj_and_num,course_name) not in curric:
-                    curric.append([subj_and_num,course_name])
-        return curric
+        if req.status_code>=200 and req.status_code<300:
+            soup=BeautifulSoup(req.content,'html.parser')
+            requirements_html = soup.find('div',id='requirementstextcontainer')
+            if requirements_html==None:
+                requirements_html = soup.find('div', id='programrequirementstextcontainer')
+                if requirements_html == None:
+                    return []
+            courses_html = requirements_html.find_all('tr',class_=re.compile('(^.*even*$|^.*odd.*$)'))
+            curric = []
+            for c in courses_html:
+                subj_and_num_html = c.find('a',class_='bubblelink code')
+                #checks to make sure the html has course info, and if it does, it looks for the course subject, number and name
+                if subj_and_num_html:
+                    subj_and_num = subj_and_num_html.text
+                    td_htmls = c.find_all('td')
+                    course_name = td_htmls[1].text
+                    if (subj_and_num,course_name) not in curric:
+                        curric.append([subj_and_num,course_name])
+            return curric
+        else:
+            return ["URL not in system"]
     except Exception as e:
         return [f"Try connecting to the internet and restarting the application. \nResulting error(s): {e}"]
