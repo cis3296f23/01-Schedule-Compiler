@@ -1,5 +1,6 @@
-from flask import Flask
-from temple_bulletin_api import get_degr_progs
+from flask import Flask, request
+from temple_bulletin_api import get_degr_progs, get_curric
+import urllib.parse
 
 
 app = Flask(__name__)
@@ -14,6 +15,14 @@ def index():
 @app.route("/degree_programs")
 def degree_programs():
     return get_degr_progs()
+
+@app.route("/curriculum")
+def curric():
+    curric_url = request.args.get('curric_url')
+    if curric_url:
+        return get_curric(urllib.parse.unquote(curric_url))
+    else:
+        return "Link not valid or no link passed."
 
 if __name__=="__main__":
     app.run(debug=True)
