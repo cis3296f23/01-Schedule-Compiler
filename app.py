@@ -22,6 +22,11 @@ def degree_programs():
 
 @app.route("/curriculum")
 def curric():
+    """
+    Fetches courses in the curriculum for a specific degree program
+
+    curric_url : url for the desired curriculum
+    """
     curric_url = request.args.get("curric_url")
     if curric_url:
         return get_curric(urllib.parse.unquote(curric_url))
@@ -30,6 +35,11 @@ def curric():
 
 @app.route("/param_data_codes")
 def param_data_codes():
+    """
+    Fetches the codes corresponding to data of a certain type (e.g. semester to number code or campus to letter code)
+
+    param_type : type of parameter (either getTerms or get_campus)
+    """
     param_type = request.args.get("param_type")
     if param_type:
         return get_param_data_codes(param_type)
