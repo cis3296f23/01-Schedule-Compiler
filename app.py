@@ -1,6 +1,6 @@
 from flask import Flask, request
 from temple_bulletin_api import get_degr_progs, get_curric
-from tuportal_api import get_param_data_codes
+from tuportal_api import get_param_data_codes, get_courses_from_keyword_search
 import urllib.parse
 
 
@@ -45,6 +45,21 @@ def param_data_codes():
         return get_param_data_codes(param_type)
     else:
         return "Parameter type not valid or no parameter passed."
+    
+@app.route("/keyword_search_courses")
+def keyword_search_courses():
+    """
+    Calls the TUPortal API function to search courses by keyword and returns the resulting dict
+
+    term : semester to look for available courses
+    keywords
+    """
+    term = request.args.get("term")
+    keywords = request.args.get("keywords")
+    if term and keywords:
+        return list(get_courses_from_keyword_search(term, keywords))
+    else:
+        return "Term and/or keyword not provided or invalid."
 
 if __name__=="__main__":
     app.run(debug=True)
